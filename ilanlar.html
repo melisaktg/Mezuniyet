@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İlanlar - PetMate</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background: url("background.jpg") no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: transparent;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  /* ── HEADER (index ile birebir aynı) ── */
+  header {
+    background-color: #1a365d;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo img { height: 40px; }
+  .logo h1  { font-size: 18px; font-weight: 600; }
+  .logo p   { font-size: 12px; opacity: 0.8; }
+
+  nav ul { display: flex; list-style: none; gap: 20px; }
+
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+  }
+  nav a:hover  { opacity: 1; }
+  nav a.active {
+    opacity: 1;
+    font-weight: 600;
+    border-bottom: 2px solid #f57c00;
+    padding-bottom: 2px;
+  }
+
+  .search-container { display: flex; gap: 10px; }
+
+  .search-input {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    width: 200px;
+    font-size: 14px;
+  }
+
+  .search-btn {
+    background-color: #f57c00;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  .search-btn:hover { background-color: #e65c00; }
+
+  /* ── SAYFA BAŞLIĞI ── */
+  .page-header {
+    background-color: #1a365d;
+    color: white;
+    padding: 28px 25px;
+    text-align: center;
+  }
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .page-header p { font-size: 14px; opacity: 0.8; }
+
+  /* ── İSTATİSTİK ÇUBUĞU ── */
+  .stats-bar {
+    background-color: white;
+    display: none;
+    justify-content: center;
+    border-bottom: 3px solid #f57c00;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 14px 32px;
+    border-right: 1px solid #e2e8f0;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num   { font-size: 24px; font-weight: 700; color: #1a365d; }
+  .stat-label { font-size: 12px; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* ── FİLTRELER ── */
+  .filters-section {
+    background-color: white;
+    padding: 18px 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 0;
+  }
+
+  .filters-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .filter-group input,
+  .filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2d3748;
+    background: #f7fafc;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .filter-group input:focus,
+  .filter-group select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    background: #fff;
+  }
+
+  .search-group { flex: 2; min-width: 200px; position: relative; }
+  .search-group input { padding-left: 34px; }
+  .search-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 11px;
+    font-size: 13px;
+    color: #a0aec0;
+    pointer-events: none;
+  }
+
+  .filter-btn {
+    background-color: #1a365d;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    align-self: flex-end;
+  }
+  .filter-btn:hover { background-color: #2c5282; }
+
+  .reset-btn {
+    background-color: white;
+    color: #718096;
+    border: 1px solid #cbd5e0;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s;
+    white-space: nowrap;
+    align-self: flex-end;
+  }
+  .reset-btn:hover { border-color: #f57c00; color: #f57c00; }
+
+  /* ── KARTLAR BÖLÜMÜ ── */
+  .section {
+    padding: 20px 25px 40px;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+  }
+
+  .results-bar {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .results-count { font-size: 14px; color: #718096; }
+  .results-count strong { color: #1a365d; }
+
+  .sort-select {
+    padding: 7px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #4a5568;
+    background: white;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* ── KART ── */
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .card {
+    background-color: #f7fafc;
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp 0.4s ease both;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .card-img-wrap {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+  }
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.05); }
+
+  .card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-sahiplendir { background: #48bb78; color: #fff; }
+  .badge-kayip       { background: #f56565; color: #fff; }
+  .badge-bulundu     { background: #f57c00; color: #fff; }
+  .badge-diger       { background: #718096; color: #fff; }
+
+  .card-city {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .card-body {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .card-title { font-size: 15px; font-weight: 700; color: #1a365d; }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .tag {
+    background: #ebf8ff;
+    border: 1px solid #bee3f8;
+    color: #2b6cb0;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: #4a5568;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .card-contact {
+    font-size: 13px;
+    color: #2d3748;
+    font-weight: 500;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 7px;
+  }
+
+  .card-btn {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.2s;
+    margin-top: 4px;
+  }
+  .card-btn:hover { background-color: #2563eb; }
+
+  /* ── BOŞ / HATA ── */
+  .state-box {
+    width: 100%;
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+  }
+  .state-box .icon { font-size: 46px; margin-bottom: 12px; }
+  .state-box h3    { font-size: 20px; color: #1a365d; margin-bottom: 6px; }
+  .state-box p     { font-size: 14px; }
+
+  /* ── LOADER ── */
+  .loader-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 60px 0;
+  }
+  .loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,54,93,0.65);
+    backdrop-filter: blur(3px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: #fff;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(26,54,93,0.3);
+    transform: translateY(16px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.open .modal { transform: none; }
+
+  .modal-img { width: 100%; height: 200px; object-fit: cover; }
+
+  .modal-header {
+    background: #1a365d;
+    color: #fff;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 700; }
+
+  .modal-close {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.3); }
+
+  .modal-body { padding: 18px; }
+
+  .modal-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 14px;
+  }
+  .info-item {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 9px 12px;
+  }
+  .info-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 600; }
+  .info-val   { font-size: 14px; color: #1a365d; font-weight: 600; margin-top: 2px; }
+
+  .modal-desc {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .modal-contact-box {
+    background: #1a365d;
+    color: #fff;
+    border-radius: 7px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ── FOOTER (index ile birebir aynı) ── */
+  footer {
+    background-color: #1a365d;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-top: 20px;
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .footer-link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+  }
+  .footer-link:hover { opacity: 1; }
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  .social-icon {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.3s;
+  }
+  .social-icon:hover { background-color: rgba(255,255,255,0.35); }
+  .copyright { font-size: 12px; opacity: 0.8; }
+
+  /* ── ANİMASYONLAR ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESPONSİF ── */
+  @media (max-width: 768px) {
+    .container { margin: 10px; padding: 10px; }
+    header { flex-direction: column; gap: 15px; padding: 15px; }
+    nav ul { flex-wrap: wrap; justify-content: center; }
+    .search-container { width: 100%; justify-content: center; }
+    .search-input { width: 100%; }
+    .stat-item { padding: 10px 16px; flex: 1; min-width: 80px; }
+    .filters-section { padding: 14px; }
+    .section { padding: 14px 14px 30px; }
+    .card { width: 100%; max-width: 320px; }
+    .modal-info { grid-template-columns: 1fr; }
+    .footer-links { flex-wrap: wrap; gap: 20px; }
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+      <div>
+        <h1>PetMate</h1>
+        <p>Eğitimli ve Eğitimsiz Hayvanlara Yuva Ol. Şeffaf ve Şevkatli Bir Yuva Ol.</p>
+      </div>
+    </div>
+    <nav>
+      <ul>
+         <li><a href="index.html">Anasayfa</a></li>
+        <li><a href="ilanlar.html" class="active">Tüm İlanlar</a></li>
+        <li><a href="ilan-ekle.html">İlan Ekle</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li> 
+      </ul>
+    </nav>
+    <div class="search-container">
+      <button class="search-btn" onclick="document.getElementById('searchInput').focus()">İlan Ara</button>
+    </div>
+  </header>
+
+  <!-- SAYFA BAŞLIĞI -->
+  <div class="page-header">
+    <h2>🐾 Tüm İlanlar</h2>
+    <p>Sahiplendir, kayıp bildirimleri ve bulunan hayvanlar — hepsi tek yerde.</p>
+  </div>
+
+  <!-- İSTATİSTİKLER -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item">
+      <div class="stat-num" id="statToplam">0</div>
+      <div class="stat-label">Toplam İlan</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statSahiplendir">0</div>
+      <div class="stat-label">Sahiplendirme</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statKayip">0</div>
+      <div class="stat-label">Kayıp</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statBulundu">0</div>
+      <div class="stat-label">Bulundu</div>
+    </div>
+  </div>
+
+  <!-- FİLTRELER -->
+  <div class="filters-section">
+    <div class="filters-row">
+      <div class="filter-group search-group">
+        <label>Ara</label>
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Hayvan adı, şehir, açıklama...">
+      </div>
+      <div class="filter-group">
+        <label>İlan Türü</label>
+        <select id="ilanFilter">
+          <option value="">Tümü</option>
+          <option value="sahiplendir">Sahiplendirme</option>
+          <option value="kayip">Kayıp</option>
+          <option value="bulundu">Bulundu</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Hayvan Türü</label>
+        <select id="typeFilter">
+          <option value="">Tümü</option>
+          <option value="kedi">Kedi 🐱</option>
+          <option value="kopek">Köpek 🐶</option>
+          <option value="kus">Kuş 🐦</option>
+          <option value="diger">Diğer</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Şehir</label>
+        <select id="cityFilter">
+          <option value="">Tüm Şehirler</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Sırala</label>
+        <select id="sortSelect">
+          <option value="yeni">En Yeni Önce</option>
+          <option value="eski">En Eski Önce</option>
+          <option value="tur">Türe Göre</option>
+        </select>
+      </div>
+      <button class="filter-btn" onclick="applyFilters()">Filtrele</button>
+      <button class="reset-btn" onclick="resetFilters()">Sıfırla</button>
+    </div>
+  </div>
+
+  <!-- KARTLAR -->
+  <div class="section">
+    <div class="results-bar" id="resultsBar">
+      <div class="results-count" id="resultsCount"></div>
+      <select class="sort-select" id="sortSelect2" onchange="document.getElementById('sortSelect').value=this.value; applyFilters();">
+        <option value="yeni">En Yeni Önce</option>
+        <option value="eski">En Eski Önce</option>
+        <option value="tur">Türe Göre</option>
+      </select>
+    </div>
+    <div class="cards-container" id="ilanlarKonteyner">
+      <div class="loader-wrap"><div class="loader"></div></div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="#" class="footer-link">Hakkımızda</a>
+      <a href="#" class="footer-link">Gizlilik Politikası</a>
+      <a href="#" class="footer-link">Şikayet Sistemi</a>
+      <a href="#" class="footer-link">İletişim</a>
+    </div>
+    <div class="social-icons">
+      <div class="social-icon">f</div>
+      <div class="social-icon">x</div>
+      <div class="social-icon">in</div>
+      <div class="social-icon">●</div>
+    </div>
+    <p class="copyright">© 2026 PetMate, Tüm hakları saklıdır.</p>
+  </footer>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <img class="modal-img" id="modalImg" src="" alt="">
+    <div class="modal-header">
+      <h3 id="modalTitle"></h3>
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info" id="modalInfo"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-contact-box" id="modalContact"></div>
+    </div>
+  </div>
+</div>
+<script>
+  let tumIlanlar = [];
+
+  function getImg(tur) {
+    const map = { kedi: 'kedi.jpg', kopek: 'köpek.jpg', kus: 'kus.jpg' };
+    return map[(tur || '').toLowerCase()] || 'hayvan.jpg';
+  }
+
+  function getBadgeClass(ilanTuru) {
+    const t = (ilanTuru || '').toLowerCase();
+    if (t.includes('sahip')) return 'badge-sahiplendir';
+    if (t.includes('kay'))   return 'badge-kayip';
+    if (t.includes('bulun')) return 'badge-bulundu';
+    return 'badge-diger';
+  }
+
+  function getBadgeLabel(ilanTuru) {
+    const t = (ilanTuru || '').toLowerCase();
+    if (t.includes('sahip')) return 'Sahiplendir';
+    if (t.includes('kay'))   return 'Kayıp';
+    if (t.includes('bulun')) return 'Bulundu';
+    return ilanTuru || 'Diğer';
+  }
+
+  function doldurSehirler(ilanlar) {
+    const sehirler = [...new Set(ilanlar.map(i => i.Sehir).filter(Boolean))].sort();
+    const sel = document.getElementById('cityFilter');
+    sehirler.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.toLowerCase();
+      opt.textContent = s;
+      sel.appendChild(opt);
+    });
+  }
+
+  function gosterStats(ilanlar) {
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('statToplam').textContent = ilanlar.length;
+    document.getElementById('statSahiplendir').textContent =
+      ilanlar.filter(i => (i.IlanTuru||'').toLowerCase().includes('sahip')).length;
+    document.getElementById('statKayip').textContent =
+      ilanlar.filter(i => (i.IlanTuru||'').toLowerCase().includes('kay')).length;
+    document.getElementById('statBulundu').textContent =
+      ilanlar.filter(i => (i.IlanTuru||'').toLowerCase().includes('bulun')).length;
+  }
+
+  function applyFilters() {
+    const ara    = document.getElementById('searchInput').value.toLowerCase().trim();
+    const ilan   = document.getElementById('ilanFilter').value.toLowerCase();
+    const tur    = document.getElementById('typeFilter').value.toLowerCase();
+    const sehir  = document.getElementById('cityFilter').value.toLowerCase();
+    const sira   = document.getElementById('sortSelect').value;
+
+    let sonuc = tumIlanlar.filter(i => {
+      const m = v => (v || '').toLowerCase();
+      if (ara && !m(i.HayvanAdi).includes(ara) && !m(i.Sehir).includes(ara) &&
+                 !m(i.Aciklama).includes(ara) && !m(i.HayvanTuru).includes(ara)) return false;
+      if (ilan  && !m(i.IlanTuru).includes(ilan))  return false;
+      if (tur   && !m(i.HayvanTuru).includes(tur)) return false;
+      if (sehir && m(i.Sehir) !== sehir)           return false;
+      return true;
+    });
+
+    if (sira === 'eski') sonuc = sonuc.slice().reverse();
+    else if (sira === 'tur') sonuc = sonuc.slice().sort((a,b) =>
+      (a.IlanTuru||'').localeCompare(b.IlanTuru||'', 'tr'));
+
+    renderIlanlar(sonuc);
+  }
+
+  function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('ilanFilter').value  = '';
+    document.getElementById('typeFilter').value  = '';
+    document.getElementById('cityFilter').value  = '';
+    document.getElementById('sortSelect').value  = 'yeni';
+    renderIlanlar(tumIlanlar);
+  }
+
+  function renderIlanlar(liste) {
+    const k   = document.getElementById('ilanlarKonteyner');
+    const bar = document.getElementById('resultsBar');
+    const cnt = document.getElementById('resultsCount');
+
+    bar.style.display = 'flex';
+    cnt.innerHTML = `<strong>${liste.length}</strong> ilan gösteriliyor`;
+
+    if (liste.length === 0) {
+      k.innerHTML = `<div class="state-box">
+        <div class="icon">🔍</div>
+        <h3>Sonuç bulunamadı</h3>
+        <p>Filtrelerinizi değiştirerek tekrar deneyin.</p>
+      </div>`;
+      return;
+    }
+
+    k.innerHTML = '';
+    liste.forEach((ilan, idx) => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.animationDelay = `${idx * 0.04}s`;
+
+      const desc = (ilan.Aciklama || '').substring(0, 70) +
+                   ((ilan.Aciklama||'').length > 70 ? '...' : '');
+
+      div.innerHTML = `
+        <div class="card-img-wrap">
+          <img src="${getImg(ilan.HayvanTuru)}" alt="${ilan.HayvanAdi || 'Hayvan'}"
+               onerror="this.src='https://placehold.co/250x150/ebf8ff/1a365d?text=🐾'">
+          <span class="card-badge ${getBadgeClass(ilan.IlanTuru)}">${getBadgeLabel(ilan.IlanTuru)}</span>
+          ${ilan.Sehir ? `<span class="card-city">📍 ${ilan.Sehir}</span>` : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-title">${ilan.HayvanAdi || 'İsimsiz'}</div>
+          <div class="card-tags">
+            ${ilan.HayvanTuru ? `<span class="tag">${ilan.HayvanTuru}</span>` : ''}
+            ${ilan.Yas        ? `<span class="tag">${ilan.Yas} yaş</span>`    : ''}
+            ${ilan.Cinsiyet   ? `<span class="tag">${ilan.Cinsiyet}</span>`   : ''}
+          </div>
+          <div class="card-desc">${desc || 'Açıklama belirtilmemiş.'}</div>
+          <div class="card-contact">📞 ${ilan.Iletisim || '—'}</div>
+          <button class="card-btn" onclick='acModal(${JSON.stringify(ilan).replace(/'/g,"&#39;")})'>
+            Detayları Gör
+          </button>
+        </div>
+      `;
+      k.appendChild(div);
+    });
+  }
+
+  function acModal(ilan) {
+    document.getElementById('modalImg').src = getImg(ilan.HayvanTuru);
+    document.getElementById('modalImg').onerror = function() {
+      this.src = 'https://placehold.co/500x200/ebf8ff/1a365d?text=🐾';
+    };
+    document.getElementById('modalTitle').textContent =
+      `${getBadgeLabel(ilan.IlanTuru)} — ${ilan.HayvanAdi || 'İsimsiz'}`;
+
+    const alanlar = [
+      ['Hayvan Türü', ilan.HayvanTuru], ['Şehir',    ilan.Sehir],
+      ['Yaş',        ilan.Yas],         ['Cinsiyet', ilan.Cinsiyet],
+      ['Irk',        ilan.Irk],         ['Renk',     ilan.Renk],
+    ].filter(([,v]) => v);
+
+    document.getElementById('modalInfo').innerHTML = alanlar.map(([k,v]) => `
+      <div class="info-item">
+        <div class="info-label">${k}</div>
+        <div class="info-val">${v}</div>
+      </div>`).join('');
+
+    document.getElementById('modalDesc').textContent = ilan.Aciklama || 'Açıklama belirtilmemiş.';
+    document.getElementById('modalContact').innerHTML =
+      `<span>📞 İletişim</span><span>${ilan.Iletisim || '—'}</span>`;
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModalBtn();
+  }
+
+  function closeModalBtn() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  ['ilanFilter','typeFilter','cityFilter','sortSelect'].forEach(id =>
+    document.getElementById(id).addEventListener('change', applyFilters));
+
+  window.onload = function () {
+   fetch('ilanlari-getir')
+      .then(r => { if (!r.ok) throw new Error('Sunucu hatası: ' + r.status); return r.json(); })
+      .then(data => {
+        tumIlanlar = data;
+        if (data.length === 0) {
+          document.getElementById('ilanlarKonteyner').innerHTML = `
+            <div class="state-box">
+              <div class="icon">📭</div>
+              <h3>Henüz ilan yok</h3>
+              <p>İlk ilanı ekleyen siz olun!</p>
+            </div>`;
+          return;
+        }
+        gosterStats(data);
+        doldurSehirler(data);
+        renderIlanlar(data);
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('ilanlarKonteyner').innerHTML = `
+          <div class="state-box">
+            <div class="icon">⚠️</div>
+            <h3>Veriler yüklenemedi</h3>
+            <p>Sunucu bağlantısını kontrol edin ve sayfayı yenileyin.</p>
+          </div>`;
+      });
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+const express = require("express");
+const sql = require("mssql");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+
+const config = {
+    user: "SA",
+    password: "your_password",
+    server: "localhost",
+    database: "PetMate",
+    options: {
+        encrypt: false,
+        trustServerCertificate: true
+    }
+};
+
+app.get("/api/en-yeniler", async (req, res) => {
+    try {
+        await sql.connect(config);
+
+        const result = await sql.query(`
+            SELECT TOP 20 *
+            FROM ilanlar
+            ORDER BY tarih DESC
+        `);
+
+        res.json(result.recordset);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Hata");
+    }
+});
+
+app.listen(3000, () => {
+    console.log("Server çalışıyor");
+});

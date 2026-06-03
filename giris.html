@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giriş Yap — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy3: #0e2038;
+  --navy:  #1c3454;
+  --amber: #d97706;
+  --amber2:#b45309;
+  --rose:  #be3636;
+  --cream: #faf8f5;
+  --warm1: #f5f0ea;
+  --warm2: #e8ddd0;
+  --border:#e5ddd3;
+  --text:  #1a1f2e;
+  --muted: #6b7280;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body {
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:grid; grid-template-columns:1fr 1fr;
+  background:var(--cream);
+}
+
+/* Sol Panel */
+.left-panel {
+  background:var(--navy3);
+  display:flex; flex-direction:column;
+  justify-content:center; padding:60px 56px;
+  position:relative; overflow:hidden;
+}
+.left-panel::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%,rgba(38,74,120,0.5),transparent),
+    radial-gradient(ellipse 40% 40% at 20% 80%,rgba(217,119,6,0.1),transparent);
+}
+.lp-logo {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:56px; position:relative; z-index:1;
+  text-decoration:none;
+}
+.lp-mark {
+  width:46px; height:46px; border-radius:13px;
+  background:linear-gradient(135deg,var(--amber),#f59e0b);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  box-shadow:0 6px 20px rgba(217,119,6,0.45);
+}
+.lp-words strong {
+  display:block; font-family:'Lora',serif;
+  font-size:22px; color:#fff; font-weight:700; line-height:1;
+}
+.lp-words span { font-size:11px; color:rgba(255,255,255,0.35); }
+
+.lp-headline {
+  font-family:'Lora',serif;
+  font-size:38px; font-weight:700;
+  color:#fff; line-height:1.15;
+  margin-bottom:18px;
+  position:relative; z-index:1;
+}
+.lp-headline em { color:var(--amber); font-style:italic; }
+.lp-desc {
+  font-size:14px; color:rgba(255,255,255,0.5);
+  line-height:1.8; max-width:320px;
+  margin-bottom:48px; position:relative; z-index:1;
+}
+.lp-features { position:relative; z-index:1; display:flex; flex-direction:column; gap:14px; }
+.lp-feat {
+  display:flex; align-items:center; gap:14px;
+}
+.lf-ico {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.lf-text { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.5; }
+.lf-text strong { color:rgba(255,255,255,0.9); }
+
+/* Sağ Panel — Form */
+.right-panel {
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  padding:60px 48px;
+}
+.form-wrap {
+  width:100%; max-width:400px;
+}
+.form-wrap h2 {
+  font-family:'Lora',serif; font-size:28px; font-weight:700;
+  color:var(--navy3); margin-bottom:6px;
+}
+.form-wrap .sub {
+  font-size:14px; color:var(--muted); margin-bottom:36px;
+}
+
+.tab-row {
+  display:flex; gap:0; margin-bottom:32px;
+  border:1.5px solid var(--border); border-radius:11px; overflow:hidden;
+  background:var(--warm1);
+}
+.tab-btn {
+  flex:1; padding:11px;
+  background:transparent; border:none;
+  font-size:14px; font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  color:var(--muted); cursor:pointer;
+  transition:all 0.2s;
+}
+.tab-btn.active {
+  background:#fff; color:var(--navy3);
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+  border-radius:9px; margin:2px;
+}
+
+.field { margin-bottom:18px; }
+.field label {
+  display:block; margin-bottom:7px;
+  font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.5px;
+  color:var(--muted);
+}
+.field input {
+  width:100%; padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:14px; font-family:'DM Sans',sans-serif;
+  color:var(--text); background:var(--warm1);
+  outline:none; transition:all 0.2s;
+}
+.field input:focus {
+  border-color:var(--navy); background:#fff;
+  box-shadow:0 0 0 3px rgba(28,52,84,0.08);
+}
+.field input.err { border-color:var(--rose); background:#fff8f8; }
+
+.submit-btn {
+  width:100%; padding:13px;
+  background:var(--navy3); color:#fff; border:none;
+  border-radius:10px; font-size:14px; font-weight:700;
+  font-family:'DM Sans',sans-serif; cursor:pointer;
+  transition:all 0.2s; margin-top:6px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  box-shadow:0 4px 16px rgba(14,32,56,0.3);
+}
+.submit-btn:hover { background:var(--navy); }
+.submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+.spinner {
+  width:16px; height:16px; border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  animation:spin 0.7s linear infinite;
+  display:none;
+}
+
+.err-box {
+  background:#fff5f5; border:1px solid #fecaca;
+  border-radius:9px; padding:11px 14px;
+  font-size:13px; color:var(--rose); font-weight:500;
+  margin-bottom:16px; display:none;
+}
+
+.divider {
+  display:flex; align-items:center; gap:14px;
+  margin:20px 0;
+}
+.divider::before, .divider::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+.divider span { font-size:12px; color:var(--muted); white-space:nowrap; }
+
+.alt-link { text-align:center; margin-top:16px; }
+.alt-link a {
+  color:var(--amber2); font-weight:600; font-size:13px;
+  text-decoration:none;
+}
+.alt-link a:hover { color:var(--amber); }
+
+.back-home {
+  display:inline-flex; align-items:center; gap:6px;
+  margin-top:32px; color:var(--muted);
+  font-size:13px; text-decoration:none;
+  transition:color 0.2s;
+}
+.back-home:hover { color:var(--navy); }
+
+@keyframes spin { to{transform:rotate(360deg);} }
+
+@media(max-width:768px) {
+  body { grid-template-columns:1fr; }
+  .left-panel { display:none; }
+  .right-panel { padding:40px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SOL PANEL -->
+<div class="left-panel">
+  <a href="index.html" class="lp-logo">
+    <div class="lp-mark">🐾</div>
+    <div class="lp-words">
+      <strong>PetMate</strong>
+      <span>Evcil Hayvan Yönetimi</span>
+    </div>
+  </a>
+
+  <h2 class="lp-headline">
+    Evcil dostunuz<br>
+    güvende, her şey<br>
+    <em>düzenli.</em>
+  </h2>
+  <p class="lp-desc">
+    Aşı takibi, veteriner randevuları, sağlık kayıtları —
+    tüm bilgiler tek platformda, her zaman erişilebilir.
+  </p>
+
+  <div class="lp-features">
+    <div class="lp-feat">
+      <div class="lf-ico">💉</div>
+      <div class="lf-text"><strong>Aşı Takibi</strong><br>Yaklaşan aşıları kaçırmayın</div>
+    </div>
+    <div class="lp-feat">
+      <div class="lf-ico">📅</div>
+      <div class="lf-text"><strong>Randevu Yönetimi</strong><br>Veteriner ziyaretlerini planlayın</div>
+    </div>
+    <div class="lp-feat">
+      <div class="lf-ico">🔔</div>
+      <div class="lf-text"><strong>Akıllı Hatırlatıcılar</strong><br>İlaç, mama, bakım bildirimleri</div>
+    </div>
+    <div class="lp-feat">
+      <div class="lf-ico">🏥</div>
+      <div class="lf-text"><strong>Sağlık Geçmişi</strong><br>Tüm kayıtlar güvenle saklanır</div>
+    </div>
+  </div>
+</div>
+
+<!-- SAĞ PANEL — FORM -->
+<div class="right-panel">
+  <div class="form-wrap">
+    <h2>Hesabınıza Girin</h2>
+    <p class="sub">Giriş yapın veya yeni hesap oluşturun.</p>
+
+    <!-- Tab -->
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabGiris"   onclick="switchTab('giris')">Giriş Yap</button>
+      <button class="tab-btn"         id="tabKayit"   onclick="switchTab('kayit')">Kayıt Ol</button>
+    </div>
+
+    <!-- Hata kutusu -->
+    <div class="err-box" id="errBox"></div>
+
+    <!-- GİRİŞ FORMU -->
+    <div id="formGiris">
+      <div class="field">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="g-kullanici" placeholder="kullaniciadi" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Şifre</label>
+        <input type="password" id="g-sifre" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="submit-btn" id="btnGiris" onclick="girisYap()">
+        <span id="girisText">Giriş Yap →</span>
+        <div class="spinner" id="girisSpin"></div>
+      </button>
+    </div>
+
+    <!-- KAYIT FORMU -->
+    <div id="formKayit" style="display:none">
+      <div class="field">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="k-kullanici" placeholder="kullaniciadi" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>E-posta (isteğe bağlı)</label>
+        <input type="email" id="k-email" placeholder="ornek@mail.com">
+      </div>
+      <div class="field">
+        <label>Şifre <span style="color:#6b7280;font-size:10px;text-transform:none;letter-spacing:0">(min. 8 karakter)</span></label>
+        <input type="password" id="k-sifre" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>Şifre Tekrar</label>
+        <input type="password" id="k-sifre2" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="submit-btn" id="btnKayit" onclick="kayitOl()">
+        <span id="kayitText">Hesap Oluştur →</span>
+        <div class="spinner" id="kayitSpin"></div>
+      </button>
+    </div>
+
+    <a href="index.html" class="back-home">← Ana Sayfaya Dön</a>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  const isGiris = tab === 'giris';
+  document.getElementById('tabGiris').classList.toggle('active', isGiris);
+  document.getElementById('tabKayit').classList.toggle('active', !isGiris);
+  document.getElementById('formGiris').style.display = isGiris ? 'block' : 'none';
+  document.getElementById('formKayit').style.display = isGiris ? 'none' : 'block';
+  hideErr();
+}
+
+function showErr(msg) {
+  const b = document.getElementById('errBox');
+  b.textContent = msg; b.style.display = 'block';
+}
+function hideErr() {
+  document.getElementById('errBox').style.display = 'none';
+}
+
+function setLoading(btnId, spinId, txtId, loading) {
+  document.getElementById(btnId).disabled = loading;
+  document.getElementById(spinId).style.display = loading ? 'block' : 'none';
+  document.getElementById(txtId).style.display  = loading ? 'none'  : 'inline';
+}
+
+async function girisYap() {
+  hideErr();
+  const kullanici = document.getElementById('g-kullanici').value.trim();
+  const sifre     = document.getElementById('g-sifre').value;
+  if(!kullanici||!sifre) { showErr('Lütfen tüm alanları doldurun.'); return; }
+
+  setLoading('btnGiris','girisSpin','girisText',true);
+  try {
+    const r = await fetch('/kullanici-giris', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({kullanici, sifre})
+    });
+    const data = await r.json();
+    if(!r.ok) { showErr(data.error||'Giriş başarısız.'); return; }
+
+    // Token'ı sakla
+    localStorage.setItem('pm_token', data.token);
+    localStorage.setItem('pm_user',  data.kullanici);
+    localStorage.setItem('pm_role',  data.rol||'user');
+
+    // Dashboard'a yönlendir
+    window.location.href = 'dashboard.html';
+  } catch {
+    showErr('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+  } finally {
+    setLoading('btnGiris','girisSpin','girisText',false);
+  }
+}
+
+async function kayitOl() {
+  hideErr();
+  const kullanici = document.getElementById('k-kullanici').value.trim();
+  const email     = document.getElementById('k-email').value.trim();
+  const sifre     = document.getElementById('k-sifre').value;
+  const sifre2    = document.getElementById('k-sifre2').value;
+
+  if(!kullanici||!sifre) { showErr('Kullanıcı adı ve şifre zorunludur.'); return; }
+  if(kullanici.length<3)  { showErr('Kullanıcı adı en az 3 karakter olmalı.'); return; }
+  if(sifre.length<8)      { showErr('Şifre en az 8 karakter olmalı.'); return; }
+  if(sifre!==sifre2)      { showErr('Şifreler eşleşmiyor.'); return; }
+
+  setLoading('btnKayit','kayitSpin','kayitText',true);
+  try {
+    const r = await fetch('/kullanici-kayit', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({kullanici, sifre, email})
+    });
+    const data = await r.json();
+    if(!r.ok) { showErr(data.error||'Kayıt başarısız.'); return; }
+
+    // Kayıt sonrası otomatik giriş
+    showErr('✅ Kayıt başarılı! Giriş yapılıyor...');
+    document.getElementById('errBox').style.background='#f0fdf4';
+    document.getElementById('errBox').style.borderColor='#bbf7d0';
+    document.getElementById('errBox').style.color='#15803d';
+
+    // Giriş yap
+    document.getElementById('g-kullanici').value = kullanici;
+    document.getElementById('g-sifre').value = sifre;
+    setTimeout(girisYap, 800);
+  } catch {
+    showErr('Sunucuya bağlanılamadı.');
+  } finally {
+    setLoading('btnKayit','kayitSpin','kayitText',false);
+  }
+}
+
+// Enter tuşu desteği
+document.addEventListener('keydown', e => {
+  if(e.key==='Enter') {
+    const isGiris = document.getElementById('formGiris').style.display!=='none';
+    if(isGiris) girisYap(); else kayitOl();
+  }
+});
+
+// Zaten giriş yapılmışsa yönlendir
+window.onload = () => {
+  if(localStorage.getItem('pm_token')) {
+    window.location.href = 'dashboard.html';
+  }
+};
+</script>
+</body>
+</html>

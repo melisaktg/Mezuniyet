@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hayvanlarım — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1c3454;--navy2:#264a78;--navy3:#0e2038;--amber:#d97706;--amber2:#b45309;--amber-l:#fef3c7;--sage:#4a7c5c;--sage-l:#d1fae5;--rose:#be3636;--rose-l:#fee2e2;--sky:#2563eb;--sky-l:#dbeafe;--cream:#faf8f5;--warm1:#f5f0ea;--warm2:#e8ddd0;--text:#1a1f2e;--muted:#6b7280;--border:#e5ddd3;--white:#ffffff;--sidebar:260px;--radius:14px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;}
+.sb-brand{padding:28px 24px 22px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
+.sb-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--amber),#f59e0b);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 4px 14px rgba(217,119,6,0.45);flex-shrink:0;}
+.sb-brand-text strong{display:block;font-family:'Lora',serif;font-size:18px;color:#fff;font-weight:700;line-height:1;}
+.sb-brand-text span{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-nav{padding:18px 12px;flex:1;}
+.sb-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 10px 8px;}
+.sb-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.18s;margin-bottom:2px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.sb-link.active{background:rgba(217,119,6,0.18);color:#fbbf24;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--amber);}
+.sb-icon{font-size:17px;width:20px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:rgba(255,255,255,0.07);margin:14px 12px;}
+.sb-user{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--amber));display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;color:#fff;font-size:15px;flex-shrink:0;}
+.sb-uname{font-size:13px;color:rgba(255,255,255,0.8);font-weight:600;}
+.sb-role{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
+.sb-logout:hover{color:rgba(255,255,255,0.7);}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;}
+.topbar h1{font-family:'Lora',serif;font-size:19px;font-weight:700;color:var(--navy3);}
+.topbar p{font-size:12px;color:var(--muted);}
+.tb-btn{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;border:none;}
+.tb-primary{background:var(--amber);color:#fff;box-shadow:0 3px 12px rgba(217,119,6,0.35);}
+.tb-primary:hover{background:var(--amber2);}
+.content{padding:28px 36px 48px;flex:1;}
+
+/* PET GRID */
+.pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+
+.pet-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.3s;animation:fadeUp 0.5s ease both;}
+.pet-card:hover{box-shadow:0 12px 32px rgba(28,52,84,0.12);transform:translateY(-4px);border-color:transparent;}
+.pet-card-top{height:140px;display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;}
+.pc-kedi{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);}
+.pc-köpek{background:linear-gradient(135deg,#fef9c3,#fde68a);}
+.pc-kuş{background:linear-gradient(135deg,#e0f2fe,#bae6fd);}
+.pc-diger{background:linear-gradient(135deg,var(--warm1),var(--warm2));}
+.pet-card-menu{position:absolute;top:10px;right:10px;display:flex;gap:6px;}
+.pc-btn{width:28px;height:28px;border-radius:8px;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.18s;}
+.pc-edit{background:rgba(255,255,255,0.85);color:var(--navy);}
+.pc-edit:hover{background:#fff;}
+.pc-del{background:rgba(255,255,255,0.85);color:var(--rose);}
+.pc-del:hover{background:var(--rose-l);}
+.pet-card-body{padding:18px;}
+.pc-name{font-family:'Lora',serif;font-size:20px;font-weight:700;color:var(--navy3);margin-bottom:6px;}
+.pc-meta{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;}
+.pc-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.pc-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.chip-kedi{background:#f3e8ff;color:#7c3aed;}
+.chip-köpek{background:#fef9c3;color:#a16207;}
+.chip-kuş{background:#e0f2fe;color:#0369a1;}
+.chip-diger{background:var(--warm1);color:var(--muted);}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.pc-stat{background:var(--warm1);border-radius:9px;padding:8px 10px;}
+.pc-sl{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:700;}
+.pc-sv{font-size:13px;font-weight:700;color:var(--navy3);}
+.pc-footer{padding:12px 18px;border-top:1px solid var(--warm2);display:flex;gap:8px;}
+.pc-action{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--navy);transition:all 0.18s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;}
+.pc-action:hover{border-color:var(--amber);color:var(--amber2);}
+.pc-action.primary{background:var(--navy3);color:#fff;border-color:var(--navy3);}
+.pc-action.primary:hover{background:var(--navy2);}
+
+/* ADD CARD */
+.add-card{background:transparent;border:2px dashed var(--border);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:280px;cursor:pointer;transition:all 0.2s;color:var(--muted);}
+.add-card:hover{border-color:var(--amber);color:var(--amber2);background:var(--amber-l);}
+.add-card-ico{font-size:40px;}
+.add-card span{font-size:14px;font-weight:600;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:80px 20px;color:var(--muted);}
+.empty-state .es-ico{font-size:64px;display:block;margin-bottom:16px;}
+.empty-state h2{font-family:'Lora',serif;font-size:24px;color:var(--navy3);margin-bottom:8px;}
+.empty-state p{font-size:14px;margin-bottom:24px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.7);backdrop-filter:blur(6px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#fff;border-radius:18px;width:520px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.35);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
+.modal-overlay.open .modal-box{transform:none;opacity:1;}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--warm2);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-family:'Lora',serif;font-size:18px;font-weight:700;color:var(--navy3);}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--warm1);border:1px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--rose-l);border-color:var(--rose);}
+.modal-body{padding:22px 24px 24px;}
+.m-field{margin-bottom:16px;}
+.m-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.m-field input,.m-field select,.m-field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--warm1);outline:none;transition:all 0.2s;}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--navy2);background:#fff;box-shadow:0 0 0 3px rgba(38,74,120,0.08);}
+.m-field textarea{min-height:80px;resize:vertical;line-height:1.6;}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-foot{padding:18px 24px;border-top:1px solid var(--warm2);display:flex;gap:10px;justify-content:flex-end;}
+.m-btn-cancel{padding:10px 20px;border-radius:9px;background:transparent;color:var(--muted);border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.m-btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+.m-btn-save{padding:10px 24px;border-radius:9px;background:var(--amber);color:#fff;border:none;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 3px 12px rgba(217,119,6,0.35);}
+.m-btn-save:hover{background:var(--amber2);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--navy3);color:#fff;padding:12px 20px;border-radius:11px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.5,.64,1);}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-left:4px solid var(--sage);}
+.toast.error{border-left:4px solid var(--rose);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@media(max-width:768px){:root{--sidebar:0px;}.sidebar{transform:translateX(-260px);width:260px;}.sidebar.open{transform:none;}.main{margin-left:0;}.content{padding:18px;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="index.html">
+    <div class="sb-logo">🐾</div>
+    <div class="sb-brand-text"><strong>PetMate</strong><span>Evcil Hayvan Yönetimi</span></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Genel</div>
+    <a href="dashboard.html" class="sb-link"><span class="sb-icon">🏠</span> Dashboard</a>
+    <a href="hayvanlarim.html" class="sb-link active"><span class="sb-icon">🐾</span> Hayvanlarım</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Sağlık</div>
+    <a href="asilar.html" class="sb-link"><span class="sb-icon">💉</span> Aşı Takibi</a>
+    <a href="saglik.html" class="sb-link"><span class="sb-icon">🏥</span> Sağlık Kayıtları</a>
+    <a href="randevular.html" class="sb-link"><span class="sb-icon">📅</span> Randevular</a>
+    <a href="hatirlaticlar.html" class="sb-link"><span class="sb-icon">🔔</span> Hatırlatıcılar</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Platform</div>
+    <a href="ilanlar.html" class="sb-link"><span class="sb-icon">📋</span> İlanlar</a>
+    <a href="ilan-ekle.html" class="sb-link"><span class="sb-icon">➕</span> İlan Ver</a>
+    <a href="ayarlar.html" class="sb-link"><span class="sb-icon">⚙️</span> Ayarlar</a>
+    <a href="admin.html" class="sb-link" id="adminLink" style="display:none"><span class="sb-icon">👑</span> Admin Panel</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">?</div>
+    <div><div class="sb-uname" id="sbName">...</div><div class="sb-role" id="sbRole">—</div></div>
+    <button class="sb-logout" onclick="logout()">↩</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1>🐾 Hayvanlarım</h1><p id="subTitle">Yükleniyor...</p></div>
+    <button class="tb-btn tb-primary" onclick="openModal()">+ Yeni Hayvan Ekle</button>
+  </div>
+  <div class="content">
+    <div class="pet-grid" id="petGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
+        <div style="font-size:32px;margin-bottom:12px">⏳</div>Yükleniyor...
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="petModal" onclick="closeModalClick(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalTitle">🐾 Yeni Hayvan Ekle</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="m-row">
+        <div class="m-field"><label>Adı *</label><input type="text" id="p-name" placeholder="Örn: Pamuk"></div>
+        <div class="m-field"><label>Tür *</label>
+          <select id="p-species">
+            <option value="">Seçin</option>
+            <option value="kedi">🐱 Kedi</option>
+            <option value="köpek">🐶 Köpek</option>
+            <option value="kuş">🐦 Kuş</option>
+            <option value="tavşan">🐰 Tavşan</option>
+            <option value="balık">🐟 Balık</option>
+            <option value="diger">🐾 Diğer</option>
+          </select>
+        </div>
+      </div>
+      <div class="m-row">
+        <div class="m-field"><label>Cins / Irk</label><input type="text" id="p-breed" placeholder="Örn: Van Kedisi"></div>
+        <div class="m-field"><label>Cinsiyet</label>
+          <select id="p-gender">
+            <option value="">Seçin</option>
+            <option value="Erkek">Erkek</option>
+            <option value="Dişi">Dişi</option>
+            <option value="Bilinmiyor">Bilinmiyor</option>
+          </select>
+        </div>
+      </div>
+      <div class="m-row">
+        <div class="m-field"><label>Doğum Tarihi</label><input type="date" id="p-birth"></div>
+        <div class="m-field"><label>Kilo (kg)</label><input type="number" id="p-weight" step="0.1" min="0" placeholder="4.5"></div>
+      </div>
+      <div class="m-field"><label>Renk / Desen</label><input type="text" id="p-color" placeholder="Beyaz, tekir..."></div>
+      <div class="m-field"><label>Notlar</label><textarea id="p-notes" placeholder="Özel durumlar, alışkanlıklar..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="m-btn-cancel" onclick="closeModal()">İptal</button>
+      <button class="m-btn-save" onclick="savePet()">💾 Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PM = {
+  getToken:()=>localStorage.getItem('pm_token'),
+  getUser:()=>localStorage.getItem('pm_user'),
+  getRole:()=>localStorage.getItem('pm_role'),
+  authHeaders:()=>({'Content-Type':'application/json','Authorization':'Bearer '+localStorage.getItem('pm_token')}),
+  logout:()=>{localStorage.clear();window.location.href='giris.html';},
+  requireAuth:()=>{if(!localStorage.getItem('pm_token'))window.location.href='giris.html';}
+};
+function logout(){PM.logout();}
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.className=`toast ${type}`;
+  t.innerHTML=(type==='success'?'✅':'❌')+' '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function openModal(pet=null){
+  document.getElementById('editId').value=pet?pet.Id:'';
+  document.getElementById('modalTitle').textContent=pet?'✏️ Hayvanı Düzenle':'🐾 Yeni Hayvan Ekle';
+  document.getElementById('p-name').value=pet?pet.Name:'';
+  document.getElementById('p-species').value=pet?pet.Species:'';
+  document.getElementById('p-breed').value=pet?pet.Breed||'':'';
+  document.getElementById('p-gender').value=pet?pet.Gender||'':'';
+  document.getElementById('p-birth').value=pet&&pet.BirthDate?pet.BirthDate.split('T')[0]:'';
+  document.getElementById('p-weight').value=pet?pet.Weight||'':'';
+  document.getElementById('p-color').value=pet?pet.Color||'':'';
+  document.getElementById('p-notes').value=pet?pet.Notes||'':'';
+  document.getElementById('petModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('petModal').classList.remove('open');document.body.style.overflow='';}
+function closeModalClick(e){if(e.target===document.getElementById('petModal'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+const speciesEmoji=s=>{const m={kedi:'🐱',köpek:'🐶','kuş':'🐦',tavşan:'🐰',balık:'🐟'};return m[(s||'').toLowerCase()]||'🐾';};
+const speciesChip=s=>{const m={kedi:'chip-kedi',köpek:'chip-köpek','kuş':'chip-kuş'};return m[(s||'').toLowerCase()]||'chip-diger';};
+const speciesBg=s=>{const m={kedi:'pc-kedi',köpek:'pc-köpek','kuş':'pc-kuş'};return m[(s||'').toLowerCase()]||'pc-diger';};
+const calcAge=bd=>{if(!bd)return'—';const d=new Date(bd);const years=Math.floor((Date.now()-d)/(1000*60*60*24*365));return years>0?years+' yaş':'< 1 yaş';};
+
+function renderPets(pets){
+  const grid=document.getElementById('petGrid');
+  document.getElementById('subTitle').textContent=`${pets.length} hayvan kayıtlı`;
+
+  if(!pets.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <span class="es-ico">🐾</span>
+      <h2>Henüz hayvan eklemediniz</h2>
+      <p>İlk hayvanınızı ekleyerek başlayın.</p>
+      <button class="tb-btn tb-primary" onclick="openModal()" style="margin:0 auto">+ İlk Hayvanımı Ekle</button>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML='';
+  pets.forEach((p,i)=>{
+    const div=document.createElement('div');
+    div.className='pet-card'; div.style.animationDelay=(i*0.06)+'s';
+    const age=calcAge(p.BirthDate);
+    div.innerHTML=`
+      <div class="pet-card-top ${speciesBg(p.Species)}">
+        ${speciesEmoji(p.Species)}
+        <div class="pet-card-menu">
+          <button class="pc-btn pc-edit" onclick="event.stopPropagation();editPet(${p.Id})" title="Düzenle">✏️</button>
+          <button class="pc-btn pc-del"  onclick="event.stopPropagation();deletePet(${p.Id},'${p.Name}')" title="Sil">🗑️</button>
+        </div>
+      </div>
+      <div class="pet-card-body">
+        <div class="pc-name">${p.Name}</div>
+        <div class="pc-meta">${p.Breed||p.Species} · ${p.Gender||'—'}</div>
+        <div class="pc-chips">
+          <span class="pc-chip ${speciesChip(p.Species)}">${p.Species}</span>
+          ${p.Weight?`<span class="pc-chip chip-diger">${p.Weight} kg</span>`:''}
+        </div>
+        <div class="pc-stats">
+          <div class="pc-stat"><div class="pc-sl">Yaş</div><div class="pc-sv">${age}</div></div>
+          <div class="pc-stat"><div class="pc-sl">Kilo</div><div class="pc-sv">${p.Weight?p.Weight+' kg':'—'}</div></div>
+        </div>
+      </div>
+      <div class="pc-footer">
+        <a href="asilar.html?pet=${p.Id}" class="pc-action">💉 Aşılar</a>
+        <a href="saglik.html?pet=${p.Id}" class="pc-action">🏥 Sağlık</a>
+        <a href="randevular.html?pet=${p.Id}" class="pc-action primary">📅 Randevu</a>
+      </div>`;
+    grid.appendChild(div);
+  });
+
+  // Ekle kartı
+  const addCard=document.createElement('div');
+  addCard.className='add-card';
+  addCard.innerHTML=`<div class="add-card-ico">➕</div><span>Yeni Hayvan Ekle</span>`;
+  addCard.onclick=()=>openModal();
+  grid.appendChild(addCard);
+}
+
+let allPets=[];
+
+async function loadPets(){
+  try{
+    const r=await fetch('/api/pets',{headers:PM.authHeaders()});
+    if(r.status===401||r.status===403){PM.logout();return;}
+    allPets=await r.json();
+    renderPets(allPets);
+  }catch(err){
+    showToast('Veriler yüklenemedi','error');
+    document.getElementById('petGrid').innerHTML=`<div class="empty-state" style="grid-column:1/-1"><span class="es-ico">⚠️</span><h2>Bağlantı hatası</h2><p>Sunucu çalışıyor mu?</p></div>`;
+  }
+}
+
+function editPet(id){
+  const pet=allPets.find(p=>p.Id===id);
+  if(pet)openModal(pet);
+}
+
+async function deletePet(id,name){
+  if(!confirm(`"${name}" adlı hayvanı silmek istediğinize emin misiniz?`))return;
+  try{
+    const r=await fetch(`/api/pets/${id}`,{method:'DELETE',headers:PM.authHeaders()});
+    if(!r.ok){showToast('Silme hatası','error');return;}
+    showToast(`${name} silindi`,'success');
+    loadPets();
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+async function savePet(){
+  const name=document.getElementById('p-name').value.trim();
+  const species=document.getElementById('p-species').value;
+  if(!name||!species){showToast('Ad ve tür zorunludur','error');return;}
+  const editId=document.getElementById('editId').value;
+  const payload={name,species,breed:document.getElementById('p-breed').value.trim()||null,gender:document.getElementById('p-gender').value||null,birthDate:document.getElementById('p-birth').value||null,weight:document.getElementById('p-weight').value||null,color:document.getElementById('p-color').value.trim()||null,notes:document.getElementById('p-notes').value.trim()||null};
+  try{
+    const url=editId?`/api/pets/${editId}`:'/api/pets';
+    const method=editId?'PUT':'POST';
+    const r=await fetch(url,{method,headers:PM.authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast(editId?'Güncellendi!':'Hayvan eklendi!','success');
+    closeModal();loadPets();
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+window.onload=()=>{
+  PM.requireAuth();
+  const user=PM.getUser();
+  document.getElementById('sbAv').textContent=(user||'?').charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=user||'Kullanıcı';
+  document.getElementById('sbRole').textContent=PM.getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
+  if(PM.getRole()==='admin')document.getElementById('adminLink').style.display='flex';
+  loadPets();
+};
+</script>
+</body>
+</html>

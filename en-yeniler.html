@@ -1,0 +1,27 @@
+<div class="cards"></div>
+
+<script>
+async function getir() {
+    const res = await fetch("http://localhost:3000/api/en-yeniler");
+    const data = await res.json();
+
+    const container = document.querySelector(".cards");
+    container.innerHTML = "";
+
+    data.forEach(ilan => {
+        container.innerHTML += `
+            <div class="card">
+                <img src="${ilan.resim}">
+                <div class="card-content">
+                    <div class="card-title">${ilan.baslik}</div>
+                    <div class="card-text">
+                        ${ilan.sehir} - ${new Date(ilan.tarih).toLocaleString("tr-TR")}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+getir();
+</script>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - PetMate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #f57c00;
+    --accent2: #1a365d;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --radius: 8px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 60% 40%, #1a365d44 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, #f57c0022 0%, transparent 50%),
+                var(--bg);
+  }
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 44px 40px;
+    width: 380px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .login-logo .paw { font-size: 42px; display:block; margin-bottom:8px; }
+  .login-logo h1 { font-size: 26px; font-weight: 800; color: var(--accent); letter-spacing:-0.5px; }
+  .login-logo p { font-size: 12px; color: var(--muted); margin-top:3px; font-family:'JetBrains Mono',monospace; }
+
+  .login-field { margin-bottom: 18px; }
+  .login-field label { display:block; font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.8px; font-family:'JetBrains Mono',monospace; }
+  .login-field input {
+    width:100%; padding:11px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text);
+    font-size:14px; font-family:'Syne',sans-serif;
+    outline:none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .login-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245,124,0,0.15); }
+
+  .login-btn {
+    width:100%; padding:12px;
+    background: var(--accent); color:#fff;
+    border:none; border-radius: var(--radius);
+    font-size:15px; font-weight:700; font-family:'Syne',sans-serif;
+    cursor:pointer; transition: background 0.2s, transform 0.1s;
+    margin-top:6px;
+  }
+  .login-btn:hover { background: #e65c00; }
+  .login-btn:active { transform: scale(0.98); }
+
+  .login-err {
+    color: var(--red); font-size:13px; text-align:center;
+    margin-top:12px; display:none;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* ── PANEL ── */
+  #adminPanel { display:none; }
+
+  /* Sidebar */
+  .layout { display:flex; min-height:100vh; }
+
+  .sidebar {
+    width: 220px; min-height:100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display:flex; flex-direction:column;
+    position: fixed; top:0; left:0; bottom:0;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-brand span { font-size:20px; font-weight:800; color:var(--accent); }
+  .sidebar-brand small { display:block; font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+
+  .sidebar-nav { flex:1; padding:14px 10px; }
+  .nav-item {
+    display:flex; align-items:center; gap:10px;
+    padding: 10px 12px; border-radius: var(--radius);
+    cursor:pointer; font-size:14px; font-weight:600;
+    color: var(--muted); transition: all 0.15s;
+    margin-bottom:4px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(245,124,0,0.12); color: var(--accent); }
+  .nav-item .icon { font-size:16px; width:20px; text-align:center; }
+
+  .sidebar-footer {
+    padding:14px 10px;
+    border-top: 1px solid var(--border);
+  }
+  .logout-btn {
+    width:100%; padding:9px 12px;
+    background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3);
+    color: var(--red); border-radius: var(--radius);
+    font-size:13px; font-weight:600; font-family:'Syne',sans-serif;
+    cursor:pointer; transition: all 0.2s;
+  }
+  .logout-btn:hover { background: rgba(248,81,73,0.2); }
+
+  /* Main content */
+  .main {
+    margin-left: 220px;
+    flex:1;
+    padding: 28px 32px;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar h2 { font-size:22px; font-weight:800; }
+  .topbar-sub { font-size:13px; color:var(--muted); margin-top:2px; font-family:'JetBrains Mono',monospace; }
+
+  .badge-pill {
+    padding:4px 10px; border-radius:20px;
+    font-size:11px; font-weight:700; font-family:'JetBrains Mono',monospace;
+  }
+  .bp-green { background:rgba(63,185,80,0.15); color:var(--green); border:1px solid rgba(63,185,80,0.3); }
+  .bp-red   { background:rgba(248,81,73,0.15);  color:var(--red);   border:1px solid rgba(248,81,73,0.3); }
+  .bp-yellow{ background:rgba(210,153,34,0.15); color:var(--yellow);border:1px solid rgba(210,153,34,0.3); }
+  .bp-blue  { background:rgba(88,166,255,0.15); color:var(--blue);  border:1px solid rgba(88,166,255,0.3); }
+  .bp-orange{ background:rgba(245,124,0,0.15);  color:var(--accent);border:1px solid rgba(245,124,0,0.3); }
+
+  /* Tabs */
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  /* Stats cards */
+  .stats-grid {
+    display:grid; grid-template-columns: repeat(4,1fr);
+    gap:16px; margin-bottom:28px;
+  }
+
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding:20px;
+    position:relative; overflow:hidden;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-card .sc-icon { font-size:28px; margin-bottom:10px; }
+  .stat-card .sc-num { font-size:32px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+  .stat-card .sc-label { font-size:12px; color:var(--muted); margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+  .stat-card .sc-glow {
+    position:absolute; right:-20px; bottom:-20px;
+    width:80px; height:80px; border-radius:50%;
+    opacity:0.08;
+  }
+
+  /* Chart */
+  .chart-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding:20px;
+  }
+  .chart-card h3 { font-size:14px; font-weight:700; margin-bottom:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+
+  .bar-chart { display:flex; flex-direction:column; gap:10px; }
+  .bar-row { display:flex; align-items:center; gap:10px; }
+  .bar-label { font-size:12px; color:var(--muted); width:90px; text-align:right; font-family:'JetBrains Mono',monospace; }
+  .bar-track { flex:1; height:10px; background:var(--surface2); border-radius:20px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:20px; transition: width 1s ease; }
+  .bar-val { font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--text); width:24px; }
+
+  .donut-wrap { display:flex; align-items:center; justify-content:center; gap:28px; }
+  .donut-legend { display:flex; flex-direction:column; gap:8px; }
+  .legend-item { display:flex; align-items:center; gap:8px; font-size:13px; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; }
+
+  /* Table */
+  .table-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:16px; flex-wrap:wrap; gap:10px;
+  }
+  .table-header h3 { font-size:16px; font-weight:700; }
+
+  .table-controls { display:flex; gap:8px; flex-wrap:wrap; }
+  .tbl-search {
+    padding:8px 12px; background:var(--surface2);
+    border:1px solid var(--border); border-radius:var(--radius);
+    color:var(--text); font-size:13px; font-family:'Syne',sans-serif;
+    outline:none; width:200px; transition:border-color 0.2s;
+  }
+  .tbl-search:focus { border-color:var(--accent); }
+  .tbl-select {
+    padding:8px 12px; background:var(--surface2);
+    border:1px solid var(--border); border-radius:var(--radius);
+    color:var(--text); font-size:13px; font-family:'Syne',sans-serif;
+    outline:none; cursor:pointer;
+  }
+
+  .table-wrap {
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius); overflow:hidden;
+  }
+
+  table { width:100%; border-collapse:collapse; }
+  thead th {
+    padding:12px 16px; font-size:11px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.7px;
+    color:var(--muted); border-bottom:1px solid var(--border);
+    text-align:left; background: var(--surface2);
+    font-family:'JetBrains Mono',monospace;
+  }
+  tbody tr {
+    border-bottom:1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding:13px 16px; font-size:13px; color:var(--text); }
+
+  .action-btns { display:flex; gap:6px; }
+  .btn-icon {
+    padding:5px 10px; border:none; border-radius:5px;
+    font-size:12px; font-weight:600; font-family:'Syne',sans-serif;
+    cursor:pointer; transition: all 0.15s;
+  }
+  .btn-del  { background:rgba(248,81,73,0.15); color:var(--red);   border:1px solid rgba(248,81,73,0.3); }
+  .btn-del:hover  { background:rgba(248,81,73,0.3); }
+  .btn-edit { background:rgba(88,166,255,0.15); color:var(--blue);  border:1px solid rgba(88,166,255,0.3); }
+  .btn-edit:hover { background:rgba(88,166,255,0.3); }
+
+  /* Status select in table */
+  .status-sel {
+    padding:4px 8px; border-radius:20px;
+    font-size:11px; font-weight:700; font-family:'JetBrains Mono',monospace;
+    border:none; cursor:pointer; outline:none;
+    background:rgba(63,185,80,0.15); color:var(--green);
+  }
+
+  /* Kullanıcı yönetimi */
+  .user-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .user-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:18px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .user-avatar {
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#1a365d);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800; color:#fff; flex-shrink:0;
+  }
+  .user-name { font-size:14px; font-weight:700; }
+  .user-role { font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+  .user-actions { margin-left:auto; display:flex; gap:6px; }
+
+  .add-user-form {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:20px; margin-bottom:20px;
+  }
+  .add-user-form h3 { font-size:14px; font-weight:700; margin-bottom:14px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+  .form-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .form-field { flex:1; min-width:140px; }
+  .form-field label { display:block; font-size:11px; color:var(--muted); margin-bottom:5px; font-family:'JetBrains Mono',monospace; }
+  .form-field input, .form-field select {
+    width:100%; padding:9px 12px;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius); color:var(--text);
+    font-size:13px; font-family:'Syne',sans-serif; outline:none;
+    transition:border-color 0.2s;
+  }
+  .form-field input:focus, .form-field select:focus { border-color:var(--accent); }
+  .btn-primary {
+    padding:9px 20px; background:var(--accent); color:#fff;
+    border:none; border-radius:var(--radius);
+    font-size:13px; font-weight:700; font-family:'Syne',sans-serif;
+    cursor:pointer; transition:background 0.2s; align-self:flex-end;
+  }
+  .btn-primary:hover { background:#e65c00; }
+
+  /* Modal */
+  .modal-overlay {
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+    z-index:999; display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.2s;
+  }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal-box {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:28px; width:440px; max-width:95%;
+    transform:translateY(12px); transition:transform 0.2s;
+  }
+  .modal-overlay.open .modal-box { transform:none; }
+  .modal-box h3 { font-size:17px; font-weight:800; margin-bottom:18px; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .btn-cancel {
+    padding:9px 18px; background:var(--surface2); color:var(--muted);
+    border:1px solid var(--border); border-radius:var(--radius);
+    font-size:13px; font-weight:600; font-family:'Syne',sans-serif;
+    cursor:pointer;
+  }
+  .btn-danger {
+    padding:9px 18px; background:var(--red); color:#fff;
+    border:none; border-radius:var(--radius);
+    font-size:13px; font-weight:700; font-family:'Syne',sans-serif;
+    cursor:pointer;
+  }
+
+  /* Toast */
+  .toast {
+    position:fixed; bottom:24px; right:24px;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius); padding:12px 18px;
+    font-size:13px; font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    transform:translateY(60px); opacity:0;
+    transition: all 0.3s; z-index:1000;
+  }
+  .toast.show { transform:none; opacity:1; }
+  .toast.success { border-color:var(--green); color:var(--green); }
+  .toast.error   { border-color:var(--red);   color:var(--red); }
+
+  /* Loader */
+  .tbl-loader { text-align:center; padding:40px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+
+  /* Empty */
+  .tbl-empty { text-align:center; padding:50px; color:var(--muted); }
+  .tbl-empty .big { font-size:36px; display:block; margin-bottom:8px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--surface); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  @media(max-width:900px) {
+    .sidebar { width:60px; }
+    .sidebar-brand span, .sidebar-brand small, .nav-item span { display:none; }
+    .main { margin-left:60px; padding:16px; }
+    .stats-grid { grid-template-columns:1fr 1fr; }
+    .chart-row, .user-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="paw">🐾</span>
+      <h1>PetMate Admin</h1>
+      <p>// yönetim paneli</p>
+    </div>
+    <div class="login-field">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <label>Şifre</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Giriş Yap</button>
+    <div class="login-err" id="loginErr">❌ Kullanıcı adı veya şifre hatalı.</div>
+  </div>
+</div>
+
+<!-- ── ADMIN PANEL ── -->
+<div id="adminPanel">
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span>🐾 PetMate</span>
+        <small>admin panel</small>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="switchTab('dashboard')">
+          <span class="icon">📊</span><span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('ilanlar')">
+          <span class="icon">📋</span><span>İlanlar</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('kullanicilar')">
+          <span class="icon">👤</span><span>Kullanıcılar</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="doLogout()">🚪 Çıkış Yap</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div class="tab-content active" id="tab-dashboard">
+        <div class="topbar">
+          <div>
+            <h2>Dashboard</h2>
+            <div class="topbar-sub" id="dashDate"></div>
+          </div>
+          <span class="badge-pill bp-green">● Sistem Aktif</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="sc-icon">📋</div>
+            <div class="sc-num" id="sc-toplam">—</div>
+            <div class="sc-label">Toplam İlan</div>
+            <div class="sc-glow" style="background:#f57c00"></div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-icon">🏠</div>
+            <div class="sc-num" id="sc-sahip">—</div>
+            <div class="sc-label">Sahiplendirme</div>
+            <div class="sc-glow" style="background:#3fb950"></div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-icon">🔴</div>
+            <div class="sc-num" id="sc-kayip">—</div>
+            <div class="sc-label">Kayıp</div>
+            <div class="sc-glow" style="background:#f85149"></div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-icon">✅</div>
+            <div class="sc-num" id="sc-bulundu">—</div>
+            <div class="sc-label">Bulundu</div>
+            <div class="sc-glow" style="background:#58a6ff"></div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-card">
+            <h3>İlan Türü Dağılımı</h3>
+            <div class="bar-chart" id="barChart"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Hayvan Türü Dağılımı</h3>
+            <div class="donut-wrap">
+              <canvas id="donutCanvas" width="140" height="140"></canvas>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Son 5 ilan -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Hayvan</th><th>Tür</th><th>İlan Türü</th><th>Şehir</th><th>İletişim</th>
+              </tr>
+            </thead>
+            <tbody id="recentBody">
+              <tr><td colspan="5" class="tbl-loader">Yükleniyor...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- İLANLAR -->
+      <div class="tab-content" id="tab-ilanlar">
+        <div class="topbar">
+          <div>
+            <h2>İlanlar</h2>
+            <div class="topbar-sub">Tüm ilanları yönet</div>
+          </div>
+          <button class="btn-primary" onclick="loadIlanlar()">🔄 Yenile</button>
+        </div>
+
+        <div class="table-header">
+          <h3 id="ilanCount">İlanlar</h3>
+          <div class="table-controls">
+            <input class="tbl-search" type="text" id="tblSearch" placeholder="🔍 Ara..." oninput="filterTable()">
+            <select class="tbl-select" id="tblTurFilter" onchange="filterTable()">
+              <option value="">Tüm Türler</option>
+              <option value="sahip">Sahiplendirme</option>
+              <option value="kayip">Kayıp</option>
+              <option value="bulundu">Bulundu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Hayvan Adı</th><th>Tür</th>
+                <th>İlan Türü</th><th>Şehir</th><th>İletişim</th><th>İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="ilanlarBody">
+              <tr><td colspan="7" class="tbl-loader">Yükleniyor...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KULLANICILAR -->
+      <div class="tab-content" id="tab-kullanicilar">
+        <div class="topbar">
+          <div>
+            <h2>Kullanıcı Yönetimi</h2>
+            <div class="topbar-sub">Admin hesaplarını yönet</div>
+          </div>
+        </div>
+
+        <div class="add-user-form">
+          <h3>Yeni Admin Ekle</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Kullanıcı Adı</label>
+              <input type="text" id="newUser" placeholder="kullanici_adi">
+            </div>
+            <div class="form-field">
+              <label>Şifre</label>
+              <input type="password" id="newPass" placeholder="••••••••">
+            </div>
+            <div class="form-field">
+              <label>Rol</label>
+              <select id="newRole">
+                <option value="admin">Admin</option>
+                <option value="moderator">Moderatör</option>
+              </select>
+            </div>
+            <button class="btn-primary" style="margin-top:19px" onclick="addUser()">+ Ekle</button>
+          </div>
+        </div>
+
+        <div class="user-grid" id="userGrid"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- SİL MODAL -->
+<div class="modal-overlay" id="delModal">
+  <div class="modal-box">
+    <h3>🗑️ İlanı Sil</h3>
+    <p style="color:var(--muted);font-size:14px;">Bu ilanı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">İptal</button>
+      <button class="btn-danger" onclick="confirmDelete()">Evet, Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── AUTH ── */
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'Petmate2026!'; // ← Buradan şifreyi değiştir
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display  = 'block';
+    init();
+  } else {
+    const e = document.getElementById('loginErr');
+    e.style.display = 'block';
+    setTimeout(() => e.style.display = 'none', 3000);
+  }
+}
+
+function doLogout() {
+  document.getElementById('adminPanel').style.display  = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+/* ── TABS ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'ilanlar')      loadIlanlar();
+  if (name === 'kullanicilar') renderUsers();
+}
+
+/* ── DATA ── */
+let allIlanlar = [];
+let pendingDelId = null;
+
+async function loadAll() {
+  try {
+    const r = await fetch('/ilanlari-getir');
+    if (!r.ok) throw new Error();
+    allIlanlar = await r.json();
+    return allIlanlar;
+  } catch { return []; }
+}
+
+/* ── INIT ── */
+async function init() {
+  document.getElementById('dashDate').textContent =
+    new Date().toLocaleString('tr-TR', {dateStyle:'long', timeStyle:'short'});
+
+  await loadAll();
+  renderDashboard();
+  renderUsers();
+}
+
+/* ── DASHBOARD ── */
+function renderDashboard() {
+  const d = allIlanlar;
+  const sahip   = d.filter(i => (i.IlanTuru||'').toLowerCase().includes('sahip')).length;
+  const kayip   = d.filter(i => (i.IlanTuru||'').toLowerCase().includes('kay')).length;
+  const bulundu = d.filter(i => (i.IlanTuru||'').toLowerCase().includes('bulun')).length;
+
+  document.getElementById('sc-toplam').textContent  = d.length;
+  document.getElementById('sc-sahip').textContent   = sahip;
+  document.getElementById('sc-kayip').textContent   = kayip;
+  document.getElementById('sc-bulundu').textContent = bulundu;
+
+  /* Bar chart */
+  const max = Math.max(sahip, kayip, bulundu, 1);
+  const bars = [
+    { label:'Sahiplendir', val:sahip,   color:'#3fb950' },
+    { label:'Kayıp',       val:kayip,   color:'#f85149' },
+    { label:'Bulundu',     val:bulundu, color:'#58a6ff' },
+  ];
+  document.getElementById('barChart').innerHTML = bars.map(b => `
+    <div class="bar-row">
+      <span class="bar-label">${b.label}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(b.val/max*100).toFixed(1)}%;background:${b.color}"></div>
+      </div>
+      <span class="bar-val">${b.val}</span>
+    </div>`).join('');
+
+  /* Donut */
+  const turler = {};
+  d.forEach(i => { const t = i.HayvanTuru||'Diğer'; turler[t] = (turler[t]||0)+1; });
+  drawDonut(turler);
+
+  /* Son ilanlar */
+  const recent = d.slice(0,5);
+  document.getElementById('recentBody').innerHTML = recent.length
+    ? recent.map(i => `<tr>
+        <td>${i.HayvanAdi||'—'}</td>
+        <td>${i.HayvanTuru||'—'}</td>
+        <td>${badgePill(i.IlanTuru)}</td>
+        <td>${i.Sehir||'—'}</td>
+        <td>${i.Iletisim||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" class="tbl-empty"><span class="big">📭</span>Henüz ilan yok.</td></tr>';
+}
+
+function badgePill(tur) {
+  const t = (tur||'').toLowerCase();
+  if (t.includes('sahip')) return `<span class="badge-pill bp-green">Sahiplendir</span>`;
+  if (t.includes('kay'))   return `<span class="badge-pill bp-red">Kayıp</span>`;
+  if (t.includes('bulun')) return `<span class="badge-pill bp-blue">Bulundu</span>`;
+  return `<span class="badge-pill bp-orange">${tur||'—'}</span>`;
+}
+
+function drawDonut(data) {
+  const canvas = document.getElementById('donutCanvas');
+  const ctx = canvas.getContext('2d');
+  const colors = ['#f57c00','#3fb950','#58a6ff','#d29922','#f85149','#a371f7'];
+  const entries = Object.entries(data);
+  const total = entries.reduce((s,[,v])=>s+v,0);
+
+  ctx.clearRect(0,0,140,140);
+  let start = -Math.PI/2;
+  entries.forEach(([k,v],i) => {
+    const slice = (v/total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(70,70);
+    ctx.arc(70,70,60,start,start+slice);
+    ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fill();
+    start += slice;
+  });
+  /* hole */
+  ctx.beginPath();
+  ctx.arc(70,70,38,0,Math.PI*2);
+  ctx.fillStyle = '#161b22';
+  ctx.fill();
+  /* total text */
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 18px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(total, 70, 70);
+
+  document.getElementById('donutLegend').innerHTML = entries.map(([k,v],i) => `
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${colors[i%colors.length]}"></span>
+      <span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px">${k} (${v})</span>
+    </div>`).join('');
+}
+
+/* ── İLANLAR TAB ── */
+async function loadIlanlar() {
+  document.getElementById('ilanlarBody').innerHTML =
+    '<tr><td colspan="7" class="tbl-loader">⏳ Yükleniyor...</td></tr>';
+  await loadAll();
+  filterTable();
+}
+
+function filterTable() {
+  const ara = document.getElementById('tblSearch').value.toLowerCase();
+  const tur = document.getElementById('tblTurFilter').value.toLowerCase();
+  const filtered = allIlanlar.filter(i => {
+    const m = v => (v||'').toLowerCase();
+    if (ara && !m(i.HayvanAdi).includes(ara) && !m(i.Sehir).includes(ara) &&
+               !m(i.IlanTuru).includes(ara) && !m(i.HayvanTuru).includes(ara)) return false;
+    if (tur && !m(i.IlanTuru).includes(tur)) return false;
+    return true;
+  });
+  renderIlanTable(filtered);
+}
+
+function renderIlanTable(liste) {
+  document.getElementById('ilanCount').textContent = `İlanlar (${liste.length})`;
+  if (!liste.length) {
+    document.getElementById('ilanlarBody').innerHTML =
+      '<tr><td colspan="7" class="tbl-empty"><span class="big">🔍</span>Sonuç bulunamadı.</td></tr>';
+    return;
+  }
+  document.getElementById('ilanlarBody').innerHTML = liste.map(i => `
+    <tr>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--muted)">${i.IlanId||i.id||'—'}</td>
+      <td><strong>${i.HayvanAdi||'İsimsiz'}</strong></td>
+      <td>${i.HayvanTuru||'—'}</td>
+      <td>${badgePill(i.IlanTuru)}</td>
+      <td>${i.Sehir||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace">${i.Iletisim||'—'}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-icon btn-del"  onclick="askDelete(${i.IlanId||i.id})">🗑️ Sil</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+/* ── SİL ── */
+function askDelete(id) {
+  pendingDelId = id;
+  document.getElementById('delModal').classList.add('open');
+}
+function closeModal() {
+  pendingDelId = null;
+  document.getElementById('delModal').classList.remove('open');
+}
+async function confirmDelete() {
+  if (!pendingDelId) return;
+  closeModal();
+  try {
+    const r = await fetch(`/ilan-sil/${pendingDelId}`, { method:'DELETE' });
+    if (!r.ok) throw new Error();
+    allIlanlar = allIlanlar.filter(i => (i.IlanId||i.id) != pendingDelId);
+    filterTable();
+    renderDashboard();
+    showToast('✅ İlan başarıyla silindi.', 'success');
+  } catch {
+    showToast('❌ Silme işlemi başarısız.', 'error');
+  }
+}
+
+/* ── KULLANICILAR ── */
+let adminUsers = JSON.parse(localStorage.getItem('pm_admins') || 'null') || [
+  { id:1, name:'admin', role:'admin' }
+];
+function saveUsers() { localStorage.setItem('pm_admins', JSON.stringify(adminUsers)); }
+
+function renderUsers() {
+  const colors = ['#f57c00','#3fb950','#58a6ff','#d29922','#f85149'];
+  document.getElementById('userGrid').innerHTML = adminUsers.map((u,i) => `
+    <div class="user-card">
+      <div class="user-avatar" style="background:linear-gradient(135deg,${colors[i%colors.length]},#1a365d)">
+        ${u.name[0].toUpperCase()}
+      </div>
+      <div>
+        <div class="user-name">${u.name}</div>
+        <div class="user-role">${u.role}</div>
+      </div>
+      <div class="user-actions">
+        ${u.id !== 1 ? `<button class="btn-icon btn-del" onclick="deleteUser(${u.id})">Sil</button>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function addUser() {
+  const name = document.getElementById('newUser').value.trim();
+  const pass = document.getElementById('newPass').value.trim();
+  const role = document.getElementById('newRole').value;
+  if (!name || !pass) { showToast('⚠️ Kullanıcı adı ve şifre boş bırakılamaz.','error'); return; }
+  if (adminUsers.find(u=>u.name===name)) { showToast('⚠️ Bu kullanıcı adı zaten var.','error'); return; }
+  adminUsers.push({ id: Date.now(), name, pass, role });
+  saveUsers();
+  renderUsers();
+  document.getElementById('newUser').value='';
+  document.getElementById('newPass').value='';
+  showToast('✅ Kullanıcı eklendi.','success');
+}
+
+function deleteUser(id) {
+  adminUsers = adminUsers.filter(u=>u.id!==id);
+  saveUsers();
+  renderUsers();
+  showToast('🗑️ Kullanıcı silindi.','success');
+}
+
+/* ── TOAST ── */
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(()=> t.classList.remove('show'), 3000);
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') closeModal();
+  if (e.key==='Enter' && document.getElementById('loginScreen').style.display!=='none') doLogin();
+});
+</script>
+</body>
+</html>
