@@ -39,9 +39,6 @@ body {
   min-height:100vh; display:flex;
 }
 
-/* ══════════════════════════
-   SIDEBAR
-══════════════════════════ */
 .sidebar {
   width:var(--sidebar);
   background:var(--navy3);
@@ -137,16 +134,12 @@ body {
 }
 .sb-logout:hover { color:rgba(255,100,100,0.8); }
 
-/* ══════════════════════════
-   MAIN
-══════════════════════════ */
 .main {
   margin-left:var(--sidebar);
   flex:1; min-height:100vh;
   display:flex; flex-direction:column;
 }
 
-/* Topbar */
 .topbar {
   background:var(--white);
   border-bottom:1px solid var(--border);
@@ -196,12 +189,8 @@ body {
   background:var(--red); border:1.5px solid var(--white);
 }
 
-/* ══════════════════════════
-   CONTENT
-══════════════════════════ */
 .content { padding:28px 36px 52px; flex:1; }
 
-/* Auth wall */
 .auth-wall {
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
@@ -211,7 +200,6 @@ body {
 .auth-wall h2 { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--navy3); }
 .auth-wall p  { color:var(--muted); font-size:14px; max-width:320px; line-height:1.6; }
 
-/* Pet tabları */
 .pet-tabs {
   display:flex; gap:10px; margin-bottom:26px;
   overflow-x:auto; padding-bottom:4px;
@@ -232,7 +220,6 @@ body {
 .pet-tab:hover:not(.active) { border-color:var(--navy2); color:var(--navy); }
 .pet-tab-em { font-size:17px; }
 
-/* Stat kartları */
 .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:26px; }
 
 .stat-card {
@@ -267,12 +254,10 @@ body {
 }
 .sc-label { font-size:12px; color:var(--muted); font-weight:500; }
 
-/* Grid layout */
 .dash-grid {
   display:grid; grid-template-columns:1fr 370px; gap:20px;
 }
 
-/* Panel kartları */
 .panel {
   background:var(--white); border:1px solid var(--border);
   border-radius:var(--radius); overflow:hidden;
@@ -294,7 +279,6 @@ body {
 }
 .panel-link:hover { color:var(--orange); }
 
-/* Hayvan listesi */
 .pet-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:10px; }
 .pet-row {
   display:flex; align-items:center; gap:13px;
@@ -320,7 +304,6 @@ body {
 .chip-kuş    { background:var(--blue-l); color:var(--blue); }
 .chip-diger  { background:var(--warm1); color:var(--muted); }
 
-/* Aşı listesi */
 .vax-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:8px; }
 .vax-row {
   display:flex; align-items:center; gap:12px;
@@ -338,7 +321,6 @@ body {
 .vax-row.soon   .vax-date { color:var(--orange2); }
 .vax-row.ok     .vax-date { color:var(--green); }
 
-/* Randevu listesi */
 .apt-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:10px; }
 .apt-row {
   display:flex; align-items:center; gap:12px;
@@ -361,7 +343,6 @@ body {
   background:var(--orange-l); padding:3px 9px; border-radius:20px;
 }
 
-/* Hatırlatıcı listesi */
 .rem-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:8px; }
 .rem-row {
   display:flex; align-items:center; gap:12px;
@@ -384,12 +365,10 @@ body {
 .rem-today   { color:var(--orange2); }
 .rem-future  { color:var(--muted); }
 
-/* Boş durum */
 .empty-state { text-align:center; padding:32px 20px; color:var(--muted); }
 .empty-state .es-ico { font-size:36px; display:block; margin-bottom:10px; }
 .empty-state p { font-size:13px; line-height:1.6; }
 
-/* Hızlı ekle */
 .quick-add {
   margin:0 22px 20px;
   padding:12px; border-radius:10px;
@@ -402,7 +381,6 @@ body {
 }
 .quick-add:hover { border-color:var(--orange); color:var(--orange2); background:var(--orange-l); }
 
-/* Loading */
 .loading-row {
   display:flex; align-items:center; justify-content:center;
   padding:32px; color:var(--muted); gap:10px; font-size:13px;
@@ -413,7 +391,6 @@ body {
   animation:spin 0.7s linear infinite;
 }
 
-/* ── MODAL ── */
 .modal-overlay {
   position:fixed; inset:0;
   background:rgba(10,20,40,0.75);
@@ -491,7 +468,6 @@ body {
 }
 .m-btn-save:hover { background:var(--orange2); }
 
-/* Toast */
 .toast {
   position:fixed; bottom:28px; right:28px; z-index:9999;
   background:var(--navy3); color:#fff;
@@ -506,11 +482,9 @@ body {
 .toast.success { border-left:4px solid var(--green); }
 .toast.error   { border-left:4px solid var(--red); }
 
-/* Animasyonlar */
 @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;} }
 @keyframes spin { to{transform:rotate(360deg);} }
 
-/* ── RESPONSİF ── */
 @media(max-width:1100px) {
   .stat-row { grid-template-columns:repeat(2,1fr); }
   .dash-grid { grid-template-columns:1fr; }
@@ -536,7 +510,6 @@ body {
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <a class="sb-brand" href="index.html">
     <div class="sb-logo">🐾</div>
@@ -548,6 +521,9 @@ body {
 
   <nav class="sb-nav">
     <div class="sb-section-label">Genel</div>
+    <a href="index.html" class="sb-link">
+      <span class="sb-icon">🌐</span> Ana Sayfa
+    </a>
     <a href="dashboard.html" class="sb-link active">
       <span class="sb-icon">🏠</span> Dashboard
     </a>
@@ -595,10 +571,8 @@ body {
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
 
-  <!-- TOPBAR -->
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
       <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
@@ -608,6 +582,7 @@ body {
       </div>
     </div>
     <div class="topbar-right">
+      <a href="index.html" class="tb-btn tb-btn-ghost">🌐 Ana Sayfa</a>
       <div class="notif-btn" id="notifBtn" onclick="scrollToReminders()">
         🔔 <div class="notif-dot" id="notifDot" style="display:none"></div>
       </div>
@@ -616,10 +591,8 @@ body {
     </div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content" id="mainContent">
 
-    <!-- AUTH WALL -->
     <div class="auth-wall" id="authWall" style="display:none">
       <div class="aw-ico">🔒</div>
       <h2>Giriş Yapmanız Gerekiyor</h2>
@@ -627,17 +600,14 @@ body {
       <a href="giris.html" class="tb-btn tb-btn-primary" style="margin-top:8px">Giriş Yap →</a>
     </div>
 
-    <!-- DASHBOARD İÇERİĞİ -->
     <div id="dashContent">
 
-      <!-- Hayvan seçim tabları -->
       <div class="pet-tabs" id="petTabs">
         <div class="pet-tab active" data-pet="all">
           <span class="pet-tab-em">🐾</span> Tümü
         </div>
       </div>
 
-      <!-- İstatistik satırı -->
       <div class="stat-row">
         <div class="stat-card" style="animation-delay:0.05s">
           <div class="sc-top">
@@ -673,13 +643,10 @@ body {
         </div>
       </div>
 
-      <!-- 2 kolonlu grid -->
       <div class="dash-grid">
 
-        <!-- SOL KOLON -->
         <div style="display:flex;flex-direction:column;gap:20px">
 
-          <!-- Hayvanlarım -->
           <div class="panel" style="animation-delay:0.1s">
             <div class="panel-head">
               <h3>🐾 Hayvanlarım</h3>
@@ -691,7 +658,6 @@ body {
             <button class="quick-add" onclick="openModal('petModal')">+ Yeni hayvan ekle</button>
           </div>
 
-          <!-- Randevular -->
           <div class="panel" style="animation-delay:0.2s">
             <div class="panel-head">
               <h3>📅 Yaklaşan Randevular</h3>
@@ -705,10 +671,8 @@ body {
 
         </div>
 
-        <!-- SAĞ KOLON -->
         <div style="display:flex;flex-direction:column;gap:20px">
 
-          <!-- Yaklaşan Aşılar -->
           <div class="panel" style="animation-delay:0.15s">
             <div class="panel-head">
               <h3>💉 Yaklaşan Aşılar</h3>
@@ -720,7 +684,6 @@ body {
             <button class="quick-add" onclick="openModal('vaxModal')">+ Aşı kaydet</button>
           </div>
 
-          <!-- Hatırlatıcılar -->
           <div class="panel" id="reminderPanel" style="animation-delay:0.25s">
             <div class="panel-head">
               <h3>🔔 Hatırlatıcılar</h3>
@@ -735,15 +698,10 @@ body {
         </div>
       </div>
 
-    </div><!-- /dashContent -->
-  </div><!-- /content -->
-</div><!-- /main -->
+    </div>
+  </div>
+</div>
 
-<!-- ══════════════════════════════════
-     MODALLER
-══════════════════════════════════ -->
-
-<!-- Hayvan Ekle -->
 <div class="modal-overlay" id="petModal" onclick="closeModalClick(event,'petModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -810,7 +768,6 @@ body {
   </div>
 </div>
 
-<!-- Aşı Ekle -->
 <div class="modal-overlay" id="vaxModal" onclick="closeModalClick(event,'vaxModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -852,7 +809,6 @@ body {
   </div>
 </div>
 
-<!-- Randevu Ekle -->
 <div class="modal-overlay" id="aptModal" onclick="closeModalClick(event,'aptModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -898,7 +854,6 @@ body {
   </div>
 </div>
 
-<!-- Hatırlatıcı Ekle -->
 <div class="modal-overlay" id="remModal" onclick="closeModalClick(event,'remModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -950,11 +905,9 @@ body {
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── Auth ── */
 function getToken() { return localStorage.getItem('pm_token'); }
 function getUser()  { return localStorage.getItem('pm_user'); }
 function getRole()  { return localStorage.getItem('pm_role'); }
@@ -970,7 +923,6 @@ function logout() {
   window.location.href = 'giris.html';
 }
 
-/* ── Toast ── */
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   const icons = { success:'✅', error:'❌', info:'ℹ️' };
@@ -980,7 +932,6 @@ function showToast(msg, type='success') {
   setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-/* ── Modal ── */
 function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
 function closeModalClick(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
@@ -988,7 +939,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
 });
 
-/* ── Yardımcılar ── */
 const speciesEmoji = s => {
   const m={kedi:'🐱',köpek:'🐶','k\u00f6pek':'🐶',ku\u015f:'🐦',tav\u015fan:'🐰',bal\u0131k:'🐟'};
   return m[(s||'').toLowerCase()]||'🐾';
@@ -1007,7 +957,6 @@ const formatDate = d => {
   return new Date(d).toLocaleDateString('tr-TR',{day:'2-digit',month:'short'});
 };
 
-/* ── Greeting ── */
 function setGreeting(name) {
   const h=new Date().getHours();
   const g=h<12?'Günaydın':h<18?'İyi günler':'İyi akşamlar';
@@ -1015,7 +964,6 @@ function setGreeting(name) {
   document.getElementById('greetSub').textContent='İşte bugün için özet bilgiler.';
 }
 
-/* ── Render ── */
 let allPets=[];
 
 function renderPetTabs(pets) {
@@ -1102,7 +1050,6 @@ function fillPetSelects(pets) {
   ['v-petId','a-petId','r-petId'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
 }
 
-/* ── Dashboard yükle ── */
 async function loadDashboard() {
   try {
     const r=await fetch('/api/dashboard',{headers:authHeaders()});
@@ -1139,7 +1086,6 @@ async function loadDashboard() {
   }
 }
 
-/* ── Kayıt fonksiyonları ── */
 async function savePet() {
   const name=document.getElementById('p-name').value.trim();
   const species=document.getElementById('p-species').value;
@@ -1206,7 +1152,6 @@ function scrollToReminders() {
   document.getElementById('reminderPanel').scrollIntoView({behavior:'smooth'});
 }
 
-/* ── Init ── */
 window.onload = () => {
   const token=getToken();
   const user=getUser();
