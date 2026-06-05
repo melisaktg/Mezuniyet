@@ -4,542 +4,422 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>İlan Ekle — PetMate</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --navy:    #1c3557;
+  --navy2:   #274a7a;
+  --navy3:   #0f2240;
+  --orange:  #e07b2e;
+  --orange2: #c96820;
+  --cream:   #fdf9f5;
+  --warm1:   #f5ede3;
+  --warm2:   #ede0d0;
+  --text:    #1a1f2e;
+  --muted:   #7a7f8e;
+  --border:  #e8ddd2;
+  --white:   #ffffff;
+  --green:   #2e7d5e;
+  --red:     #c0392b;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--cream); color:var(--text); overflow-x:hidden; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: url("background.jpg") no-repeat center center;
-    background-size: cover;
-    min-height: 100vh;
-    color: #2d3748;
-  }
+/* ── HEADER ── */
+header {
+  background:var(--navy3); height:70px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 52px; position:sticky; top:0; z-index:900;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.logo { display:flex; align-items:center; gap:14px; text-decoration:none; }
+.logo-mark {
+  width:42px; height:42px; background:linear-gradient(135deg,var(--orange),#f0a05a);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:20px; box-shadow:0 4px 16px rgba(224,123,46,0.45); flex-shrink:0;
+}
+.logo-words { display:flex; flex-direction:column; gap:1px; }
+.logo-words strong { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:#fff; line-height:1; }
+.logo-words span { font-size:10px; color:rgba(255,255,255,0.42); letter-spacing:0.4px; line-height:1; }
+nav { display:flex; align-items:center; gap:4px; }
+nav a { color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; padding:8px 15px; border-radius:8px; transition:all 0.18s; }
+nav a:hover { color:#fff; background:rgba(255,255,255,0.08); }
+nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
+.h-actions { display:flex; gap:10px; align-items:center; }
+.h-btn-ghost { padding:8px 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.18); color:rgba(255,255,255,0.8); background:transparent; font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; }
+.h-btn-ghost:hover { background:rgba(255,255,255,0.1); color:#fff; }
+.h-btn-fill { padding:9px 20px; border-radius:8px; background:var(--orange); color:#fff; border:none; font-size:13px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; box-shadow:0 4px 14px rgba(224,123,46,0.4); }
+.h-btn-fill:hover { background:var(--orange2); }
+.h-btn-logout { padding:8px 18px; border-radius:8px; border:1px solid rgba(192,57,43,0.4); color:rgba(255,140,120,0.9); background:rgba(192,57,43,0.12); font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; display:none; align-items:center; gap:7px; }
+.h-btn-logout:hover { background:rgba(192,57,43,0.25); color:#fff; border-color:rgba(192,57,43,0.7); }
+.h-user-name { font-size:13px; color:rgba(255,255,255,0.75); font-weight:600; display:none; align-items:center; gap:6px; }
 
-  /* ── HEADER ── */
-  header {
-    background-color: #1a365d;
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .logo { display:flex; align-items:center; gap:10px; }
-  .logo img { height:40px; }
-  .logo h1 { font-size:18px; font-weight:600; }
-  .logo p  { font-size:12px; opacity:0.8; }
-  nav ul { display:flex; list-style:none; gap:20px; }
-  nav a {
-    color:white; text-decoration:none; font-size:14px;
-    opacity:0.8; transition:opacity 0.3s;
-  }
-  nav a:hover { opacity:1; }
-  nav a.active {
-    opacity:1; font-weight:600;
-    border-bottom:2px solid #f57c00; padding-bottom:2px;
-  }
+/* ── SAYFA HERO ── */
+.page-hero {
+  background:var(--navy3); padding:52px 52px 48px; position:relative; overflow:hidden;
+}
+.page-hero::after {
+  content:'🐾'; position:absolute; right:80px; top:50%; transform:translateY(-50%);
+  font-size:160px; opacity:0.04; user-select:none; pointer-events:none;
+}
+.page-hero-inner { max-width:780px; margin:0 auto; position:relative; z-index:1; }
+.hero-eyebrow { display:inline-flex; align-items:center; gap:10px; margin-bottom:16px; }
+.eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--orange); flex-shrink:0; box-shadow:0 0 8px rgba(224,123,46,0.6); }
+.eyebrow-text { font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--orange); }
+.page-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,44px); font-weight:700; color:#fff; line-height:1.1; margin-bottom:10px; }
+.page-hero p { font-size:14px; color:rgba(255,255,255,0.5); max-width:420px; line-height:1.7; font-weight:300; }
 
-  /* ── SAYFA BAŞLIĞI ── */
-  .page-banner {
-    background: linear-gradient(135deg, #1a365d 0%, #2d5a9e 100%);
-    color: white;
-    text-align: center;
-    padding: 40px 20px 60px;
-    position: relative;
-    overflow: hidden;
-  }
-  .page-banner::before {
-    content: '🐾';
-    position: absolute;
-    font-size: 200px;
-    opacity: 0.04;
-    right: -20px; bottom: -40px;
-    user-select: none;
-  }
-  .page-banner h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 900;
-    margin-bottom: 8px;
-  }
-  .page-banner p { font-size: 15px; opacity: 0.75; }
+/* ── ADIM GÖSTERGESİ ── */
+.outer { max-width:780px; margin:0 auto; padding:0 24px 64px; }
+.steps-wrap {
+  display:flex; background:var(--white); border-radius:16px 16px 0 0;
+  overflow:hidden; border:1px solid var(--border); border-bottom:none;
+  margin-top:-20px; position:relative; z-index:2;
+}
+.step {
+  flex:1; padding:14px 10px; text-align:center;
+  font-size:12px; font-weight:600; color:var(--muted);
+  border-right:1px solid var(--border); cursor:default;
+  transition:all 0.2s; position:relative;
+}
+.step:last-child { border-right:none; }
+.step.active { color:var(--navy3); background:var(--warm1); }
+.step.done   { color:var(--green); background:#f0fff7; }
+.s-num {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--warm2); color:var(--muted);
+  font-size:11px; font-weight:700; margin-bottom:4px;
+}
+.step.active .s-num { background:var(--orange); color:#fff; }
+.step.done   .s-num { background:var(--green);  color:#fff; }
+.s-label { display:block; }
 
-  /* ── ANA KAPSAYICI ── */
-  .outer {
-    max-width: 720px;
-    margin: -30px auto 40px;
-    padding: 0 20px;
-    position: relative;
-    z-index: 1;
-  }
+/* ── FORM KARTI ── */
+.form-card {
+  background:var(--white); border-radius:0 0 18px 18px;
+  border:1px solid var(--border); border-top:none;
+  box-shadow:0 16px 48px rgba(15,34,64,0.1);
+}
 
-  /* ── ADIM GÖSTERGESİ ── */
-  .steps {
-    display: flex;
-    background: #fff;
-    border-radius: 14px 14px 0 0;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    border-bottom: none;
-  }
-  .step {
-    flex: 1; padding: 14px 10px;
-    text-align: center;
-    font-size: 12px; font-weight: 600;
-    color: #a0aec0;
-    border-right: 1px solid #e2e8f0;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-  .step:last-child { border-right: none; }
-  .step.active { color: #1a365d; background: #f0f5ff; }
-  .step.done   { color: #38a169; background: #f0fff4; }
-  .step .s-num {
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: #e2e8f0;
-    color: #718096;
-    font-size: 11px; font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .step.active .s-num { background: #1a365d; color: #fff; }
-  .step.done   .s-num { background: #38a169; color: #fff; }
-  .step .s-label { display: block; }
+/* ── BÖLÜM ── */
+.form-section { padding:32px 36px; display:none; animation:fadeInSec 0.3s ease; }
+.form-section.active { display:block; }
+@keyframes fadeInSec { from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:none;} }
 
-  /* ── FORM KARTI ── */
-  .form-card {
-    background: #fff;
-    border-radius: 0 0 16px 16px;
-    border: 1px solid #e2e8f0;
-    border-top: none;
-    box-shadow: 0 12px 40px rgba(26,54,93,0.12);
-    overflow: hidden;
-  }
+.sec-title {
+  display:flex; align-items:center; gap:10px;
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1px; color:var(--orange); margin-bottom:24px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--warm2); }
 
-  /* ── BÖLÜM ── */
-  .form-section {
-    padding: 28px 32px;
-    display: none;
-    animation: fadeIn 0.3s ease;
-  }
-  .form-section.active { display: block; }
+/* ── ALANLAR ── */
+.field { margin-bottom:20px; }
+.field label {
+  display:block; margin-bottom:7px;
+  font-size:11px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.5px;
+}
+.req { color:var(--red); margin-left:2px; }
+.field input,
+.field select,
+.field textarea {
+  width:100%; padding:11px 14px;
+  border:1.5px solid var(--border); border-radius:10px;
+  font-size:14px; font-family:'Plus Jakarta Sans',sans-serif;
+  color:var(--text); background:var(--cream); outline:none;
+  transition:all 0.18s;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color:var(--orange); background:var(--white);
+  box-shadow:0 0 0 3px rgba(224,123,46,0.1);
+}
+.field input.err, .field select.err, .field textarea.err {
+  border-color:var(--red); background:#fff8f8;
+}
+.field textarea { min-height:120px; resize:vertical; line-height:1.6; }
+.field-hint { font-size:11px; color:var(--muted); margin-top:5px; }
+.err-msg { font-size:11px; color:var(--red); margin-top:5px; display:none; }
 
-  @keyframes fadeIn {
-    from { opacity:0; transform:translateX(12px); }
-    to   { opacity:1; transform:none; }
-  }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
 
-  .section-title {
-    font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.6px;
-    color: #f57c00; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: #f0e9df;
-  }
+/* ── İLAN TÜRÜ KARTLARI ── */
+.ilan-turu-group { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.ilan-turu-card {
+  border:2px solid var(--border); border-radius:14px;
+  padding:20px 14px; text-align:center; cursor:pointer;
+  transition:all 0.2s; background:var(--cream);
+}
+.ilan-turu-card:hover { border-color:var(--orange); background:var(--warm1); }
+.ilan-turu-card.selected { border-color:var(--orange); background:var(--orange-l,#fef3e8); }
+.itan-ico { font-size:30px; display:block; margin-bottom:8px; }
+.itan-lbl { font-size:13px; font-weight:700; color:var(--navy3); }
+.itan-desc { font-size:11px; color:var(--muted); margin-top:3px; }
+.ilan-turu-card input { display:none; }
 
-  /* ── FORM ALANLARI ── */
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+/* ── HAYVAN TÜRÜ ── */
+.hayvan-group { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.hayvan-btn {
+  border:2px solid var(--border); border-radius:12px;
+  padding:14px 8px; text-align:center; cursor:pointer;
+  transition:all 0.2s; background:var(--cream); font-size:26px;
+}
+.hayvan-btn span { display:block; font-size:11px; font-weight:600; color:var(--muted); margin-top:5px; }
+.hayvan-btn:hover { border-color:var(--navy2); background:var(--warm1); }
+.hayvan-btn.selected { border-color:var(--orange); background:var(--warm1); }
+.hayvan-btn.selected span { color:var(--orange); }
+.hayvan-btn input { display:none; }
 
-  .field { margin-bottom: 18px; }
+/* ── ÖZELLİK CHECKBOX ── */
+.check-group { display:flex; flex-wrap:wrap; gap:8px; }
+.check-item {
+  display:flex; align-items:center; gap:7px;
+  background:var(--cream); border:1.5px solid var(--border);
+  border-radius:8px; padding:8px 13px; cursor:pointer;
+  transition:all 0.2s; font-size:13px; user-select:none;
+}
+.check-item input[type="checkbox"] { width:14px; height:14px; accent-color:var(--orange); cursor:pointer; }
+.check-item:has(input:checked) { background:var(--warm1); border-color:var(--orange); color:var(--navy2); font-weight:600; }
 
-  .field label {
-    display: block; margin-bottom: 7px;
-    font-size: 12px; font-weight: 600;
-    color: #4a5568; text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .field label .req { color: #e53e3e; margin-left: 2px; }
+/* ── ÖZET ── */
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.sum-item { background:var(--cream); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.sum-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; margin-bottom:3px; }
+.sum-val { font-size:14px; font-weight:600; color:var(--navy3); }
+.sum-desc {
+  background:var(--cream); border:1px solid var(--border);
+  border-radius:10px; padding:14px; font-size:14px;
+  color:#4a5568; line-height:1.7; margin-bottom:20px;
+}
+.sum-desc-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; margin-bottom:8px; }
 
-  .field input,
-  .field select,
-  .field textarea {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    color: #2d3748;
-    background: #f8fafc;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  }
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: #1a365d;
-    box-shadow: 0 0 0 3px rgba(26,54,93,0.08);
-    background: #fff;
-  }
-  .field input.err,
-  .field select.err,
-  .field textarea.err {
-    border-color: #fc8181;
-    background: #fff5f5;
-  }
-  .field textarea {
-    min-height: 110px;
-    resize: vertical;
-    line-height: 1.6;
-  }
+/* ── BUTON SATIRI ── */
+.btn-row {
+  display:flex; gap:12px; padding:20px 36px 32px;
+  border-top:1px solid var(--warm2);
+}
+.btn-prev {
+  flex:1; padding:13px; background:var(--white);
+  border:1.5px solid var(--border); border-radius:10px;
+  font-size:14px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;
+  color:var(--muted); cursor:pointer; transition:all 0.2s;
+}
+.btn-prev:hover { border-color:var(--navy3); color:var(--navy3); }
+.btn-next {
+  flex:2; padding:13px; background:var(--navy3); color:#fff;
+  border:none; border-radius:10px;
+  font-size:14px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  box-shadow:0 4px 16px rgba(15,34,64,0.25);
+}
+.btn-next:hover { background:var(--navy2); }
+.btn-next:active { transform:scale(0.98); }
+.btn-submit {
+  flex:2; padding:13px;
+  background:linear-gradient(120deg,var(--orange),var(--orange2));
+  color:#fff; border:none; border-radius:10px;
+  font-size:15px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  box-shadow:0 4px 18px rgba(224,123,46,0.4);
+}
+.btn-submit:hover { background:linear-gradient(120deg,var(--orange2),#b05b18); }
+.btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
 
-  .field-hint {
-    font-size: 11px; color: #a0aec0;
-    margin-top: 5px;
-  }
-  .err-msg {
-    font-size: 11px; color: #e53e3e;
-    margin-top: 5px; display: none;
-  }
+/* Spinner */
+.spin { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:rot 0.7s linear infinite; display:none; }
+@keyframes rot { to{transform:rotate(360deg);} }
 
-  /* Checkbox grubu */
-  .check-group {
-    display: flex; flex-wrap: wrap; gap: 10px;
-  }
-  .check-item {
-    display: flex; align-items: center; gap: 8px;
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 8px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 13px;
-    user-select: none;
-  }
-  .check-item input[type="checkbox"] { width:15px; height:15px; accent-color: #1a365d; cursor:pointer; }
-  .check-item:has(input:checked) {
-    background: #ebf8ff; border-color: #bee3f8; color: #2b6cb0; font-weight: 600;
-  }
+/* ── BAŞARI ── */
+.success-screen { display:none; text-align:center; padding:56px 36px; animation:fadeInSec 0.4s ease; }
+.success-screen.show { display:block; }
+.success-ico { font-size:68px; display:block; margin-bottom:18px; }
+.success-screen h3 { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--navy3); margin-bottom:10px; }
+.success-screen p { font-size:15px; color:var(--muted); margin-bottom:30px; }
+.success-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.success-btns a {
+  padding:12px 24px; border-radius:10px; font-size:14px; font-weight:700;
+  text-decoration:none; transition:all 0.2s; font-family:'Plus Jakarta Sans',sans-serif;
+}
+.s-btn-p { background:var(--navy3); color:#fff; box-shadow:0 4px 14px rgba(15,34,64,0.25); }
+.s-btn-p:hover { background:var(--navy2); }
+.s-btn-s { background:var(--white); color:var(--navy3); border:1.5px solid var(--border); }
+.s-btn-s:hover { border-color:var(--navy3); }
 
-  /* İlan türü kartları */
-  .ilan-turu-group {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-  }
-  .ilan-turu-card {
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 16px 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #f8fafc;
-  }
-  .ilan-turu-card:hover { border-color: #1a365d; background: #f0f5ff; }
-  .ilan-turu-card.selected { border-color: #1a365d; background: #ebf8ff; }
-  .ilan-turu-card .tur-ico { font-size: 28px; display: block; margin-bottom: 6px; }
-  .ilan-turu-card .tur-label { font-size: 13px; font-weight: 600; color: #1a365d; }
-  .ilan-turu-card .tur-desc  { font-size: 11px; color: #a0aec0; margin-top: 3px; }
-  .ilan-turu-card input { display: none; }
+/* ── HATA KUTUSU ── */
+.alert-err {
+  background:#fff5f5; border:1px solid #fca5a5; border-radius:10px;
+  padding:12px 16px; color:#991b1b; font-size:13px; font-weight:500;
+  margin:0 36px 16px; display:none;
+}
 
-  /* Hayvan türü butonları */
-  .hayvan-turu-group {
-    display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
-  }
-  .hayvan-btn {
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 12px 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #f8fafc;
-    font-size: 24px;
-  }
-  .hayvan-btn span { display: block; font-size: 11px; font-weight: 600; color: #4a5568; margin-top: 4px; }
-  .hayvan-btn:hover   { border-color: #1a365d; background: #f0f5ff; }
-  .hayvan-btn.selected{ border-color: #f57c00; background: #fff8f0; }
-  .hayvan-btn.selected span { color: #f57c00; }
-  .hayvan-btn input { display: none; }
+/* ── GÜVENLİK NOTU ── */
+.security-note {
+  background:var(--warm1); border:1px solid var(--warm2);
+  border-radius:10px; padding:14px 16px;
+  font-size:13px; color:var(--navy2); line-height:1.6;
+}
 
-  /* ── BUTONLAR ── */
-  .btn-row {
-    display: flex; gap: 12px;
-    padding: 20px 32px 28px;
-    border-top: 1px solid #f0e9df;
-  }
-  .btn-prev {
-    flex: 1;
-    padding: 13px;
-    background: white;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 14px; font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    color: #718096;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-prev:hover { border-color: #1a365d; color: #1a365d; }
+/* ── FOOTER ── */
+footer { background:var(--navy3); padding:52px 52px 28px; }
+.footer-top { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:60px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:28px; }
+.f-brand-desc { font-size:13px; color:rgba(255,255,255,0.4); line-height:1.75; margin-top:16px; max-width:220px; }
+.f-col h4 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:rgba(255,255,255,0.35); margin-bottom:18px; }
+.f-col a { display:block; color:rgba(255,255,255,0.6); text-decoration:none; font-size:13px; margin-bottom:10px; transition:color 0.2s; }
+.f-col a:hover { color:#fff; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; }
+.f-copy { font-size:12px; color:rgba(255,255,255,0.3); }
+.f-socials { display:flex; gap:8px; }
+.f-social { width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:13px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.08); }
+.f-social:hover { background:rgba(255,255,255,0.15); color:#fff; }
 
-  .btn-next {
-    flex: 2;
-    padding: 13px;
-    background: #1a365d;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px; font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items:center; justify-content:center; gap: 8px;
-    box-shadow: 0 4px 14px rgba(26,54,93,0.25);
-  }
-  .btn-next:hover { background: #2c5282; }
-  .btn-next:active { transform: scale(0.98); }
-
-  .btn-submit {
-    flex: 2;
-    padding: 13px;
-    background: linear-gradient(120deg, #f57c00, #e65c00);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px; font-weight: 700;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items:center; justify-content:center; gap: 8px;
-    box-shadow: 0 4px 16px rgba(245,124,0,0.35);
-  }
-  .btn-submit:hover { background: linear-gradient(120deg, #e65c00, #c94e00); }
-  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  /* Spinner */
-  .spin {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: rot 0.7s linear infinite;
-    display: none;
-  }
-  @keyframes rot { to { transform: rotate(360deg); } }
-
-  /* ── ÖZET (son adım) ── */
-  .summary-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 20px;
-  }
-  .sum-item {
-    background: #f7fafc; border: 1px solid #e2e8f0;
-    border-radius: 10px; padding: 12px 14px;
-  }
-  .sum-label { font-size: 10px; text-transform:uppercase; letter-spacing:0.5px; color:#a0aec0; font-weight:600; margin-bottom:3px; }
-  .sum-val   { font-size: 14px; font-weight: 600; color: #1a365d; }
-
-  .sum-aciklama {
-    background: #f7fafc; border: 1px solid #e2e8f0;
-    border-radius: 10px; padding: 14px;
-    font-size: 14px; color: #4a5568;
-    line-height: 1.6; margin-bottom: 20px;
-  }
-
-  /* ── BAŞARI EKRANI ── */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 50px 32px;
-    animation: fadeIn 0.4s ease;
-  }
-  .success-screen.show { display: block; }
-  .success-icon { font-size: 64px; display: block; margin-bottom: 16px; }
-  .success-screen h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px; font-weight: 700;
-    color: #1a365d; margin-bottom: 10px;
-  }
-  .success-screen p { font-size: 15px; color: #718096; margin-bottom: 28px; }
-  .success-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .success-btns a {
-    padding: 11px 22px;
-    border-radius: 10px;
-    font-size: 14px; font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .s-btn-primary {
-    background: #1a365d; color: white;
-    box-shadow: 0 4px 12px rgba(26,54,93,0.25);
-  }
-  .s-btn-primary:hover { background: #2c5282; }
-  .s-btn-sec {
-    background: white; color: #1a365d;
-    border: 1.5px solid #e2e8f0;
-  }
-  .s-btn-sec:hover { border-color: #1a365d; }
-
-  /* ── HATA KUTUSU ── */
-  .alert-err {
-    background: #fff5f5; border: 1px solid #fed7d7;
-    border-radius: 10px; padding: 12px 16px;
-    color: #c53030; font-size: 13px; font-weight: 500;
-    margin: 0 32px 16px; display: none;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background-color: #1a365d;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    margin-top: 20px;
-  }
-  .footer-links { display:flex; justify-content:center; gap:30px; margin-bottom:16px; flex-wrap:wrap; }
-  .footer-link { color:white; text-decoration:none; font-size:14px; opacity:0.8; transition:opacity 0.3s; }
-  .footer-link:hover { opacity:1; }
-  .social-icons { display:flex; justify-content:center; gap:15px; margin-bottom:15px; }
-  .social-icon {
-    width:30px; height:30px; background:rgba(255,255,255,0.2);
-    border-radius:50%; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:13px; transition:background 0.3s;
-  }
-  .social-icon:hover { background:rgba(255,255,255,0.35); }
-  .copyright { font-size:12px; opacity:0.8; }
-
-  /* ── RESPONSİF ── */
-  @media(max-width:600px) {
-    .field-row, .field-row.three { grid-template-columns: 1fr; }
-    .ilan-turu-group { grid-template-columns: 1fr; }
-    .hayvan-turu-group { grid-template-columns: repeat(2,1fr); }
-    .form-section { padding: 20px 18px; }
-    .btn-row { padding: 16px 18px 22px; flex-wrap: wrap; }
-    .summary-grid { grid-template-columns: 1fr; }
-  }
+/* ── RESPONSİF ── */
+@media(max-width:900px){
+  header{padding:0 24px;} nav{display:none;}
+  .page-hero{padding:40px 24px 44px;}
+  .outer{padding:0 16px 48px;}
+  footer{padding:40px 24px 24px;}
+  .footer-top{grid-template-columns:1fr;gap:32px;}
+  .footer-bottom{flex-direction:column;gap:16px;}
+}
+@media(max-width:600px){
+  .row-2,.row-3{grid-template-columns:1fr;}
+  .ilan-turu-group{grid-template-columns:1fr;}
+  .hayvan-group{grid-template-columns:repeat(2,1fr);}
+  .form-section{padding:22px 18px;}
+  .btn-row{padding:16px 18px 24px; flex-wrap:wrap;}
+  .alert-err{margin:0 18px 14px;}
+  .summary-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header>
-  <div class="logo">
-    <img src="logo.png" alt="Logo">
-    <div>
-      <h1>PetMate</h1>
-      <p>Eğitimli ve Eğitimsiz Hayvanlara Yuva Ol.</p>
-    </div>
-  </div>
+  <a class="logo" href="index.html">
+    <div class="logo-mark">🐾</div>
+    <div class="logo-words"><strong>PetMate</strong><span>Şeffaf ve Şevkatli Bir Yuva</span></div>
+  </a>
   <nav>
-    <ul>
-      <li><a href="index.html">Anasayfa</a></li>
-      <li><a href="ilanlar.html">Tüm İlanlar</a></li>
-      <li><a href="ilan-ekle.html" class="active">İlan Ekle</a></li>
-      <li><a href="dashboard.html">Dashboard</a></li> 
-    </ul>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="ilanlar.html">Tüm İlanlar</a>
+    <a href="ilan-ekle.html" class="active">İlan Ekle</a>
+    <a href="dashboard.html">Dashboard</a>
   </nav>
+  <div class="h-actions">
+    <a href="giris.html" class="h-btn-ghost" id="btnGiris">Giriş Yap</a>
+    <span class="h-user-name" id="userLabel">🐾 <span id="userNameText"></span></span>
+    <button class="h-btn-logout" id="btnCikis" onclick="cikisYap()">Çıkış Yap</button>
+    <a href="ilan-ekle.html" class="h-btn-fill">+ İlan Ver</a>
+  </div>
 </header>
 
-<!-- BANNER -->
-<div class="page-banner">
-  <h2>🐾 İlan Ver</h2>
-  <p>Sahiplendirme, kayıp veya bulundu ilanı oluşturun — ücretsiz ve hızlı.</p>
+<!-- SAYFA HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      <span class="eyebrow-text">İlan Ver</span>
+    </div>
+    <h1>Bir canın yuvaya<br>kavuşmasına yardım et.</h1>
+    <p>Sahiplendirme, kayıp veya bulundu ilanı oluşturun — ücretsiz ve dakikalar içinde yayında.</p>
+  </div>
 </div>
 
 <div class="outer">
 
   <!-- ADIM GÖSTERGESİ -->
-  <div class="steps" id="stepsBar">
-    <div class="step active" id="step-ind-0">
-      <div class="s-num">1</div>
-      <span class="s-label">İlan Türü</span>
-    </div>
-    <div class="step" id="step-ind-1">
-      <div class="s-num">2</div>
-      <span class="s-label">Hayvan Bilgisi</span>
-    </div>
-    <div class="step" id="step-ind-2">
-      <div class="s-num">3</div>
-      <span class="s-label">İletişim</span>
-    </div>
-    <div class="step" id="step-ind-3">
-      <div class="s-num">4</div>
-      <span class="s-label">Önizleme</span>
-    </div>
+  <div class="steps-wrap" id="stepsBar">
+    <div class="step active" id="step-ind-0"><div class="s-num">1</div><span class="s-label">İlan Türü</span></div>
+    <div class="step"        id="step-ind-1"><div class="s-num">2</div><span class="s-label">Hayvan Bilgisi</span></div>
+    <div class="step"        id="step-ind-2"><div class="s-num">3</div><span class="s-label">İletişim</span></div>
+    <div class="step"        id="step-ind-3"><div class="s-num">4</div><span class="s-label">Önizleme</span></div>
   </div>
 
   <div class="form-card">
 
     <!-- ── ADIM 1: İLAN TÜRÜ ── -->
     <div class="form-section active" id="sec-0">
-      <div class="section-title">📋 İlan Türünü Seçin</div>
+      <div class="sec-title">📋 İlan Türünü Seçin</div>
 
       <div class="field">
         <div class="ilan-turu-group">
           <label class="ilan-turu-card" onclick="selectIlanTuru(this,'sahiplendirme')">
             <input type="radio" name="ilanTuru" value="sahiplendirme">
-            <span class="tur-ico">🏠</span>
-            <span class="tur-label">Sahiplendirme</span>
-            <span class="tur-desc">Hayvanınıza yuva arayın</span>
+            <span class="itan-ico">🏠</span>
+            <span class="itan-lbl">Sahiplendirme</span>
+            <span class="itan-desc">Hayvanınıza yuva arayın</span>
           </label>
           <label class="ilan-turu-card" onclick="selectIlanTuru(this,'kayip')">
             <input type="radio" name="ilanTuru" value="kayip">
-            <span class="tur-ico">🔴</span>
-            <span class="tur-label">Kayıp</span>
-            <span class="tur-desc">Kayıp hayvanınızı bildirin</span>
+            <span class="itan-ico">🔴</span>
+            <span class="itan-lbl">Kayıp</span>
+            <span class="itan-desc">Kayıp hayvanınızı bildirin</span>
           </label>
           <label class="ilan-turu-card" onclick="selectIlanTuru(this,'bulundu')">
             <input type="radio" name="ilanTuru" value="bulundu">
-            <span class="tur-ico">✅</span>
-            <span class="tur-label">Bulundu</span>
-            <span class="tur-desc">Bulduğunuz hayvanı bildirin</span>
+            <span class="itan-ico">✅</span>
+            <span class="itan-lbl">Bulundu</span>
+            <span class="itan-desc">Bulduğunuz hayvanı bildirin</span>
           </label>
         </div>
         <div class="err-msg" id="err-ilanTuru">Lütfen bir ilan türü seçin.</div>
       </div>
 
-      <div class="field" style="margin-top:8px">
+      <div class="field">
         <label>Şehir <span class="req">*</span></label>
-        <input type="text" id="f-sehir" placeholder="Örn: Kahramanmaraş">
+        <input type="text" id="f-sehir" placeholder="Örn: Adana, İstanbul, Ankara" maxlength="100">
         <div class="err-msg" id="err-sehir">Şehir alanı zorunludur.</div>
       </div>
     </div>
 
     <!-- ── ADIM 2: HAYVAN BİLGİSİ ── -->
     <div class="form-section" id="sec-1">
-      <div class="section-title">🐾 Hayvan Bilgileri</div>
+      <div class="sec-title">🐾 Hayvan Bilgileri</div>
 
       <div class="field">
         <label>Hayvan Türü <span class="req">*</span></label>
-        <div class="hayvan-turu-group">
+        <div class="hayvan-group">
           <label class="hayvan-btn" onclick="selectHayvanTuru(this,'kedi')">
             <input type="radio" name="hayvanTuru" value="kedi">
             🐱<span>Kedi</span>
           </label>
-          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'kopek')">
-            <input type="radio" name="hayvanTuru" value="kopek">
+          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'köpek')">
+            <input type="radio" name="hayvanTuru" value="köpek">
             🐶<span>Köpek</span>
           </label>
-          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'kus')">
-            <input type="radio" name="hayvanTuru" value="kus">
+          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'kuş')">
+            <input type="radio" name="hayvanTuru" value="kuş">
             🐦<span>Kuş</span>
           </label>
-          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'diger')">
-            <input type="radio" name="hayvanTuru" value="diger">
+          <label class="hayvan-btn" onclick="selectHayvanTuru(this,'diğer')">
+            <input type="radio" name="hayvanTuru" value="diğer">
             🐾<span>Diğer</span>
           </label>
         </div>
         <div class="err-msg" id="err-hayvanTuru">Lütfen hayvan türünü seçin.</div>
       </div>
 
-      <div class="field-row">
+      <div class="row-2">
         <div class="field">
           <label>Hayvanın Adı <span class="req">*</span></label>
-          <input type="text" id="f-hayvanAdi" placeholder="Örn: Pamuk, Karabaş">
+          <input type="text" id="f-hayvanAdi" placeholder="Örn: Pamuk, Karabaş" maxlength="100">
           <div class="err-msg" id="err-hayvanAdi">Hayvan adı zorunludur.</div>
         </div>
         <div class="field">
           <label>Irk</label>
-          <input type="text" id="f-irk" placeholder="Örn: Van Kedisi, Golden">
+          <input type="text" id="f-irk" placeholder="Örn: Van Kedisi, Golden Retriever" maxlength="100">
         </div>
       </div>
 
-      <div class="field-row three">
+      <div class="row-3">
         <div class="field">
           <label>Yaş <span class="req">*</span></label>
           <input type="number" id="f-yas" min="0" max="30" placeholder="Örn: 2">
@@ -556,78 +436,77 @@
         </div>
         <div class="field">
           <label>Renk / Desen</label>
-          <input type="text" id="f-renk" placeholder="Örn: Beyaz, Tekir">
+          <input type="text" id="f-renk" placeholder="Örn: Beyaz, Tekir" maxlength="100">
         </div>
       </div>
 
       <div class="field">
         <label>Özellikler</label>
         <div class="check-group">
-          <label class="check-item"><input type="checkbox" id="c-asili"> Aşılı</label>
-          <label class="check-item"><input type="checkbox" id="c-kisir"> Kısırlaştırılmış</label>
-          <label class="check-item"><input type="checkbox" id="c-cipli"> Çipli</label>
-          <label class="check-item"><input type="checkbox" id="c-evdost"> Evcil canlı dostu</label>
-          <label class="check-item"><input type="checkbox" id="c-cocuk"> Çocuk dostu</label>
+          <label class="check-item"><input type="checkbox" id="c-asili"> 💉 Aşılı</label>
+          <label class="check-item"><input type="checkbox" id="c-kisir"> ✂️ Kısırlaştırılmış</label>
+          <label class="check-item"><input type="checkbox" id="c-cipli"> 📡 Çipli</label>
+          <label class="check-item"><input type="checkbox" id="c-evdost"> 🐾 Evcil canlı dostu</label>
+          <label class="check-item"><input type="checkbox" id="c-cocuk"> 👶 Çocuk dostu</label>
         </div>
       </div>
 
       <div class="field">
         <label>Açıklama <span class="req">*</span></label>
-        <textarea id="f-aciklama" placeholder="Hayvan hakkında detaylı bilgi verin. Karakteri, alışkanlıkları, özel ihtiyaçları..."></textarea>
-        <div class="field-hint">En az 20 karakter yazmanız önerilir.</div>
-        <div class="err-msg" id="err-aciklama">Açıklama zorunludur.</div>
+        <textarea id="f-aciklama" placeholder="Hayvan hakkında detaylı bilgi verin. Karakteri, alışkanlıkları, özel ihtiyaçları..." maxlength="2000"></textarea>
+        <div class="field-hint">En az 20 karakter — ne kadar detaylı olursa o kadar iyi. (maks. 2000)</div>
+        <div class="err-msg" id="err-aciklama">Açıklama zorunludur (en az 20 karakter).</div>
       </div>
     </div>
 
     <!-- ── ADIM 3: İLETİŞİM ── -->
     <div class="form-section" id="sec-2">
-      <div class="section-title">📞 İletişim Bilgileri</div>
+      <div class="sec-title">📞 İletişim Bilgileri</div>
 
       <div class="field">
         <label>Telefon Numarası <span class="req">*</span></label>
-        <input type="tel" id="f-iletisim" placeholder="Örn: 0532 123 45 67">
+        <input type="tel" id="f-iletisim" placeholder="Örn: 0532 123 45 67" maxlength="100">
         <div class="field-hint">Sizi aramak isteyen kişiler bu numarayı görecek.</div>
         <div class="err-msg" id="err-iletisim">İletişim bilgisi zorunludur.</div>
       </div>
 
       <div class="field">
-        <label>E-posta (isteğe bağlı)</label>
-        <input type="email" id="f-eposta" placeholder="ornek@mail.com">
+        <label>E-posta <span style="color:var(--muted);font-weight:400;text-transform:none;">(isteğe bağlı)</span></label>
+        <input type="email" id="f-eposta" placeholder="ornek@mail.com" maxlength="255">
+        <div class="field-hint">İlgilenenler e-posta ile de ulaşabilsin isterseniz ekleyin.</div>
       </div>
 
-      <div style="background:#f0f5ff;border:1px solid #c3dafe;border-radius:10px;padding:14px 16px;font-size:13px;color:#3c5a9e;line-height:1.6;">
-        🔒 İletişim bilgileriniz yalnızca ilanınıza ilgi gösteren kişilerle paylaşılır. Üçüncü taraflarla satılmaz.
+      <div class="security-note">
+        🔒 İletişim bilgileriniz yalnızca ilanınıza ilgi gösteren kişilerle paylaşılır. Üçüncü taraflarla kesinlikle satılmaz veya paylaşılmaz.
       </div>
     </div>
 
     <!-- ── ADIM 4: ÖNİZLEME ── -->
     <div class="form-section" id="sec-3">
-      <div class="section-title">👁️ İlanınızı Kontrol Edin</div>
+      <div class="sec-title">👁️ İlanınızı Kontrol Edin</div>
       <div class="summary-grid" id="summaryGrid"></div>
-      <div class="pm-desc-lbl" style="font-size:11px;text-transform:uppercase;letter-spacing:0.6px;color:#a0aec0;font-weight:600;margin-bottom:8px;">Açıklama</div>
-      <div class="sum-aciklama" id="summaryDesc"></div>
+      <div class="sum-desc-lbl">Açıklama</div>
+      <div class="sum-desc" id="summaryDesc"></div>
     </div>
 
     <!-- ── BAŞARI ── -->
     <div class="success-screen" id="successScreen">
-      <span class="success-icon">🎉</span>
+      <span class="success-ico">🎉</span>
       <h3>İlanınız Yayınlandı!</h3>
       <p>Harika! İlanınız başarıyla kaydedildi ve artık herkes görebilir.</p>
       <div class="success-btns">
-        <a href="ilanlar.html" class="s-btn-primary">📋 İlanları Gör</a>
-        <a href="ilan-ekle.html" class="s-btn-sec">➕ Yeni İlan Ekle</a>
+        <a href="ilanlar.html" class="s-btn-p">📋 İlanları Gör</a>
+        <a href="ilan-ekle.html" class="s-btn-s">➕ Yeni İlan Ekle</a>
       </div>
     </div>
 
-    <!-- Hata kutusu -->
+    <!-- HATA KUTUSU -->
     <div class="alert-err" id="alertErr"></div>
 
-    <!-- BUTONLAR -->
+    <!-- BUTON SATIRI -->
     <div class="btn-row" id="btnRow">
       <button class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none">← Geri</button>
-      <button class="btn-next" id="btnNext" onclick="nextStep()">
-        Devam Et <span>→</span>
-      </button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">Devam Et →</button>
       <button class="btn-submit" id="btnSubmit" onclick="submitForm()" style="display:none">
         <span id="submitText">🐾 İlanı Yayınla</span>
         <div class="spin" id="submitSpin"></div>
@@ -639,179 +518,171 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-links">
-    <a href="#" class="footer-link">Hakkımızda</a>
-    <a href="#" class="footer-link">Gizlilik Politikası</a>
-    <a href="#" class="footer-link">Şikayet Sistemi</a>
-    <a href="#" class="footer-link">İletişim</a>
+  <div class="footer-top">
+    <div>
+      <div class="logo-mark" style="width:40px;height:40px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;">🐾</div>
+      <p class="f-brand-desc">Evcil hayvanlara şeffaf, şevkatli bir yuva. Türkiye'nin her şehrinde.</p>
+    </div>
+    <div class="f-col">
+      <h4>Platform</h4>
+      <a href="ilanlar.html">Tüm İlanlar</a>
+      <a href="ilan-ekle.html">İlan Ekle</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="giris.html">Giriş Yap</a>
+    </div>
+    <div class="f-col">
+      <h4>Şirket</h4>
+      <a href="#">Hakkımızda</a>
+      <a href="#">Gizlilik Politikası</a>
+      <a href="#">İletişim</a>
+    </div>
   </div>
-  <div class="social-icons">
-    <div class="social-icon">f</div>
-    <div class="social-icon">x</div>
-    <div class="social-icon">in</div>
-    <div class="social-icon">●</div>
+  <div class="footer-bottom">
+    <p class="f-copy">© 2026 PetMate — Tüm hakları saklıdır.</p>
+    <div class="f-socials"><div class="f-social">f</div><div class="f-social">x</div><div class="f-social">in</div></div>
   </div>
-  <p class="copyright">© 2026 PetMate, Tüm hakları saklıdır.</p>
 </footer>
 
 <script>
 let currentStep = 0;
-const totalSteps = 4;
+const TOTAL = 4;
 
-/* ── Seçim fonksiyonları ── */
-function selectIlanTuru(el, val) {
+/* ── Giriş / Çıkış ── */
+function girisDurumGuncelle() {
+  const user         = localStorage.getItem('pm_user');
+  const btnGiris     = document.getElementById('btnGiris');
+  const userLabel    = document.getElementById('userLabel');
+  const userNameText = document.getElementById('userNameText');
+  const btnCikis     = document.getElementById('btnCikis');
+  if (user) {
+    btnGiris.style.display   = 'none';
+    userLabel.style.display  = 'flex';
+    userNameText.textContent = user;
+    btnCikis.style.display   = 'flex';
+  } else {
+    btnGiris.style.display   = '';
+    userLabel.style.display  = 'none';
+    btnCikis.style.display   = 'none';
+  }
+}
+function cikisYap() {
+  localStorage.removeItem('pm_user');
+  localStorage.removeItem('pm_token');
+  girisDurumGuncelle();
+  window.location.href = 'giris.html';
+}
+girisDurumGuncelle();
+
+/* ── Seçim ── */
+function selectIlanTuru(el) {
   document.querySelectorAll('.ilan-turu-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   el.querySelector('input').checked = true;
 }
-
-function selectHayvanTuru(el, val) {
+function selectHayvanTuru(el) {
   document.querySelectorAll('.hayvan-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   el.querySelector('input').checked = true;
 }
 
-/* ── Değer okuma ── */
-function getVal(id) {
-  const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
-function getRadio(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : '';
-}
-function getChecks() {
-  const map = {
-    'c-asili':'Aşılı','c-kisir':'Kısırlaştırılmış',
-    'c-cipli':'Çipli','c-evdost':'Evcil canlı dostu','c-cocuk':'Çocuk dostu'
-  };
-  return Object.entries(map)
-    .filter(([id]) => document.getElementById(id).checked)
-    .map(([,label]) => label);
+/* ── Okuma ── */
+function getVal(id)    { const el=document.getElementById(id); return el?el.value.trim():''; }
+function getRadio(name){ const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:''; }
+function getChecks()   {
+  const map={'c-asili':'Aşılı','c-kisir':'Kısırlaştırılmış','c-cipli':'Çipli','c-evdost':'Evcil canlı dostu','c-cocuk':'Çocuk dostu'};
+  return Object.entries(map).filter(([id])=>document.getElementById(id).checked).map(([,l])=>l);
 }
 
-/* ── Doğrulama ── */
+/* ── Validasyon ── */
 function clearErrors() {
-  document.querySelectorAll('.err-msg').forEach(e => e.style.display='none');
-  document.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+  document.querySelectorAll('.err-msg').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
 }
-function showErr(id, inputId) {
-  const e = document.getElementById(id);
-  if (e) e.style.display = 'block';
-  if (inputId) {
-    const inp = document.getElementById(inputId);
-    if (inp) inp.classList.add('err');
-  }
+function showErr(errId, inputId) {
+  const e=document.getElementById(errId); if(e) e.style.display='block';
+  const i=document.getElementById(inputId); if(i) i.classList.add('err');
 }
-
 function validateStep(step) {
-  clearErrors();
-  let ok = true;
-
-  if (step === 0) {
-    if (!getRadio('ilanTuru')) {
-      document.getElementById('err-ilanTuru').style.display = 'block'; ok = false;
-    }
-    if (!getVal('f-sehir')) {
-      showErr('err-sehir','f-sehir'); ok = false;
-    }
+  clearErrors(); let ok=true;
+  if (step===0) {
+    if (!getRadio('ilanTuru')) { document.getElementById('err-ilanTuru').style.display='block'; ok=false; }
+    if (!getVal('f-sehir'))   { showErr('err-sehir','f-sehir'); ok=false; }
   }
-
-  if (step === 1) {
-    if (!getRadio('hayvanTuru')) {
-      document.getElementById('err-hayvanTuru').style.display = 'block'; ok = false;
-    }
-    if (!getVal('f-hayvanAdi')) { showErr('err-hayvanAdi','f-hayvanAdi'); ok = false; }
-    if (!getVal('f-yas'))       { showErr('err-yas','f-yas');             ok = false; }
-    if (!getVal('f-aciklama'))  { showErr('err-aciklama','f-aciklama');   ok = false; }
+  if (step===1) {
+    if (!getRadio('hayvanTuru')) { document.getElementById('err-hayvanTuru').style.display='block'; ok=false; }
+    if (!getVal('f-hayvanAdi'))  { showErr('err-hayvanAdi','f-hayvanAdi'); ok=false; }
+    if (!getVal('f-yas'))        { showErr('err-yas','f-yas'); ok=false; }
+    if (getVal('f-aciklama').length < 20) { showErr('err-aciklama','f-aciklama'); ok=false; }
   }
-
-  if (step === 2) {
-    if (!getVal('f-iletisim')) { showErr('err-iletisim','f-iletisim'); ok = false; }
+  if (step===2) {
+    if (!getVal('f-iletisim')) { showErr('err-iletisim','f-iletisim'); ok=false; }
   }
-
   return ok;
 }
 
 /* ── Adım geçişi ── */
 function goStep(n) {
-  document.querySelectorAll('.form-section').forEach((s,i) =>
-    s.classList.toggle('active', i === n));
-
-  for (let i = 0; i < totalSteps; i++) {
+  document.querySelectorAll('.form-section').forEach((s,i) => s.classList.toggle('active', i===n));
+  for (let i=0; i<TOTAL; i++) {
     const ind = document.getElementById('step-ind-'+i);
     ind.classList.remove('active','done');
     if (i < n)  ind.classList.add('done');
     if (i === n) ind.classList.add('active');
     ind.querySelector('.s-num').textContent = i < n ? '✓' : i+1;
   }
-
   document.getElementById('btnPrev').style.display   = n > 0 ? 'block' : 'none';
-  document.getElementById('btnNext').style.display   = n < totalSteps-1 ? 'flex' : 'none';
-  document.getElementById('btnSubmit').style.display = n === totalSteps-1 ? 'flex' : 'none';
-
-  if (n === totalSteps-1) buildSummary();
+  document.getElementById('btnNext').style.display   = n < TOTAL-1 ? 'flex' : 'none';
+  document.getElementById('btnSubmit').style.display = n === TOTAL-1 ? 'flex' : 'none';
+  if (n === TOTAL-1) buildSummary();
   currentStep = n;
   window.scrollTo({top:0, behavior:'smooth'});
 }
-
-function nextStep() {
-  if (!validateStep(currentStep)) return;
-  goStep(currentStep + 1);
-}
-function prevStep() {
-  goStep(currentStep - 1);
-}
+function nextStep() { if (validateStep(currentStep)) goStep(currentStep+1); }
+function prevStep() { goStep(currentStep-1); }
 
 /* ── Özet ── */
 function turLabel(v) {
-  return v === 'sahiplendirme' ? '🏠 Sahiplendirme'
-       : v === 'kayip'         ? '🔴 Kayıp'
-       : v === 'bulundu'       ? '✅ Bulundu' : v;
+  return v==='sahiplendirme'?'🏠 Sahiplendirme':v==='kayip'?'🔴 Kayıp':v==='bulundu'?'✅ Bulundu':v;
 }
 function hayvanLabel(v) {
-  return v === 'kedi' ? '🐱 Kedi' : v === 'kopek' ? '🐶 Köpek'
-       : v === 'kus'  ? '🐦 Kuş'  : '🐾 Diğer';
+  return v==='kedi'?'🐱 Kedi':v==='köpek'?'🐶 Köpek':v==='kuş'?'🐦 Kuş':'🐾 Diğer';
 }
-
 function buildSummary() {
   const checks = getChecks();
   const alanlar = [
-    ['İlan Türü',     turLabel(getRadio('ilanTuru'))],
-    ['Şehir',         getVal('f-sehir')],
-    ['Hayvan Türü',   hayvanLabel(getRadio('hayvanTuru'))],
-    ['Adı',           getVal('f-hayvanAdi')],
-    ['Irk',           getVal('f-irk') || '—'],
-    ['Yaş',           getVal('f-yas') ? getVal('f-yas')+' yaş' : '—'],
-    ['Cinsiyet',      getVal('f-cinsiyet') || '—'],
-    ['Renk',          getVal('f-renk') || '—'],
-    ['İletişim',      getVal('f-iletisim')],
-    ['Özellikler',    checks.length ? checks.join(', ') : '—'],
+    ['İlan Türü',   turLabel(getRadio('ilanTuru'))],
+    ['Şehir',       getVal('f-sehir')],
+    ['Hayvan Türü', hayvanLabel(getRadio('hayvanTuru'))],
+    ['Adı',         getVal('f-hayvanAdi')],
+    ['Irk',         getVal('f-irk')||'—'],
+    ['Yaş',         getVal('f-yas')?getVal('f-yas')+' yaş':'—'],
+    ['Cinsiyet',    getVal('f-cinsiyet')||'—'],
+    ['Renk',        getVal('f-renk')||'—'],
+    ['Telefon',     getVal('f-iletisim')],
+    ['E-posta',     getVal('f-eposta')||'—'],
+    ['Özellikler',  checks.length?checks.join(', '):'—'],
   ];
-  document.getElementById('summaryGrid').innerHTML = alanlar.map(([l,v]) => `
-    <div class="sum-item">
-      <div class="sum-label">${l}</div>
-      <div class="sum-val">${v}</div>
-    </div>`).join('');
-  document.getElementById('summaryDesc').textContent = getVal('f-aciklama') || '—';
+  document.getElementById('summaryGrid').innerHTML = alanlar.map(([l,v])=>`
+    <div class="sum-item"><div class="sum-lbl">${l}</div><div class="sum-val">${v}</div></div>`).join('');
+  document.getElementById('summaryDesc').textContent = getVal('f-aciklama')||'—';
 }
 
 /* ── Gönderim ── */
 async function submitForm() {
-  const btn  = document.getElementById('btnSubmit');
-  const txt  = document.getElementById('submitText');
-  const spin = document.getElementById('submitSpin');
-  const errBox = document.getElementById('alertErr');
+  const btn     = document.getElementById('btnSubmit');
+  const txt     = document.getElementById('submitText');
+  const spin    = document.getElementById('submitSpin');
+  const errBox  = document.getElementById('alertErr');
 
   btn.disabled = true;
   txt.style.display  = 'none';
   spin.style.display = 'block';
   errBox.style.display = 'none';
 
+  /* Açıklamaya özellikleri ekle */
   const checks = getChecks();
-  const ozellikler = checks.join(', ');
-  const aciklamaFull = getVal('f-aciklama')
-    + (ozellikler ? '\n\nÖzellikler: ' + ozellikler : '');
+  const ozellikStr = checks.length ? '\n\nÖzellikler: ' + checks.join(', ') : '';
+  const aciklamaFull = getVal('f-aciklama') + ozellikStr;
 
   const payload = {
     ilanTuru:   getRadio('ilanTuru'),
@@ -824,30 +695,38 @@ async function submitForm() {
     sehir:      getVal('f-sehir'),
     aciklama:   aciklamaFull,
     iletisim:   getVal('f-iletisim'),
+    /* E-posta server.js'de HayvanIlanlari tablosunda sütun yoksa
+       backend bunu yok sayar; ilerde eklenirse burada hazır */
+    eposta:     getVal('f-eposta'),
   };
+
+  /* JWT varsa Authorization header'a ekle */
+  const token = localStorage.getItem('pm_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
 
   try {
     const r = await fetch('/ilan-ekle', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      headers,
+      body: JSON.stringify(payload),
     });
 
     if (r.ok) {
-      document.getElementById('stepsBar').style.display  = 'none';
-      document.getElementById('btnRow').style.display    = 'none';
+      document.getElementById('stepsBar').style.display = 'none';
+      document.getElementById('btnRow').style.display   = 'none';
       document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
       document.getElementById('successScreen').classList.add('show');
     } else {
       const msg = await r.text();
-      errBox.textContent = '❌ Hata: ' + msg;
+      errBox.textContent   = '❌ ' + (JSON.parse(msg).error || msg);
       errBox.style.display = 'block';
     }
   } catch {
-    errBox.textContent = '❌ Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
+    errBox.textContent   = '❌ Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
     errBox.style.display = 'block';
   } finally {
-    btn.disabled = false;
+    btn.disabled       = false;
     txt.style.display  = 'inline';
     spin.style.display = 'none';
   }
