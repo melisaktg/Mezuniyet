@@ -36,9 +36,7 @@ app.use('/kullanici-kayit', authLimiter);
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }  // Render için gerekli
-        : false,
+    ssl: { rejectUnauthorized: false },
 });
 
 pool.connect((err, client, release) => {
