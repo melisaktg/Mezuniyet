@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -52,6 +52,9 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .h-btn-ghost:hover { background:rgba(255,255,255,0.1); color:#fff; }
 .h-btn-fill { padding:9px 20px; border-radius:8px; background:var(--orange); color:#fff; border:none; font-size:13px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; box-shadow:0 4px 14px rgba(224,123,46,0.4); }
 .h-btn-fill:hover { background:var(--orange2); }
+.h-btn-logout { padding:8px 18px; border-radius:8px; border:1px solid rgba(192,57,43,0.4); color:rgba(255,140,120,0.9); background:rgba(192,57,43,0.12); font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; display:none; align-items:center; gap:7px; }
+.h-btn-logout:hover { background:rgba(192,57,43,0.25); color:#fff; border-color:rgba(192,57,43,0.7); }
+.h-user-name { font-size:13px; color:rgba(255,255,255,0.75); font-weight:600; display:none; align-items:center; gap:6px; }
 
 /* HERO */
 .hero { min-height:90vh; background:var(--navy3); position:relative; display:flex; align-items:center; overflow:hidden; }
@@ -255,6 +258,8 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   </nav>
   <div class="h-actions">
     <a href="giris.html" class="h-btn-ghost" id="btnGiris">Giriş Yap</a>
+    <span class="h-user-name" id="userLabel">🐾 <span id="userNameText"></span></span>
+    <button class="h-btn-logout" id="btnCikis" onclick="cikisYap()">Çıkış Yap</button>
     <a href="ilan-ekle.html" class="h-btn-fill">+ İlan Ver</a>
   </div>
 </header>
@@ -393,10 +398,36 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 
 <script>
 /* Yardımcılar */
-const emoji = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'🐱'; if(t.includes('k'+'öpek')||t.includes('kopek'))return'🐶'; if(t.includes('ku'+'ş')||t.includes('kus'))return'🐦'; return'🐾'; };
+const emoji = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'🐱'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'🐶'; if(t.includes('ku\u015f')||t.includes('kus'))return'🐦'; return'🐾'; };
 const badgeCls = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'cb-sahip'; if(t.includes('kay'))return'cb-kayip'; if(t.includes('bulun'))return'cb-bulundu'; return'cb-diger'; };
 const badgeLbl = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'Sahiplendir'; if(t.includes('kay'))return'Kayıp'; if(t.includes('bulun'))return'Bulundu'; return'Diğer'; };
-const imgSrc  = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'kedi.jpg'; if(t.includes('k'+'öpek')||t.includes('kopek'))return'köpek.jpg'; if(t.includes('ku'+'ş')||t.includes('kus'))return'kus.jpg'; return'hayvan.jpg'; };
+const imgSrc  = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'kedi.jpg'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'k\u00f6pek.jpg'; if(t.includes('ku\u015f')||t.includes('kus'))return'kus.jpg'; return'hayvan.jpg'; };
+
+/* Giriş / Çıkış */
+function girisDurumGuncelle() {
+  const user         = localStorage.getItem('pm_user');
+  const btnGiris     = document.getElementById('btnGiris');
+  const userLabel    = document.getElementById('userLabel');
+  const userNameText = document.getElementById('userNameText');
+  const btnCikis     = document.getElementById('btnCikis');
+  if (user) {
+    btnGiris.style.display     = 'none';
+    userLabel.style.display    = 'flex';
+    userNameText.textContent   = user;
+    btnCikis.style.display     = 'flex';
+  } else {
+    btnGiris.style.display     = '';
+    userLabel.style.display    = 'none';
+    btnCikis.style.display     = 'none';
+  }
+}
+function cikisYap() {
+  localStorage.removeItem('pm_user');
+  localStorage.removeItem('pm_token');
+  girisDurumGuncelle();
+  window.location.href = 'giris.html';
+}
+girisDurumGuncelle();
 
 /* Modal */
 function openModal(ilan) {
@@ -458,29 +489,20 @@ function makeCard(ilan,idx) {
   return d;
 }
 
-/* Yükleme — DÜZELTİLDİ */
+/* Yükleme */
 window.onload = async () => {
-  /* Header: giriş yapıldıysa butonu güncelle */
-  const user = localStorage.getItem('pm_user');
-  if(user) {
-    const btn = document.getElementById('btnGiris');
-    btn.textContent = '🐾 ' + user;
-    btn.href = 'dashboard.html';
-  }
+  girisDurumGuncelle();
 
   try {
-    /* İLANLARI GETİR */
     const r = await fetch('/ilanlari-getir');
     if(!r.ok) throw new Error('Sunucu hatası: ' + r.status);
     const all = await r.json();
 
-    /* İstatistikler */
     document.getElementById('sToplam').textContent  = all.length;
     document.getElementById('sSahip').textContent   = all.filter(i=>(i.IlanTuru||'').toLowerCase().includes('sahip')).length;
     document.getElementById('sKayip').textContent   = all.filter(i=>(i.IlanTuru||'').toLowerCase().includes('kay')).length;
     document.getElementById('sBulundu').textContent = all.filter(i=>(i.IlanTuru||'').toLowerCase().includes('bulun')).length;
 
-    /* Öne çıkan ilanlar */
     let featured = [];
     try {
       const r2 = await fetch('/one-cikan-ilanlar');
@@ -505,7 +527,6 @@ window.onload = async () => {
         <h3>Veriler yüklenemedi</h3>
         <p>Sunucu çalışıyor mu? <code>node server.js</code> komutunu kontrol edin.</p>
       </div>`;
-    /* Sıfır göster */
     ['sToplam','sSahip','sKayip','sBulundu'].forEach(id=>document.getElementById(id).textContent='0');
   }
 };
