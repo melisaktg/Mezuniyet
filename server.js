@@ -1,3 +1,18 @@
+/**
+ * PetMate — PostgreSQL Backend (server.js)
+ *
+ * MSSQL → PostgreSQL dönüşümü yapılmıştır.
+ * Tüm endpoint'ler, auth, rate limiting ve güvenlik korunmuştur.
+ *
+ * Kurulum:
+ *   npm install express pg bcryptjs jsonwebtoken dotenv helmet express-rate-limit
+ *
+ * .env dosyası örneği:
+ *   DATABASE_URL=postgresql://kullanici:sifre@host:5432/petmatedb
+ *   JWT_SECRET=cok_gizli_bir_anahtar
+ *   PORT=3000
+ *   NODE_ENV=production
+ */
 
 require('dotenv').config();
 
@@ -11,10 +26,11 @@ const path      = require('path');
 
 const app = express();
 
-app.use(helmet({
-    contentSecurityPolicy: false,
-}));
-app.use(express.static('.'));
+/* ══════════════════════════════════════════
+   GÜVENLİK MİDDLEWARE'LERİ
+══════════════════════════════════════════ */
+app.use(helmet());
+app.use(express.static('public'));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
@@ -36,11 +52,20 @@ app.use('/api/', apiLimiter);
 app.use('/kullanici-giris', authLimiter);
 app.use('/kullanici-kayit', authLimiter);
 
+/* ══════════════════════════════════════════
+   VERİTABANI BAĞLANTISI (PostgreSQL)
+   Render'da DATABASE_URL otomatik gelir.
+   Yerel test için .env dosyasına ekleyin:
+   DATABASE_URL=postgresql://user:pass@localhost:5432/petmatedb
+══════════════════════════════════════════ */
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }  // Render için gerekli
+        : false,
 });
 
+// Bağlantı testi
 pool.connect((err, client, release) => {
     if (err) {
         console.error('❌ Veritabanı bağlantı hatası:', err.message);
@@ -50,6 +75,11 @@ pool.connect((err, client, release) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   TABLOLARI OLUŞTUR (ilk çalıştırmada)
+   Render'da her deploy'da çalışır, IF NOT
+   EXISTS sayesinde veri silinmez.
+══════════════════════════════════════════ */
 async function initDB() {
     const client = await pool.connect();
     try {
@@ -75,6 +105,7 @@ async function initDB() {
                 sehir       VARCHAR(100),
                 aciklama    TEXT,
                 iletisim    VARCHAR(100),
+                foto_url    TEXT,
                 tarih       TIMESTAMP DEFAULT NOW()
             );
 
@@ -162,6 +193,9 @@ async function initDB() {
 
 initDB();
 
+/* ══════════════════════════════════════════
+   AUTH MİDDLEWARE
+══════════════════════════════════════════ */
 const JWT_SECRET = process.env.JWT_SECRET || 'degistirmeniz_gereken_gizli_anahtar';
 
 function authMiddleware(req, res, next) {
@@ -182,6 +216,9 @@ function adminMiddleware(req, res, next) {
     next();
 }
 
+/* ══════════════════════════════════════════
+   YARDIMCI FONKSİYONLAR
+══════════════════════════════════════════ */
 const sanitizeStr = (val, maxLen = 255) => {
     if (val === undefined || val === null) return null;
     return String(val).trim().substring(0, maxLen);
@@ -197,14 +234,19 @@ const sanitizeFloat = (val) => {
     return isNaN(n) ? null : n;
 };
 
+/* ══════════════════════════════════════════
+   ═══════  İLAN ENDPOINT'LERİ  ═══════════
+══════════════════════════════════════════ */
+
+// İlan ekle
 app.post('/ilan-ekle', async (req, res) => {
     if (!req.body || Object.keys(req.body).length === 0)
         return res.status(400).json({ error: 'Veri ulaşmıyor.' });
     try {
         await pool.query(
             `INSERT INTO hayvan_ilanlari
-             (ilan_turu, hayvan_turu, hayvan_adi, irk, yas, cinsiyet, renk, sehir, aciklama, iletisim)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+             (ilan_turu, hayvan_turu, hayvan_adi, irk, yas, cinsiyet, renk, sehir, aciklama, iletisim, foto_url)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
             [
                 sanitizeStr(req.body.ilanTuru, 50),
                 sanitizeStr(req.body.hayvanTuru, 50),
@@ -216,6 +258,7 @@ app.post('/ilan-ekle', async (req, res) => {
                 sanitizeStr(req.body.sehir, 100),
                 sanitizeStr(req.body.aciklama, 2000),
                 sanitizeStr(req.body.iletisim, 100),
+                req.body.fotoUrl || null,  // base64 — TEXT kolonuna
             ]
         );
         res.json({ success: true, message: 'İlan başarıyla kaydedildi.' });
@@ -225,6 +268,7 @@ app.post('/ilan-ekle', async (req, res) => {
     }
 });
 
+// İlanları getir
 app.get('/ilanlari-getir', async (req, res) => {
     try {
         const result = await pool.query(
@@ -240,6 +284,7 @@ app.get('/ilanlari-getir', async (req, res) => {
                 sehir       AS "Sehir",
                 aciklama    AS "Aciklama",
                 iletisim    AS "Iletisim",
+                foto_url    AS "FotoUrl",
                 tarih       AS "Tarih"
              FROM hayvan_ilanlari
              ORDER BY id DESC`
@@ -251,6 +296,7 @@ app.get('/ilanlari-getir', async (req, res) => {
     }
 });
 
+// İlan sil (admin)
 app.delete('/ilan-sil/:id', authMiddleware, adminMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -263,6 +309,7 @@ app.delete('/ilan-sil/:id', authMiddleware, adminMiddleware, async (req, res) =>
     }
 });
 
+// Öne çıkan ilanları getir
 app.get('/one-cikan-ilanlar', async (req, res) => {
     try {
         const result = await pool.query(`
@@ -288,6 +335,7 @@ app.get('/one-cikan-ilanlar', async (req, res) => {
     }
 });
 
+// Öne çıkan ilanları güncelle (admin)
 app.post('/one-cikan-guncelle', authMiddleware, adminMiddleware, async (req, res) => {
     const { ilanIds } = req.body;
     if (!Array.isArray(ilanIds)) return res.status(400).json({ error: 'Geçersiz format.' });
@@ -324,6 +372,11 @@ app.get('/one-cikan-idler', authMiddleware, adminMiddleware, async (req, res) =>
     }
 });
 
+/* ══════════════════════════════════════════
+   ═══════  KULLANICI YÖNETİMİ  ═══════════
+══════════════════════════════════════════ */
+
+// Kayıt
 app.post('/kullanici-kayit', async (req, res) => {
     const { kullanici, sifre, email } = req.body;
     if (!kullanici || !sifre)
@@ -354,6 +407,7 @@ app.post('/kullanici-kayit', async (req, res) => {
     }
 });
 
+// Giriş
 app.post('/kullanici-giris', async (req, res) => {
     const { kullanici, sifre } = req.body;
     if (!kullanici || !sifre)
@@ -383,7 +437,11 @@ app.post('/kullanici-giris', async (req, res) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   ═════  PET MANAGEMENT  ══════════════════
+══════════════════════════════════════════ */
 
+// Hayvanları getir
 app.get('/api/pets', authMiddleware, async (req, res) => {
     try {
         const result = await pool.query(
@@ -436,6 +494,7 @@ app.post('/api/pets', authMiddleware, async (req, res) => {
     }
 });
 
+// Hayvan güncelle
 app.put('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -460,6 +519,7 @@ app.put('/api/pets/:id', authMiddleware, async (req, res) => {
     }
 });
 
+// Hayvan sil (soft delete)
 app.delete('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -474,6 +534,9 @@ app.delete('/api/pets/:id', authMiddleware, async (req, res) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   ═══════  AŞI TAKİBİ  ════════════════════
+══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
@@ -519,6 +582,9 @@ app.post('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   ═══════  SAĞLIK KAYITLARI  ══════════════
+══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
@@ -564,6 +630,10 @@ app.post('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
+
+/* ══════════════════════════════════════════
+   ═══════  RANDEVULAR  ════════════════════
+══════════════════════════════════════════ */
 
 app.get('/api/appointments', authMiddleware, async (req, res) => {
     try {
@@ -612,6 +682,9 @@ app.post('/api/appointments', authMiddleware, async (req, res) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   ═══════  HATIRLATICILАР  ════════════════
+══════════════════════════════════════════ */
 
 app.get('/api/reminders', authMiddleware, async (req, res) => {
     try {
@@ -661,6 +734,7 @@ app.post('/api/reminders', authMiddleware, async (req, res) => {
     }
 });
 
+// Hatırlatıcı tamamlandı
 app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     try {
@@ -676,6 +750,9 @@ app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
     }
 });
 
+/* ══════════════════════════════════════════
+   ═══════  DASHBOARD ÖZET  ════════════════
+══════════════════════════════════════════ */
 
 app.get('/api/dashboard', authMiddleware, async (req, res) => {
     const uid = req.user.id;
@@ -737,10 +814,10 @@ app.get('/api/dashboard', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
 });
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
+/* ══════════════════════════════════════════
+   SUNUCU BAŞLAT
+══════════════════════════════════════════ */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`✅ PetMate sunucu çalışıyor: http://localhost:${PORT}`);
