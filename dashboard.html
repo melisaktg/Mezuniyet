@@ -4,31 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — PetMate</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Palette — sıcak lacivert + amber */
-  --navy:    #1c3454;
-  --navy2:   #264a78;
-  --navy3:   #0e2038;
-  --amber:   #d97706;
-  --amber2:  #b45309;
-  --amber-l: #fef3c7;
-  --amber-m: #fde68a;
-  --sage:    #4a7c5c;
-  --sage-l:  #d1fae5;
-  --rose:    #be3636;
-  --rose-l:  #fee2e2;
-  --sky:     #2563eb;
-  --sky-l:   #dbeafe;
-  --cream:   #faf8f5;
-  --warm1:   #f5f0ea;
-  --warm2:   #e8ddd0;
+  --navy:    #1c3557;
+  --navy2:   #274a7a;
+  --navy3:   #0f2240;
+  --orange:  #e07b2e;
+  --orange2: #c96820;
+  --orange-l:#fef3e8;
+  --cream:   #fdf9f5;
+  --warm1:   #f5ede3;
+  --warm2:   #ede0d0;
   --text:    #1a1f2e;
-  --muted:   #6b7280;
-  --border:  #e5ddd3;
+  --muted:   #7a7f8e;
+  --border:  #e8ddd2;
   --white:   #ffffff;
-  --sidebar: 260px;
+  --green:   #2e7d5e;
+  --green-l: #d1fae5;
+  --red:     #c0392b;
+  --red-l:   #fee2e2;
+  --blue:    #2563eb;
+  --blue-l:  #dbeafe;
+  --sidebar: 262px;
   --radius:  14px;
 }
 
@@ -36,352 +34,335 @@
 html { scroll-behavior:smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
+  font-family:'Plus Jakarta Sans', sans-serif;
+  background:var(--cream); color:var(--text);
+  min-height:100vh; display:flex;
 }
 
 /* ══════════════════════════
    SIDEBAR
 ══════════════════════════ */
 .sidebar {
-  width: var(--sidebar);
-  background: var(--navy3);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  left: 0; top: 0; bottom: 0;
-  z-index: 100;
-  transition: transform 0.3s;
+  width:var(--sidebar);
+  background:var(--navy3);
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  position:fixed; left:0; top:0; bottom:0;
+  z-index:100; transition:transform 0.3s;
 }
 
 .sb-brand {
-  padding: 28px 24px 22px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  display: flex; align-items: center; gap: 13px;
-  text-decoration: none;
+  padding:26px 22px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex; align-items:center; gap:13px;
+  text-decoration:none;
 }
 .sb-logo {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--amber), #f59e0b);
-  border-radius: 11px;
-  display: flex; align-items:center; justify-content:center;
-  font-size: 19px;
-  box-shadow: 0 4px 14px rgba(217,119,6,0.45);
-  flex-shrink: 0;
+  width:42px; height:42px;
+  background:linear-gradient(135deg,var(--orange),#f0a05a);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 16px rgba(224,123,46,0.45);
+  flex-shrink:0;
 }
 .sb-brand-text strong {
-  display: block;
-  font-family: 'Lora', serif;
-  font-size: 18px; color: #fff; font-weight: 700;
-  line-height: 1;
+  display:block;
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px; color:#fff; font-weight:700; line-height:1;
 }
 .sb-brand-text span {
-  font-size: 10px; color: rgba(255,255,255,0.35);
-  letter-spacing: 0.3px;
+  font-size:10px; color:rgba(255,255,255,0.35);
+  letter-spacing:0.3px;
 }
 
-.sb-nav { padding: 18px 12px; flex: 1; }
+.sb-nav { padding:18px 12px; flex:1; }
 
 .sb-section-label {
-  font-size: 9px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1.2px; color: rgba(255,255,255,0.25);
-  padding: 0 10px 8px;
+  font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1.4px; color:rgba(255,255,255,0.22);
+  padding:0 10px 8px;
 }
 
 .sb-link {
-  display: flex; align-items: center; gap: 11px;
-  padding: 10px 12px; border-radius: 10px;
-  color: rgba(255,255,255,0.55);
-  text-decoration: none; font-size: 13.5px; font-weight: 500;
-  transition: all 0.18s; margin-bottom: 2px;
-  position: relative;
+  display:flex; align-items:center; gap:11px;
+  padding:10px 12px; border-radius:10px;
+  color:rgba(255,255,255,0.55);
+  text-decoration:none; font-size:13px; font-weight:500;
+  transition:all 0.18s; margin-bottom:2px;
+  position:relative;
 }
-.sb-link:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+.sb-link:hover { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.85); }
 .sb-link.active {
-  background: rgba(217,119,6,0.18);
-  color: #fbbf24;
+  background:rgba(224,123,46,0.18);
+  color:#f0a05a;
 }
 .sb-link.active::before {
-  content: '';
-  position: absolute; left: 0; top: 20%; bottom: 20%;
-  width: 3px; border-radius: 0 3px 3px 0;
-  background: var(--amber);
+  content:'';
+  position:absolute; left:0; top:20%; bottom:20%;
+  width:3px; border-radius:0 3px 3px 0;
+  background:var(--orange);
 }
-.sb-icon { font-size: 17px; width: 20px; text-align:center; flex-shrink:0; }
+.sb-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
 
 .sb-badge {
-  margin-left: auto;
-  background: var(--rose); color: #fff;
-  font-size: 10px; font-weight: 700;
-  padding: 1px 6px; border-radius: 20px;
-  min-width: 18px; text-align: center;
+  margin-left:auto;
+  background:var(--red); color:#fff;
+  font-size:10px; font-weight:700;
+  padding:1px 6px; border-radius:20px;
+  min-width:18px; text-align:center;
 }
 
-.sb-sep { height: 1px; background: rgba(255,255,255,0.07); margin: 14px 12px; }
+.sb-sep { height:1px; background:rgba(255,255,255,0.07); margin:12px 12px; }
 
 .sb-user {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  display: flex; align-items: center; gap: 11px;
+  padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.07);
+  display:flex; align-items:center; gap:11px;
 }
 .sb-av {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--navy2), var(--amber));
-  display: flex; align-items:center; justify-content:center;
-  font-family: 'Lora', serif; font-weight: 700;
-  color: #fff; font-size: 15px; flex-shrink: 0;
+  width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg,var(--navy2),var(--orange));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-weight:700;
+  color:#fff; font-size:16px; flex-shrink:0;
 }
-.sb-uname { font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600; }
-.sb-role  { font-size: 10px; color: rgba(255,255,255,0.35); }
+.sb-uname { font-size:13px; color:rgba(255,255,255,0.85); font-weight:600; }
+.sb-role  { font-size:10px; color:rgba(255,255,255,0.35); }
 .sb-logout {
-  margin-left: auto; background: none; border: none;
-  color: rgba(255,255,255,0.3); cursor: pointer;
-  font-size: 16px; padding: 4px;
-  transition: color 0.2s;
+  margin-left:auto; background:none; border:none;
+  color:rgba(255,255,255,0.3); cursor:pointer;
+  font-size:16px; padding:4px;
+  transition:color 0.2s;
 }
-.sb-logout:hover { color: rgba(255,255,255,0.7); }
+.sb-logout:hover { color:rgba(255,100,100,0.8); }
 
 /* ══════════════════════════
    MAIN
 ══════════════════════════ */
 .main {
-  margin-left: var(--sidebar);
-  flex: 1; min-height: 100vh;
-  display: flex; flex-direction: column;
+  margin-left:var(--sidebar);
+  flex:1; min-height:100vh;
+  display:flex; flex-direction:column;
 }
 
 /* Topbar */
 .topbar {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 0 36px;
-  height: 64px;
-  display: flex; align-items: center;
-  justify-content: space-between;
-  position: sticky; top: 0; z-index: 90;
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 36px; height:66px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:90;
+  box-shadow:0 1px 8px rgba(15,34,64,0.06);
 }
 .topbar-left h1 {
-  font-family: 'Lora', serif;
-  font-size: 19px; font-weight: 700; color: var(--navy3);
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px; font-weight:700; color:var(--navy3); line-height:1.1;
 }
-.topbar-left p { font-size: 12px; color: var(--muted); }
+.topbar-left p { font-size:12px; color:var(--muted); margin-top:1px; }
 
-.topbar-right { display: flex; align-items:center; gap: 12px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
 
 .tb-btn {
-  padding: 8px 18px; border-radius: 9px;
-  font-size: 13px; font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer; text-decoration: none;
-  transition: all 0.18s;
-  display: inline-flex; align-items: center; gap: 7px;
+  padding:8px 18px; border-radius:9px;
+  font-size:13px; font-weight:600;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer; text-decoration:none;
+  transition:all 0.18s;
+  display:inline-flex; align-items:center; gap:7px;
 }
 .tb-btn-primary {
-  background: var(--amber); color: #fff; border: none;
-  box-shadow: 0 3px 12px rgba(217,119,6,0.35);
+  background:var(--orange); color:#fff; border:none;
+  box-shadow:0 3px 12px rgba(224,123,46,0.35);
 }
-.tb-btn-primary:hover { background: var(--amber2); }
+.tb-btn-primary:hover { background:var(--orange2); }
 .tb-btn-ghost {
-  background: transparent; color: var(--navy);
-  border: 1.5px solid var(--border);
+  background:transparent; color:var(--navy);
+  border:1.5px solid var(--border);
 }
-.tb-btn-ghost:hover { border-color: var(--navy); }
+.tb-btn-ghost:hover { border-color:var(--navy2); }
 
 .notif-btn {
-  position: relative;
-  width: 38px; height: 38px; border-radius: 9px;
-  background: var(--warm1); border: 1.5px solid var(--border);
-  display: flex; align-items:center; justify-content:center;
-  cursor: pointer; font-size: 16px; transition: all 0.18s;
+  position:relative;
+  width:38px; height:38px; border-radius:9px;
+  background:var(--warm1); border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; transition:all 0.18s;
 }
-.notif-btn:hover { background: var(--warm2); }
+.notif-btn:hover { background:var(--warm2); }
 .notif-dot {
   position:absolute; top:6px; right:6px;
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--rose); border: 1.5px solid var(--white);
+  width:7px; height:7px; border-radius:50%;
+  background:var(--red); border:1.5px solid var(--white);
 }
 
 /* ══════════════════════════
    CONTENT
 ══════════════════════════ */
-.content { padding: 28px 36px 48px; flex: 1; }
+.content { padding:28px 36px 52px; flex:1; }
 
-/* Auth guard */
+/* Auth wall */
 .auth-wall {
-  display: flex; flex-direction:column;
+  display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  min-height: 60vh; text-align:center; gap: 18px;
+  min-height:60vh; text-align:center; gap:18px;
 }
-.auth-wall .aw-ico { font-size: 56px; }
-.auth-wall h2 { font-family:'Lora',serif; font-size:26px; color:var(--navy3); }
-.auth-wall p  { color:var(--muted); font-size:14px; max-width:320px; }
+.auth-wall .aw-ico { font-size:60px; }
+.auth-wall h2 { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--navy3); }
+.auth-wall p  { color:var(--muted); font-size:14px; max-width:320px; line-height:1.6; }
 
-/* ── Pet hızlı seçim ── */
+/* Pet tabları */
 .pet-tabs {
-  display: flex; gap: 10px; margin-bottom: 26px;
-  overflow-x: auto; padding-bottom: 4px;
+  display:flex; gap:10px; margin-bottom:26px;
+  overflow-x:auto; padding-bottom:4px;
 }
 .pet-tab {
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 18px; border-radius: 24px;
-  border: 1.5px solid var(--border);
-  background: var(--white); cursor: pointer;
-  font-size: 13px; font-weight: 600; color: var(--muted);
-  white-space: nowrap; transition: all 0.2s;
-  flex-shrink: 0;
+  display:flex; align-items:center; gap:8px;
+  padding:9px 18px; border-radius:24px;
+  border:1.5px solid var(--border);
+  background:var(--white); cursor:pointer;
+  font-size:13px; font-weight:600; color:var(--muted);
+  white-space:nowrap; transition:all 0.2s; flex-shrink:0;
 }
 .pet-tab.active {
-  background: var(--navy3); color: #fff;
-  border-color: var(--navy3);
-  box-shadow: 0 4px 14px rgba(14,32,56,0.25);
+  background:var(--navy3); color:#fff;
+  border-color:var(--navy3);
+  box-shadow:0 4px 14px rgba(15,34,64,0.25);
 }
-.pet-tab:hover:not(.active) { border-color: var(--navy2); color: var(--navy); }
-.pet-tab-em { font-size: 18px; }
+.pet-tab:hover:not(.active) { border-color:var(--navy2); color:var(--navy); }
+.pet-tab-em { font-size:17px; }
 
-/* ── Stat kartları ── */
-.stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 26px; }
+/* Stat kartları */
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:26px; }
 
 .stat-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px 20px;
-  transition: all 0.25s;
-  animation: fadeUp 0.5s ease both;
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--radius); padding:22px 20px;
+  transition:all 0.25s; animation:fadeUp 0.5s ease both;
 }
-.stat-card:hover { box-shadow: 0 8px 24px rgba(28,52,84,0.1); transform: translateY(-2px); }
+.stat-card:hover { box-shadow:0 8px 28px rgba(15,34,64,0.1); transform:translateY(-2px); }
 
 .sc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .sc-ico {
-  width: 42px; height: 42px; border-radius: 11px;
+  width:42px; height:42px; border-radius:11px;
   display:flex; align-items:center; justify-content:center; font-size:19px;
 }
-.ic-amber { background: var(--amber-l); }
-.ic-sage  { background: var(--sage-l); }
-.ic-rose  { background: var(--rose-l); }
-.ic-sky   { background: var(--sky-l); }
+.ic-orange { background:var(--orange-l); }
+.ic-green  { background:var(--green-l); }
+.ic-red    { background:var(--red-l); }
+.ic-blue   { background:var(--blue-l); }
 
-.sc-trend { font-size:11px; font-weight:600; padding: 3px 8px; border-radius:20px; }
-.sc-trend.up   { background: var(--sage-l); color: var(--sage); }
-.sc-trend.warn { background: var(--rose-l); color: var(--rose); }
-.sc-trend.ok   { background: var(--amber-l); color: var(--amber2); }
+.sc-trend {
+  font-size:11px; font-weight:600;
+  padding:3px 9px; border-radius:20px;
+}
+.sc-trend.ok   { background:var(--green-l); color:var(--green); }
+.sc-trend.warn { background:var(--red-l);   color:var(--red); }
+.sc-trend.info { background:var(--orange-l);color:var(--orange2); }
 
 .sc-num {
-  font-family: 'Lora', serif;
-  font-size: 34px; font-weight: 700; color: var(--navy3);
-  line-height: 1; display:block; margin-bottom: 4px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px; font-weight:700; color:var(--navy3);
+  line-height:1; display:block; margin-bottom:4px;
 }
-.sc-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.sc-label { font-size:12px; color:var(--muted); font-weight:500; }
 
-/* ── Grid layout ── */
+/* Grid layout */
 .dash-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 20px;
+  display:grid; grid-template-columns:1fr 370px; gap:20px;
 }
 
-/* ── Panel kartları ── */
+/* Panel kartları */
 .panel {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  animation: fadeUp 0.5s ease both;
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+  animation:fadeUp 0.5s ease both;
 }
 .panel-head {
-  padding: 18px 22px 0;
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
+  padding:18px 22px 0;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px;
 }
 .panel-head h3 {
-  font-family: 'Lora', serif;
-  font-size: 15px; font-weight: 700; color: var(--navy3);
-  display: flex; align-items: center; gap: 8px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px; font-weight:700; color:var(--navy3);
+  display:flex; align-items:center; gap:8px;
 }
 .panel-link {
-  font-size: 12px; color: var(--amber2); font-weight: 600;
-  text-decoration: none; transition: color 0.2s;
+  font-size:12px; color:var(--orange2); font-weight:600;
+  text-decoration:none; transition:color 0.2s;
 }
-.panel-link:hover { color: var(--amber); }
+.panel-link:hover { color:var(--orange); }
 
 /* Hayvan listesi */
-.pet-list { padding: 0 22px 20px; display: flex; flex-direction: column; gap: 10px; }
+.pet-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:10px; }
 .pet-row {
-  display: flex; align-items: center; gap: 13px;
-  padding: 13px 14px; border-radius: 11px;
-  background: var(--warm1); border: 1px solid var(--warm2);
-  cursor: pointer; transition: all 0.2s;
+  display:flex; align-items:center; gap:13px;
+  padding:13px 14px; border-radius:11px;
+  background:var(--warm1); border:1px solid var(--warm2);
+  cursor:pointer; transition:all 0.2s;
 }
-.pet-row:hover { background: var(--white); border-color: var(--navy2); box-shadow: 0 4px 14px rgba(28,52,84,0.1); }
+.pet-row:hover { background:var(--white); border-color:var(--navy2); box-shadow:0 4px 14px rgba(15,34,64,0.1); }
 .pet-av {
-  width: 46px; height: 46px; border-radius: 12px;
-  background: var(--navy3);
+  width:46px; height:46px; border-radius:12px;
+  background:var(--navy3);
   display:flex; align-items:center; justify-content:center;
-  font-size: 24px; flex-shrink:0;
+  font-size:24px; flex-shrink:0;
 }
-.pet-av img {
-  width: 100%; height: 100%; object-fit:cover; border-radius:12px;
-}
-.pet-name { font-size: 14px; font-weight: 700; color: var(--navy3); }
-.pet-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.pet-name { font-size:14px; font-weight:700; color:var(--navy3); }
+.pet-meta { font-size:11px; color:var(--muted); margin-top:2px; }
 .pet-chip {
-  margin-left: auto;
-  font-size: 10px; font-weight: 700; padding: 3px 9px;
-  border-radius: 20px;
+  margin-left:auto;
+  font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px;
 }
-.chip-kedi   { background: #f3e8ff; color: #7c3aed; }
-.chip-köpek  { background: #fef9c3; color: #a16207; }
-.chip-kuş   { background: #e0f2fe; color: #0369a1; }
-.chip-diger  { background: var(--warm1); color: var(--muted); }
+.chip-kedi   { background:#f3e8ff; color:#7c3aed; }
+.chip-köpek  { background:var(--orange-l); color:var(--orange2); }
+.chip-kuş    { background:var(--blue-l); color:var(--blue); }
+.chip-diger  { background:var(--warm1); color:var(--muted); }
 
 /* Aşı listesi */
-.vax-list { padding: 0 22px 20px; display:flex; flex-direction:column; gap: 8px; }
+.vax-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:8px; }
 .vax-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px; border-radius: 10px;
-  border-left: 3px solid;
-  background: var(--warm1);
+  display:flex; align-items:center; gap:12px;
+  padding:12px; border-radius:10px; border-left:3px solid;
+  background:var(--warm1);
 }
-.vax-row.urgent { border-color: var(--rose); background: #fff8f8; }
-.vax-row.soon   { border-color: var(--amber); background: #fffbf0; }
-.vax-row.ok     { border-color: var(--sage); background: #f0fdf6; }
-.vax-ico { font-size: 20px; }
-.vax-name { font-size: 13px; font-weight: 600; color: var(--navy3); }
-.vax-pet  { font-size: 11px; color: var(--muted); }
-.vax-date { margin-left:auto; font-size:11px; font-weight:700; white-space:nowrap; }
-.vax-row.urgent .vax-date { color: var(--rose); }
-.vax-row.soon   .vax-date { color: var(--amber2); }
-.vax-row.ok     .vax-date { color: var(--sage); }
+.vax-row.urgent { border-color:var(--red);    background:#fff8f8; }
+.vax-row.soon   { border-color:var(--orange); background:var(--orange-l); }
+.vax-row.ok     { border-color:var(--green);  background:#f0fdf6; }
+.vax-ico { font-size:19px; }
+.vax-name { font-size:13px; font-weight:600; color:var(--navy3); }
+.vax-pet  { font-size:11px; color:var(--muted); }
+.vax-date { margin-left:auto; font-size:11px; font-weight:700; white-space:nowrap; text-align:right; }
+.vax-row.urgent .vax-date { color:var(--red); }
+.vax-row.soon   .vax-date { color:var(--orange2); }
+.vax-row.ok     .vax-date { color:var(--green); }
 
 /* Randevu listesi */
-.apt-list { padding: 0 22px 20px; display:flex; flex-direction:column; gap: 10px; }
+.apt-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:10px; }
 .apt-row {
-  display:flex; align-items:center; gap: 12px;
-  padding: 14px; border-radius: 11px;
-  background: var(--warm1); border: 1px solid var(--warm2);
+  display:flex; align-items:center; gap:12px;
+  padding:14px; border-radius:11px;
+  background:var(--warm1); border:1px solid var(--warm2);
 }
 .apt-date-block {
-  width: 46px; flex-shrink:0;
-  background: var(--navy3); border-radius: 10px;
+  width:46px; flex-shrink:0;
+  background:var(--navy3); border-radius:10px;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding: 8px 4px;
+  padding:8px 4px;
 }
-.apt-day   { font-family:'Lora',serif; font-size:20px; font-weight:700; color:#fff; line-height:1; }
+.apt-day   { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:#fff; line-height:1; }
 .apt-month { font-size:9px; font-weight:600; text-transform:uppercase; color:rgba(255,255,255,0.5); letter-spacing:0.5px; }
 .apt-info  { flex:1; }
 .apt-clinic { font-size:13px; font-weight:700; color:var(--navy3); }
 .apt-pet    { font-size:11px; color:var(--muted); margin-top:2px; }
 .apt-time {
-  font-size:12px; font-weight:600; color:var(--amber2);
-  background:var(--amber-l); padding:3px 9px; border-radius:20px;
+  font-size:12px; font-weight:600; color:var(--orange2);
+  background:var(--orange-l); padding:3px 9px; border-radius:20px;
 }
 
 /* Hatırlatıcı listesi */
-.rem-list { padding: 0 22px 20px; display:flex; flex-direction:column; gap: 8px; }
+.rem-list { padding:0 22px 20px; display:flex; flex-direction:column; gap:8px; }
 .rem-row {
   display:flex; align-items:center; gap:12px;
   padding:11px 13px; border-radius:10px;
@@ -390,39 +371,36 @@ body {
 }
 .rem-row:hover { background:var(--white); }
 .rem-check {
-  width:20px; height:20px; border-radius:6px;
+  width:22px; height:22px; border-radius:6px;
   border:2px solid var(--border); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  transition:all 0.18s; cursor:pointer;
+  transition:all 0.18s; cursor:pointer; font-size:13px;
 }
-.rem-check:hover { border-color:var(--sage); background:var(--sage-l); }
+.rem-check:hover { border-color:var(--green); background:var(--green-l); }
 .rem-title { font-size:13px; font-weight:600; color:var(--navy3); }
 .rem-pet   { font-size:11px; color:var(--muted); }
 .rem-due   { margin-left:auto; font-size:10px; font-weight:700; white-space:nowrap; }
-.rem-overdue { color:var(--rose); }
-.rem-today   { color:var(--amber2); }
+.rem-overdue { color:var(--red); }
+.rem-today   { color:var(--orange2); }
 .rem-future  { color:var(--muted); }
 
 /* Boş durum */
-.empty-state {
-  text-align:center; padding:36px 24px;
-  color: var(--muted);
-}
+.empty-state { text-align:center; padding:32px 20px; color:var(--muted); }
 .empty-state .es-ico { font-size:36px; display:block; margin-bottom:10px; }
-.empty-state p { font-size:13px; }
+.empty-state p { font-size:13px; line-height:1.6; }
 
-/* Hızlı ekleme butonu */
+/* Hızlı ekle */
 .quick-add {
-  margin: 0 22px 20px;
-  padding: 12px; border-radius: 10px;
-  border: 1.5px dashed var(--border);
-  background: transparent; width: calc(100% - 44px);
-  font-size: 13px; font-weight: 600; color: var(--muted);
-  cursor: pointer; transition: all 0.2s;
-  display: flex; align-items:center; justify-content:center; gap: 8px;
-  font-family: 'DM Sans', sans-serif;
+  margin:0 22px 20px;
+  padding:12px; border-radius:10px;
+  border:1.5px dashed var(--border);
+  background:transparent; width:calc(100% - 44px);
+  font-size:13px; font-weight:600; color:var(--muted);
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
 }
-.quick-add:hover { border-color: var(--amber); color: var(--amber2); background: var(--amber-l); }
+.quick-add:hover { border-color:var(--orange); color:var(--orange2); background:var(--orange-l); }
 
 /* Loading */
 .loading-row {
@@ -431,24 +409,24 @@ body {
 }
 .spinner {
   width:20px; height:20px; border-radius:50%;
-  border:2px solid var(--warm2); border-top-color:var(--amber);
-  animation: spin 0.7s linear infinite;
+  border:2px solid var(--warm2); border-top-color:var(--orange);
+  animation:spin 0.7s linear infinite;
 }
 
-/* Modal */
+/* ── MODAL ── */
 .modal-overlay {
   position:fixed; inset:0;
-  background:rgba(10,20,40,0.7);
-  backdrop-filter:blur(6px);
+  background:rgba(10,20,40,0.75);
+  backdrop-filter:blur(7px);
   z-index:999; display:flex; align-items:center; justify-content:center;
   padding:20px; opacity:0; pointer-events:none; transition:opacity 0.25s;
 }
 .modal-overlay.open { opacity:1; pointer-events:all; }
 
 .modal-box {
-  background:#fff; border-radius:18px;
+  background:#fff; border-radius:20px;
   width:500px; max-width:100%;
-  box-shadow:0 40px 80px rgba(0,0,0,0.35);
+  box-shadow:0 40px 80px rgba(0,0,0,0.3);
   transform:scale(0.92) translateY(16px);
   transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;
   opacity:0; max-height:90vh; overflow-y:auto;
@@ -460,14 +438,15 @@ body {
   border-bottom:1px solid var(--warm2);
   display:flex; align-items:center; justify-content:space-between;
 }
-.modal-head h3 { font-family:'Lora',serif; font-size:18px; font-weight:700; color:var(--navy3); }
+.modal-head h3 { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; color:var(--navy3); }
 .modal-close {
   width:30px; height:30px; border-radius:8px;
   background:var(--warm1); border:1px solid var(--border);
-  cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
   transition:all 0.2s;
 }
-.modal-close:hover { background:var(--rose-l); border-color:var(--rose); }
+.modal-close:hover { background:var(--red-l); border-color:var(--red); }
 
 .modal-body { padding:22px 24px 24px; }
 .m-field { margin-bottom:16px; }
@@ -479,17 +458,16 @@ body {
 .m-field input, .m-field select, .m-field textarea {
   width:100%; padding:10px 13px;
   border:1.5px solid var(--border); border-radius:9px;
-  font-size:14px; font-family:'DM Sans',sans-serif;
+  font-size:14px; font-family:'Plus Jakarta Sans',sans-serif;
   color:var(--text); background:var(--warm1);
   outline:none; transition:all 0.2s;
 }
 .m-field input:focus, .m-field select:focus, .m-field textarea:focus {
-  border-color:var(--navy2); background:#fff;
-  box-shadow:0 0 0 3px rgba(38,74,120,0.08);
+  border-color:var(--orange); background:#fff;
+  box-shadow:0 0 0 3px rgba(224,123,46,0.1);
 }
 .m-field textarea { min-height:80px; resize:vertical; line-height:1.6; }
-.m-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.m-row3 { grid-template-columns:1fr 1fr 1fr; }
+.m-row  { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
 .modal-foot {
   padding:18px 24px;
@@ -500,55 +478,50 @@ body {
   padding:10px 20px; border-radius:9px;
   background:transparent; color:var(--muted);
   border:1.5px solid var(--border);
-  font-size:13px; font-weight:600; font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;
   cursor:pointer; transition:all 0.18s;
 }
 .m-btn-cancel:hover { border-color:var(--navy); color:var(--navy); }
 .m-btn-save {
   padding:10px 24px; border-radius:9px;
-  background:var(--amber); color:#fff; border:none;
-  font-size:13px; font-weight:700; font-family:'DM Sans',sans-serif;
+  background:var(--orange); color:#fff; border:none;
+  font-size:13px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif;
   cursor:pointer; transition:all 0.18s;
-  box-shadow:0 3px 12px rgba(217,119,6,0.35);
+  box-shadow:0 3px 12px rgba(224,123,46,0.35);
 }
-.m-btn-save:hover { background:var(--amber2); }
+.m-btn-save:hover { background:var(--orange2); }
 
 /* Toast */
 .toast {
   position:fixed; bottom:28px; right:28px; z-index:9999;
   background:var(--navy3); color:#fff;
-  padding:12px 20px; border-radius:11px;
+  padding:12px 20px; border-radius:12px;
   font-size:13px; font-weight:600;
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  box-shadow:0 8px 28px rgba(0,0,0,0.3);
   display:flex; align-items:center; gap:10px;
   transform:translateY(80px); opacity:0;
   transition:all 0.3s cubic-bezier(.34,1.5,.64,1);
 }
 .toast.show { transform:none; opacity:1; }
-.toast.success { border-left:4px solid var(--sage); }
-.toast.error   { border-left:4px solid var(--rose); }
+.toast.success { border-left:4px solid var(--green); }
+.toast.error   { border-left:4px solid var(--red); }
 
 /* Animasyonlar */
-@keyframes fadeUp {
-  from{opacity:0;transform:translateY(16px);}
-  to{opacity:1;transform:none;}
-}
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;} }
 @keyframes spin { to{transform:rotate(360deg);} }
 
-/* ══════════════════════════
-   RESPONSİF
-══════════════════════════ */
+/* ── RESPONSİF ── */
 @media(max-width:1100px) {
   .stat-row { grid-template-columns:repeat(2,1fr); }
   .dash-grid { grid-template-columns:1fr; }
 }
 @media(max-width:768px) {
-  :root { --sidebar: 0px; }
-  .sidebar { transform:translateX(-260px); width:260px; }
+  :root { --sidebar:0px; }
+  .sidebar { transform:translateX(-262px); width:262px; }
   .sidebar.open { transform:none; }
   .main { margin-left:0; }
   .topbar { padding:0 18px; }
-  .content { padding:18px; }
+  .content { padding:18px 16px; }
   .stat-row { grid-template-columns:1fr 1fr; }
   .hamburger { display:flex; }
 }
@@ -616,7 +589,7 @@ body {
     <div class="sb-av" id="sbAv">?</div>
     <div>
       <div class="sb-uname" id="sbName">Yükleniyor...</div>
-      <div class="sb-role" id="sbRole">—</div>
+      <div class="sb-role"  id="sbRole">—</div>
     </div>
     <button class="sb-logout" onclick="logout()" title="Çıkış yap">↩</button>
   </div>
@@ -646,7 +619,7 @@ body {
   <!-- CONTENT -->
   <div class="content" id="mainContent">
 
-    <!-- AUTH WALL — giriş yapılmadıysa -->
+    <!-- AUTH WALL -->
     <div class="auth-wall" id="authWall" style="display:none">
       <div class="aw-ico">🔒</div>
       <h2>Giriş Yapmanız Gerekiyor</h2>
@@ -668,15 +641,15 @@ body {
       <div class="stat-row">
         <div class="stat-card" style="animation-delay:0.05s">
           <div class="sc-top">
-            <div class="sc-ico ic-amber">🐾</div>
-            <span class="sc-trend ok" id="petTrend">—</span>
+            <div class="sc-ico ic-orange">🐾</div>
+            <span class="sc-trend info" id="petTrend">—</span>
           </div>
           <span class="sc-num" id="statPets">—</span>
           <span class="sc-label">Kayıtlı Hayvan</span>
         </div>
         <div class="stat-card" style="animation-delay:0.1s">
           <div class="sc-top">
-            <div class="sc-ico ic-rose">💉</div>
+            <div class="sc-ico ic-red">💉</div>
             <span class="sc-trend warn" id="vaxTrend">—</span>
           </div>
           <span class="sc-num" id="statVax">—</span>
@@ -684,7 +657,7 @@ body {
         </div>
         <div class="stat-card" style="animation-delay:0.15s">
           <div class="sc-top">
-            <div class="sc-ico ic-sky">📅</div>
+            <div class="sc-ico ic-blue">📅</div>
             <span class="sc-trend ok" id="aptTrend">—</span>
           </div>
           <span class="sc-num" id="statApt">—</span>
@@ -692,7 +665,7 @@ body {
         </div>
         <div class="stat-card" style="animation-delay:0.2s">
           <div class="sc-top">
-            <div class="sc-ico ic-sage">🔔</div>
+            <div class="sc-ico ic-green">🔔</div>
             <span class="sc-trend ok" id="remTrend">—</span>
           </div>
           <span class="sc-num" id="statRem">—</span>
@@ -770,7 +743,7 @@ body {
      MODALLER
 ══════════════════════════════════ -->
 
-<!-- Hayvan Ekle Modalı -->
+<!-- Hayvan Ekle -->
 <div class="modal-overlay" id="petModal" onclick="closeModalClick(event,'petModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -780,11 +753,11 @@ body {
     <div class="modal-body">
       <div class="m-row">
         <div class="m-field">
-          <label>Adı <span style="color:var(--rose)">*</span></label>
+          <label>Adı <span style="color:var(--red)">*</span></label>
           <input type="text" id="p-name" placeholder="Örn: Pamuk">
         </div>
         <div class="m-field">
-          <label>Tür <span style="color:var(--rose)">*</span></label>
+          <label>Tür <span style="color:var(--red)">*</span></label>
           <select id="p-species">
             <option value="">Seçin</option>
             <option value="kedi">🐱 Kedi</option>
@@ -837,7 +810,7 @@ body {
   </div>
 </div>
 
-<!-- Aşı Ekle Modalı -->
+<!-- Aşı Ekle -->
 <div class="modal-overlay" id="vaxModal" onclick="closeModalClick(event,'vaxModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -846,16 +819,16 @@ body {
     </div>
     <div class="modal-body">
       <div class="m-field">
-        <label>Hayvan <span style="color:var(--rose)">*</span></label>
+        <label>Hayvan <span style="color:var(--red)">*</span></label>
         <select id="v-petId"></select>
       </div>
       <div class="m-field">
-        <label>Aşı Adı <span style="color:var(--rose)">*</span></label>
+        <label>Aşı Adı <span style="color:var(--red)">*</span></label>
         <input type="text" id="v-name" placeholder="Örn: Kuduz, Karma Aşı">
       </div>
       <div class="m-row">
         <div class="m-field">
-          <label>Aşı Tarihi <span style="color:var(--rose)">*</span></label>
+          <label>Aşı Tarihi <span style="color:var(--red)">*</span></label>
           <input type="date" id="v-date">
         </div>
         <div class="m-field">
@@ -879,7 +852,7 @@ body {
   </div>
 </div>
 
-<!-- Randevu Ekle Modalı -->
+<!-- Randevu Ekle -->
 <div class="modal-overlay" id="aptModal" onclick="closeModalClick(event,'aptModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -888,12 +861,12 @@ body {
     </div>
     <div class="modal-body">
       <div class="m-field">
-        <label>Hayvan <span style="color:var(--rose)">*</span></label>
+        <label>Hayvan <span style="color:var(--red)">*</span></label>
         <select id="a-petId"></select>
       </div>
       <div class="m-row">
         <div class="m-field">
-          <label>Tarih <span style="color:var(--rose)">*</span></label>
+          <label>Tarih <span style="color:var(--red)">*</span></label>
           <input type="date" id="a-date">
         </div>
         <div class="m-field">
@@ -925,7 +898,7 @@ body {
   </div>
 </div>
 
-<!-- Hatırlatıcı Ekle Modalı -->
+<!-- Hatırlatıcı Ekle -->
 <div class="modal-overlay" id="remModal" onclick="closeModalClick(event,'remModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -935,7 +908,7 @@ body {
     <div class="modal-body">
       <div class="m-row">
         <div class="m-field">
-          <label>Hayvan <span style="color:var(--rose)">*</span></label>
+          <label>Hayvan <span style="color:var(--red)">*</span></label>
           <select id="r-petId"></select>
         </div>
         <div class="m-field">
@@ -952,12 +925,12 @@ body {
         </div>
       </div>
       <div class="m-field">
-        <label>Başlık <span style="color:var(--rose)">*</span></label>
+        <label>Başlık <span style="color:var(--red)">*</span></label>
         <input type="text" id="r-title" placeholder="Örn: Sabah ilacı ver">
       </div>
       <div class="m-row">
         <div class="m-field">
-          <label>Tarih <span style="color:var(--rose)">*</span></label>
+          <label>Tarih <span style="color:var(--red)">*</span></label>
           <input type="date" id="r-date">
         </div>
         <div class="m-field">
@@ -981,18 +954,13 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══════════════════════════
-   AUTH HELPERS
-══════════════════════════ */
-function getToken()    { return localStorage.getItem('pm_token'); }
-function getUser()     { return localStorage.getItem('pm_user'); }
-function getRole()     { return localStorage.getItem('pm_role'); }
+/* ── Auth ── */
+function getToken() { return localStorage.getItem('pm_token'); }
+function getUser()  { return localStorage.getItem('pm_user'); }
+function getRole()  { return localStorage.getItem('pm_role'); }
 
 function authHeaders() {
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + getToken()
-  };
+  return { 'Content-Type':'application/json', 'Authorization':'Bearer '+getToken() };
 }
 
 function logout() {
@@ -1002,163 +970,103 @@ function logout() {
   window.location.href = 'giris.html';
 }
 
-/* ══════════════════════════
-   TOAST
-══════════════════════════ */
+/* ── Toast ── */
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   const icons = { success:'✅', error:'❌', info:'ℹ️' };
   t.className = `toast ${type}`;
   t.innerHTML = `<span>${icons[type]||'ℹ️'}</span> ${msg}`;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3200);
+  setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-/* ══════════════════════════
-   MODAL HELPERS
-══════════════════════════ */
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  document.body.style.overflow='';
-}
-function closeModalClick(e, id) {
-  if(e.target === document.getElementById(id)) closeModal(id);
-}
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape')
-    document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+/* ── Modal ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+function closeModalClick(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
 });
 
-/* ══════════════════════════
-   YARDIMCI FONKSİYONLAR
-══════════════════════════ */
+/* ── Yardımcılar ── */
 const speciesEmoji = s => {
-  const m = { kedi:'🐱', köpek:'🐶', kuş:'🐦', tavşan:'🐰', balık:'🐟' };
-  return m[(s||'').toLowerCase()] || '🐾';
+  const m={kedi:'🐱',köpek:'🐶','k\u00f6pek':'🐶',ku\u015f:'🐦',tav\u015fan:'🐰',bal\u0131k:'🐟'};
+  return m[(s||'').toLowerCase()]||'🐾';
 };
 const speciesChipClass = s => {
-  const m = { kedi:'chip-kedi', köpek:'chip-köpek', kuş:'chip-kuş' };
-  return m[(s||'').toLowerCase()] || 'chip-diger';
+  const m={kedi:'chip-kedi','köpek':'chip-köpek','k\u00f6pek':'chip-köpek','ku\u015f':'chip-ku\u015f'};
+  return m[(s||'').toLowerCase()]||'chip-diger';
 };
-const daysBetween = (dateStr) => {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(dateStr); d.setHours(0,0,0,0);
-  return Math.round((d - today) / (1000*60*60*24));
+const daysBetween = d => {
+  const today=new Date(); today.setHours(0,0,0,0);
+  const dt=new Date(d); dt.setHours(0,0,0,0);
+  return Math.round((dt-today)/(1000*60*60*24));
 };
-const formatDate = (dateStr) => {
-  if(!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short' });
-};
-const formatDateFull = (dateStr) => {
-  if(!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
+const formatDate = d => {
+  if(!d) return '—';
+  return new Date(d).toLocaleDateString('tr-TR',{day:'2-digit',month:'short'});
 };
 
-/* ══════════════════════════
-   GREET
-══════════════════════════ */
+/* ── Greeting ── */
 function setGreeting(name) {
-  const h = new Date().getHours();
-  const g = h < 12 ? 'Günaydın' : h < 18 ? 'İyi günler' : 'İyi akşamlar';
-  document.getElementById('greetTitle').textContent = `${g}, ${name}! 👋`;
-  document.getElementById('greetSub').textContent =
-    'İşte bugün için özet bilgiler.';
+  const h=new Date().getHours();
+  const g=h<12?'Günaydın':h<18?'İyi günler':'İyi akşamlar';
+  document.getElementById('greetTitle').textContent=`${g}, ${name}! 👋`;
+  document.getElementById('greetSub').textContent='İşte bugün için özet bilgiler.';
 }
 
-/* ══════════════════════════
-   RENDER FONKSİYONLARI
-══════════════════════════ */
-let allPets = [];
+/* ── Render ── */
+let allPets=[];
 
 function renderPetTabs(pets) {
-  const tabs = document.getElementById('petTabs');
-  const existing = [...tabs.querySelectorAll('[data-pet]:not([data-pet="all"])')];
-  existing.forEach(e=>e.remove());
-  pets.forEach(p => {
-    const tab = document.createElement('div');
-    tab.className = 'pet-tab';
-    tab.dataset.pet = p.Id;
-    tab.innerHTML = `<span class="pet-tab-em">${speciesEmoji(p.Species)}</span> ${p.Name}`;
-    tab.onclick = () => {
-      document.querySelectorAll('.pet-tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-    };
+  const tabs=document.getElementById('petTabs');
+  [...tabs.querySelectorAll('[data-pet]:not([data-pet="all"])')].forEach(e=>e.remove());
+  pets.forEach(p=>{
+    const tab=document.createElement('div');
+    tab.className='pet-tab'; tab.dataset.pet=p.Id;
+    tab.innerHTML=`<span class="pet-tab-em">${speciesEmoji(p.Species)}</span> ${p.Name}`;
+    tab.onclick=()=>{ document.querySelectorAll('.pet-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); };
     tabs.appendChild(tab);
   });
-  document.querySelector('[data-pet="all"]').onclick = () => {
+  document.querySelector('[data-pet="all"]').onclick=()=>{
     document.querySelectorAll('.pet-tab').forEach(t=>t.classList.remove('active'));
     document.querySelector('[data-pet="all"]').classList.add('active');
   };
 }
 
 function renderPets(pets) {
-  const el = document.getElementById('petList');
-  if(!pets.length) {
-    el.innerHTML = `<div class="empty-state">
-      <span class="es-ico">🐾</span>
-      <p>Henüz kayıtlı hayvan yok. İlk hayvanınızı ekleyin!</p>
-    </div>`;
-    return;
-  }
-  el.innerHTML = pets.map(p => {
-    const age = p.BirthDate
-      ? Math.floor((Date.now()-new Date(p.BirthDate))/(1000*60*60*24*365))+' yaş'
-      : '—';
+  const el=document.getElementById('petList');
+  if(!pets.length){ el.innerHTML=`<div class="empty-state"><span class="es-ico">🐾</span><p>Henüz kayıtlı hayvan yok. İlk hayvanınızı ekleyin!</p></div>`; return; }
+  el.innerHTML=pets.map(p=>{
+    const age=p.BirthDate?Math.floor((Date.now()-new Date(p.BirthDate))/(1000*60*60*24*365))+' yaş':'—';
     return `<div class="pet-row" onclick="window.location='hayvanlarim.html?id=${p.Id}'">
       <div class="pet-av">${speciesEmoji(p.Species)}</div>
-      <div>
-        <div class="pet-name">${p.Name}</div>
-        <div class="pet-meta">${p.Breed||p.Species} · ${age} · ${p.Weight?p.Weight+' kg':'—'}</div>
-      </div>
+      <div><div class="pet-name">${p.Name}</div><div class="pet-meta">${p.Breed||p.Species} · ${age} · ${p.Weight?p.Weight+' kg':'—'}</div></div>
       <span class="pet-chip ${speciesChipClass(p.Species)}">${p.Species}</span>
     </div>`;
   }).join('');
 }
 
-function renderVax(vaxList) {
-  const el = document.getElementById('vaxList');
-  if(!vaxList.length) {
-    el.innerHTML = `<div class="empty-state">
-      <span class="es-ico">✅</span>
-      <p>Yaklaşan aşı yok — harika!</p>
-    </div>`;
-    return;
-  }
-  el.innerHTML = vaxList.map(v => {
-    const days = daysBetween(v.NextDate);
-    const cls = days < 0 ? 'urgent' : days <= 7 ? 'urgent' : days <= 14 ? 'soon' : 'ok';
-    const dateLabel = days < 0
-      ? `${Math.abs(days)} gün gecikti`
-      : days === 0 ? 'Bugün!'
-      : `${days} gün sonra`;
+function renderVax(list) {
+  const el=document.getElementById('vaxList');
+  if(!list.length){ el.innerHTML=`<div class="empty-state"><span class="es-ico">✅</span><p>Yaklaşan aşı yok — harika!</p></div>`; return; }
+  el.innerHTML=list.map(v=>{
+    const days=daysBetween(v.NextDate);
+    const cls=days<0?'urgent':days<=7?'urgent':days<=14?'soon':'ok';
+    const lbl=days<0?`${Math.abs(days)} gün gecikti`:days===0?'Bugün!':days+' gün sonra';
     return `<div class="vax-row ${cls}">
       <span class="vax-ico">💉</span>
-      <div>
-        <div class="vax-name">${v.VaccineName}</div>
-        <div class="vax-pet">${v.PetName}</div>
-      </div>
-      <div class="vax-date">${dateLabel}<br><small>${formatDate(v.NextDate)}</small></div>
+      <div><div class="vax-name">${v.VaccineName}</div><div class="vax-pet">${v.PetName}</div></div>
+      <div class="vax-date">${lbl}<br><small>${formatDate(v.NextDate)}</small></div>
     </div>`;
   }).join('');
 }
 
 function renderApt(apts) {
-  const el = document.getElementById('aptList');
-  if(!apts.length) {
-    el.innerHTML = `<div class="empty-state">
-      <span class="es-ico">📅</span>
-      <p>Yaklaşan randevu yok.</p>
-    </div>`;
-    return;
-  }
-  el.innerHTML = apts.slice(0,4).map(a => {
-    const d = new Date(a.AppointmentDate);
+  const el=document.getElementById('aptList');
+  if(!apts.length){ el.innerHTML=`<div class="empty-state"><span class="es-ico">📅</span><p>Yaklaşan randevu yok.</p></div>`; return; }
+  el.innerHTML=apts.slice(0,4).map(a=>{
+    const d=new Date(a.AppointmentDate);
     return `<div class="apt-row">
       <div class="apt-date-block">
         <div class="apt-day">${d.getDate()}</div>
@@ -1174,52 +1082,34 @@ function renderApt(apts) {
 }
 
 function renderRem(rems) {
-  const el = document.getElementById('remList');
-  if(!rems.length) {
-    el.innerHTML = `<div class="empty-state">
-      <span class="es-ico">🔔</span>
-      <p>Aktif hatırlatıcı yok.</p>
-    </div>`;
-    return;
-  }
-  const typeIcons = { ilaç:'💊', aşı:'💉', bakım:'✂️', mama:'🍖', su:'💧', yürüyüş:'🦮' };
-  el.innerHTML = rems.map(r => {
-    const days = daysBetween(r.DueDate);
-    const cls = days < 0 ? 'rem-overdue' : days === 0 ? 'rem-today' : 'rem-future';
-    const dateLabel = days < 0 ? `${Math.abs(days)}g gecikti` : days===0 ? 'Bugün' : `${days}g sonra`;
-    const ico = typeIcons[r.ReminderType] || '📌';
+  const el=document.getElementById('remList');
+  if(!rems.length){ el.innerHTML=`<div class="empty-state"><span class="es-ico">🔔</span><p>Aktif hatırlatıcı yok.</p></div>`; return; }
+  const icons={ilaç:'💊',aşı:'💉',bakım:'✂️',mama:'🍖',su:'💧',yürüyüş:'🦮'};
+  el.innerHTML=rems.map(r=>{
+    const days=daysBetween(r.DueDate);
+    const cls=days<0?'rem-overdue':days===0?'rem-today':'rem-future';
+    const lbl=days<0?`${Math.abs(days)}g gecikti`:days===0?'Bugün':days+'g sonra';
     return `<div class="rem-row">
-      <div class="rem-check" onclick="completeRem(${r.Id},this)" title="Tamamlandı olarak işaretle">
-        ${ico}
-      </div>
-      <div>
-        <div class="rem-title">${r.Title}</div>
-        <div class="rem-pet">${r.PetName}</div>
-      </div>
-      <div class="rem-due ${cls}">${dateLabel}</div>
+      <div class="rem-check" onclick="completeRem(${r.Id},this)">${icons[r.ReminderType]||'📌'}</div>
+      <div><div class="rem-title">${r.Title}</div><div class="rem-pet">${r.PetName}</div></div>
+      <div class="rem-due ${cls}">${lbl}</div>
     </div>`;
   }).join('');
 }
 
 function fillPetSelects(pets) {
-  const ids = ['v-petId','a-petId','r-petId'];
-  const opts = pets.map(p=>`<option value="${p.Id}">${speciesEmoji(p.Species)} ${p.Name}</option>`).join('');
-  ids.forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.innerHTML = `<option value="">Hayvan seçin</option>${opts}`;
-  });
+  const opts='<option value="">Hayvan seçin</option>'+pets.map(p=>`<option value="${p.Id}">${speciesEmoji(p.Species)} ${p.Name}</option>`).join('');
+  ['v-petId','a-petId','r-petId'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
 }
 
-/* ══════════════════════════
-   API ÇAĞRILARI
-══════════════════════════ */
+/* ── Dashboard yükle ── */
 async function loadDashboard() {
   try {
-    const r = await fetch('/api/dashboard', { headers: authHeaders() });
-    if(r.status===401||r.status===403) { logout(); return; }
-    const data = await r.json();
+    const r=await fetch('/api/dashboard',{headers:authHeaders()});
+    if(r.status===401||r.status===403){ logout(); return; }
+    const data=await r.json();
 
-    allPets = data.pets || [];
+    allPets=data.pets||[];
     renderPetTabs(allPets);
     renderPets(allPets);
     renderVax(data.upcomingVax||[]);
@@ -1227,160 +1117,88 @@ async function loadDashboard() {
     renderRem(data.activeReminders||[]);
     fillPetSelects(allPets);
 
-    // İstatistikler
-    document.getElementById('statPets').textContent = allPets.length;
-    document.getElementById('statVax').textContent  = (data.upcomingVax||[]).length;
-    document.getElementById('statApt').textContent  = (data.upcomingApt||[]).length;
-    document.getElementById('statRem').textContent  = (data.activeReminders||[]).length;
-    document.getElementById('petTrend').textContent = allPets.length + ' kayıt';
-    document.getElementById('vaxTrend').textContent = (data.upcomingVax||[]).length ? '⚠️ Dikkat' : '✓ İyi';
-    document.getElementById('aptTrend').textContent = (data.upcomingApt||[]).length ? 'Var' : 'Yok';
-    document.getElementById('remTrend').textContent = (data.activeReminders||[]).length ? 'Bekliyor' : 'Temiz';
+    document.getElementById('statPets').textContent=allPets.length;
+    document.getElementById('statVax').textContent=(data.upcomingVax||[]).length;
+    document.getElementById('statApt').textContent=(data.upcomingApt||[]).length;
+    document.getElementById('statRem').textContent=(data.activeReminders||[]).length;
+    document.getElementById('petTrend').textContent=allPets.length+' kayıt';
+    document.getElementById('vaxTrend').textContent=(data.upcomingVax||[]).length?'⚠️ Dikkat':'✓ İyi';
+    document.getElementById('aptTrend').textContent=(data.upcomingApt||[]).length?'Var':'Yok';
+    document.getElementById('remTrend').textContent=(data.activeReminders||[]).length?'Bekliyor':'Temiz';
 
-    // Badge'ler
-    const vaxCount = (data.upcomingVax||[]).filter(v=>daysBetween(v.NextDate)<=7).length;
-    const remCount = (data.activeReminders||[]).filter(r=>daysBetween(r.DueDate)<=0).length;
-    if(vaxCount) {
-      const b = document.getElementById('vaxBadge');
-      b.textContent=vaxCount; b.style.display='inline';
-    }
-    if(remCount) {
-      const b = document.getElementById('remBadge');
-      b.textContent=remCount; b.style.display='inline';
-      document.getElementById('notifDot').style.display='block';
-    }
+    const vaxUrgent=(data.upcomingVax||[]).filter(v=>daysBetween(v.NextDate)<=7).length;
+    const remLate  =(data.activeReminders||[]).filter(r=>daysBetween(r.DueDate)<=0).length;
+    if(vaxUrgent){ const b=document.getElementById('vaxBadge'); b.textContent=vaxUrgent; b.style.display='inline'; }
+    if(remLate)  { const b=document.getElementById('remBadge'); b.textContent=remLate; b.style.display='inline'; document.getElementById('notifDot').style.display='block'; }
 
   } catch(err) {
-    console.error('Dashboard yükleme hatası:', err);
-    showToast('Veriler yüklenemedi. Sunucu bağlantısını kontrol edin.', 'error');
-    // Fallback: demo modu
-    renderPets([]);
-    renderVax([]);
-    renderApt([]);
-    renderRem([]);
-    ['statPets','statVax','statApt','statRem'].forEach(id=>
-      document.getElementById(id).textContent='—');
+    console.error('Dashboard hatası:',err);
+    showToast('Veriler yüklenemedi. Sunucu bağlantısını kontrol edin.','error');
+    renderPets([]); renderVax([]); renderApt([]); renderRem([]);
+    ['statPets','statVax','statApt','statRem'].forEach(id=>document.getElementById(id).textContent='—');
   }
 }
 
-/* ══════════════════════════
-   KAYIT FONKSİYONLARI
-══════════════════════════ */
+/* ── Kayıt fonksiyonları ── */
 async function savePet() {
-  const name    = document.getElementById('p-name').value.trim();
-  const species = document.getElementById('p-species').value;
-  if(!name||!species) { showToast('Ad ve tür zorunludur.','error'); return; }
-
-  const payload = {
-    name, species,
-    breed:     document.getElementById('p-breed').value.trim()||null,
-    gender:    document.getElementById('p-gender').value||null,
-    birthDate: document.getElementById('p-birth').value||null,
-    weight:    document.getElementById('p-weight').value||null,
-    color:     document.getElementById('p-color').value.trim()||null,
-    notes:     document.getElementById('p-notes').value.trim()||null,
-  };
-
+  const name=document.getElementById('p-name').value.trim();
+  const species=document.getElementById('p-species').value;
+  if(!name||!species){ showToast('Ad ve tür zorunludur.','error'); return; }
+  const payload={name,species,breed:document.getElementById('p-breed').value.trim()||null,gender:document.getElementById('p-gender').value||null,birthDate:document.getElementById('p-birth').value||null,weight:document.getElementById('p-weight').value||null,color:document.getElementById('p-color').value.trim()||null,notes:document.getElementById('p-notes').value.trim()||null};
   try {
-    const r = await fetch('/api/pets', {
-      method:'POST', headers:authHeaders(), body:JSON.stringify(payload)
-    });
-    if(!r.ok) { const e=await r.json(); showToast(e.error||'Hata','error'); return; }
-    showToast('Hayvan başarıyla eklendi!','success');
-    closeModal('petModal');
-    loadDashboard();
+    const r=await fetch('/api/pets',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Hayvan başarıyla eklendi!','success'); closeModal('petModal'); loadDashboard();
   } catch { showToast('Bağlantı hatası','error'); }
 }
 
 async function saveVax() {
-  const petId = document.getElementById('v-petId').value;
-  const name  = document.getElementById('v-name').value.trim();
-  const date  = document.getElementById('v-date').value;
-  if(!petId||!name||!date) { showToast('Hayvan, aşı adı ve tarih zorunludur.','error'); return; }
-
-  const payload = {
-    vaccineName: name,
-    vaccineDate: date,
-    nextDate:    document.getElementById('v-next').value||null,
-    vetName:     document.getElementById('v-vet').value.trim()||null,
-    notes:       document.getElementById('v-notes').value.trim()||null,
-  };
-
+  const petId=document.getElementById('v-petId').value;
+  const name=document.getElementById('v-name').value.trim();
+  const date=document.getElementById('v-date').value;
+  if(!petId||!name||!date){showToast('Hayvan, aşı adı ve tarih zorunludur.','error');return;}
+  const payload={vaccineName:name,vaccineDate:date,nextDate:document.getElementById('v-next').value||null,vetName:document.getElementById('v-vet').value.trim()||null,notes:document.getElementById('v-notes').value.trim()||null};
   try {
-    const r = await fetch(`/api/pets/${petId}/vaccinations`, {
-      method:'POST', headers:authHeaders(), body:JSON.stringify(payload)
-    });
-    if(!r.ok) { const e=await r.json(); showToast(e.error||'Hata','error'); return; }
-    showToast('Aşı kaydı eklendi!','success');
-    closeModal('vaxModal');
-    loadDashboard();
+    const r=await fetch(`/api/pets/${petId}/vaccinations`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Aşı kaydı eklendi!','success'); closeModal('vaxModal'); loadDashboard();
   } catch { showToast('Bağlantı hatası','error'); }
 }
 
 async function saveApt() {
-  const petId = document.getElementById('a-petId').value;
-  const date  = document.getElementById('a-date').value;
-  if(!petId||!date) { showToast('Hayvan ve tarih zorunludur.','error'); return; }
-
-  const payload = {
-    petId,
-    appointmentDate: date,
-    appointmentTime: document.getElementById('a-time').value||null,
-    clinicName:      document.getElementById('a-clinic').value.trim()||null,
-    vetName:         document.getElementById('a-vet').value.trim()||null,
-    reason:          document.getElementById('a-reason').value.trim()||null,
-    notes:           document.getElementById('a-notes').value.trim()||null,
-  };
-
+  const petId=document.getElementById('a-petId').value;
+  const date=document.getElementById('a-date').value;
+  if(!petId||!date){showToast('Hayvan ve tarih zorunludur.','error');return;}
+  const payload={petId,appointmentDate:date,appointmentTime:document.getElementById('a-time').value||null,clinicName:document.getElementById('a-clinic').value.trim()||null,vetName:document.getElementById('a-vet').value.trim()||null,reason:document.getElementById('a-reason').value.trim()||null,notes:document.getElementById('a-notes').value.trim()||null};
   try {
-    const r = await fetch('/api/appointments', {
-      method:'POST', headers:authHeaders(), body:JSON.stringify(payload)
-    });
-    if(!r.ok) { const e=await r.json(); showToast(e.error||'Hata','error'); return; }
-    showToast('Randevu eklendi!','success');
-    closeModal('aptModal');
-    loadDashboard();
+    const r=await fetch('/api/appointments',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Randevu eklendi!','success'); closeModal('aptModal'); loadDashboard();
   } catch { showToast('Bağlantı hatası','error'); }
 }
 
 async function saveRem() {
-  const petId = document.getElementById('r-petId').value;
-  const title = document.getElementById('r-title').value.trim();
-  const date  = document.getElementById('r-date').value;
-  if(!petId||!title||!date) { showToast('Hayvan, başlık ve tarih zorunludur.','error'); return; }
-
-  const interval = parseInt(document.getElementById('r-interval').value)||null;
-  const payload = {
-    petId,
-    reminderType:       document.getElementById('r-type').value,
-    title,
-    dueDate:            date,
-    description:        document.getElementById('r-desc').value.trim()||null,
-    isRecurring:        !!interval,
-    recurrenceInterval: interval,
-  };
-
+  const petId=document.getElementById('r-petId').value;
+  const title=document.getElementById('r-title').value.trim();
+  const date=document.getElementById('r-date').value;
+  if(!petId||!title||!date){showToast('Hayvan, başlık ve tarih zorunludur.','error');return;}
+  const interval=parseInt(document.getElementById('r-interval').value)||null;
+  const payload={petId,reminderType:document.getElementById('r-type').value,title,dueDate:date,description:document.getElementById('r-desc').value.trim()||null,isRecurring:!!interval,recurrenceInterval:interval};
   try {
-    const r = await fetch('/api/reminders', {
-      method:'POST', headers:authHeaders(), body:JSON.stringify(payload)
-    });
-    if(!r.ok) { const e=await r.json(); showToast(e.error||'Hata','error'); return; }
-    showToast('Hatırlatıcı eklendi!','success');
-    closeModal('remModal');
-    loadDashboard();
+    const r=await fetch('/api/reminders',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Hatırlatıcı eklendi!','success'); closeModal('remModal'); loadDashboard();
   } catch { showToast('Bağlantı hatası','error'); }
 }
 
 async function completeRem(id, el) {
   try {
-    const r = await fetch(`/api/reminders/${id}/complete`, {
-      method:'PATCH', headers:authHeaders()
-    });
-    if(!r.ok) { showToast('Hata','error'); return; }
+    const r=await fetch(`/api/reminders/${id}/complete`,{method:'PATCH',headers:authHeaders()});
+    if(!r.ok){showToast('Hata','error');return;}
     el.closest('.rem-row').style.opacity='0.4';
     el.innerHTML='✅';
     showToast('Tamamlandı olarak işaretlendi!','success');
-    setTimeout(loadDashboard, 1000);
+    setTimeout(loadDashboard,1000);
   } catch { showToast('Bağlantı hatası','error'); }
 }
 
@@ -1388,33 +1206,26 @@ function scrollToReminders() {
   document.getElementById('reminderPanel').scrollIntoView({behavior:'smooth'});
 }
 
-/* ══════════════════════════
-   INIT
-══════════════════════════ */
+/* ── Init ── */
 window.onload = () => {
-  const token = getToken();
-  const user  = getUser();
+  const token=getToken();
+  const user=getUser();
 
-  if(!token) {
-    // Token yok — auth wall göster
+  if(!token){
     document.getElementById('authWall').style.display='flex';
     document.getElementById('dashContent').style.display='none';
     document.getElementById('sbName').textContent='Misafir';
     return;
   }
 
-  // Kullanıcı bilgisi
-  const name = user || 'Kullanıcı';
-  document.getElementById('sbAv').textContent  = name.charAt(0).toUpperCase();
-  document.getElementById('sbName').textContent = name;
-  document.getElementById('sbRole').textContent = getRole()==='admin' ? '👑 Yönetici' : '🐾 Üye';
+  const name=user||'Kullanıcı';
+  document.getElementById('sbAv').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=name;
+  document.getElementById('sbRole').textContent=getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
   setGreeting(name);
 
-  // Bugünün tarihini varsayılan yap
-  const today = new Date().toISOString().split('T')[0];
-  ['v-date','a-date','r-date'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value=today;
-  });
+  const today=new Date().toISOString().split('T')[0];
+  ['v-date','a-date','r-date'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=today; });
 
   loadDashboard();
 };
