@@ -279,6 +279,44 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 .f-social { width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:13px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.08); }
 .f-social:hover { background:rgba(255,255,255,0.15); color:#fff; }
 
+/* ── FOTOĞRAF YÜKLEME ── */
+.photo-upload-area {
+  border:2px dashed var(--border); border-radius:14px;
+  padding:32px 20px; text-align:center; cursor:pointer;
+  transition:all 0.2s; background:var(--cream); position:relative;
+}
+.photo-upload-area:hover { border-color:var(--orange); background:var(--warm1); }
+.photo-upload-area.has-photo { border-color:var(--orange); border-style:solid; padding:8px; }
+.photo-upload-area input[type="file"] { display:none; }
+.upload-ico { font-size:40px; display:block; margin-bottom:10px; }
+.upload-lbl { font-size:14px; font-weight:600; color:var(--navy3); margin-bottom:4px; }
+.upload-hint { font-size:12px; color:var(--muted); }
+.upload-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  margin-top:14px; padding:9px 20px; border-radius:9px;
+  background:var(--orange); color:#fff; border:none;
+  font-size:13px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer; transition:all 0.18s;
+}
+.upload-btn:hover { background:var(--orange2); }
+.photo-preview {
+  width:100%; max-height:280px; object-fit:cover;
+  border-radius:10px; display:none;
+}
+.photo-preview.show { display:block; }
+.photo-remove {
+  position:absolute; top:14px; right:14px;
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(192,57,43,0.85); color:#fff; border:none;
+  font-size:13px; cursor:pointer; display:none;
+  align-items:center; justify-content:center;
+  transition:all 0.18s;
+}
+.photo-remove.show { display:flex; }
+.photo-remove:hover { background:var(--red); }
+.photo-info { font-size:11px; color:var(--green); margin-top:8px; font-weight:600; display:none; }
+.photo-info.show { display:block; }
+
 /* ── RESPONSİF ── */
 @media(max-width:900px){
   header{padding:0 24px;} nav{display:none;}
@@ -339,8 +377,9 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   <div class="steps-wrap" id="stepsBar">
     <div class="step active" id="step-ind-0"><div class="s-num">1</div><span class="s-label">İlan Türü</span></div>
     <div class="step"        id="step-ind-1"><div class="s-num">2</div><span class="s-label">Hayvan Bilgisi</span></div>
-    <div class="step"        id="step-ind-2"><div class="s-num">3</div><span class="s-label">İletişim</span></div>
-    <div class="step"        id="step-ind-3"><div class="s-num">4</div><span class="s-label">Önizleme</span></div>
+    <div class="step"        id="step-ind-2"><div class="s-num">3</div><span class="s-label">Fotoğraf</span></div>
+    <div class="step"        id="step-ind-3"><div class="s-num">4</div><span class="s-label">İletişim</span></div>
+    <div class="step"        id="step-ind-4"><div class="s-num">5</div><span class="s-label">Önizleme</span></div>
   </div>
 
   <div class="form-card">
@@ -459,8 +498,33 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
-    <!-- ── ADIM 3: İLETİŞİM ── -->
+    <!-- ── ADIM 3: FOTOĞRAF ── -->
     <div class="form-section" id="sec-2">
+      <div class="sec-title">📷 Fotoğraf Ekle</div>
+
+      <div class="field">
+        <label>Hayvan Fotoğrafı <span style="color:var(--muted);font-weight:400;text-transform:none;">(isteğe bağlı)</span></label>
+        <div class="photo-upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
+          <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
+          <img class="photo-preview" id="photoPreview" src="" alt="Önizleme">
+          <button class="photo-remove" id="photoRemove" onclick="removePhoto(event)">✕</button>
+          <div id="uploadPlaceholder">
+            <span class="upload-ico">📷</span>
+            <div class="upload-lbl">Fotoğraf yüklemek için tıklayın</div>
+            <div class="upload-hint">JPG, PNG veya WEBP — maksimum 5MB</div>
+            <button class="upload-btn" type="button">📁 Dosya Seç</button>
+          </div>
+        </div>
+        <div class="photo-info" id="photoInfo">✅ Fotoğraf hazır — sıkıştırılarak kaydedilecek</div>
+      </div>
+
+      <div style="background:var(--warm1);border:1px solid var(--warm2);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--navy2);line-height:1.6;margin-top:4px;">
+        💡 Fotoğraf eklemek ilanınızın dikkat çekmesini sağlar. Eklemek zorunda değilsiniz, istediğiniz zaman atlayabilirsiniz.
+      </div>
+    </div>
+
+    <!-- ── ADIM 4: İLETİŞİM ── -->
+    <div class="form-section" id="sec-3">
       <div class="sec-title">📞 İletişim Bilgileri</div>
 
       <div class="field">
@@ -481,9 +545,13 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
-    <!-- ── ADIM 4: ÖNİZLEME ── -->
-    <div class="form-section" id="sec-3">
+    <!-- ── ADIM 5: ÖNİZLEME ── -->
+    <div class="form-section" id="sec-4">
       <div class="sec-title">👁️ İlanınızı Kontrol Edin</div>
+      <div id="summaryPhoto" style="margin-bottom:16px;display:none">
+        <div class="sum-lbl" style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:700;margin-bottom:8px;">Fotoğraf</div>
+        <img id="summaryPhotoImg" src="" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;border:1px solid var(--border);">
+      </div>
       <div class="summary-grid" id="summaryGrid"></div>
       <div class="sum-desc-lbl">Açıklama</div>
       <div class="sum-desc" id="summaryDesc"></div>
@@ -545,7 +613,257 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 
 <script>
 let currentStep = 0;
-const TOTAL = 4;
+const TOTAL = 5;
+let photoBase64 = null; // sıkıştırılmış fotoğraf
+
+/* ── Giriş / Çıkış ── */
+function girisDurumGuncelle() {
+  const user         = localStorage.getItem('pm_user');
+  const btnGiris     = document.getElementById('btnGiris');
+  const userLabel    = document.getElementById('userLabel');
+  const userNameText = document.getElementById('userNameText');
+  const btnCikis     = document.getElementById('btnCikis');
+  if (user) {
+    btnGiris.style.display   = 'none';
+    userLabel.style.display  = 'flex';
+    userNameText.textContent = user;
+    btnCikis.style.display   = 'flex';
+  } else {
+    btnGiris.style.display   = '';
+    userLabel.style.display  = 'none';
+    btnCikis.style.display   = 'none';
+  }
+}
+function cikisYap() {
+  localStorage.removeItem('pm_user');
+  localStorage.removeItem('pm_token');
+  girisDurumGuncelle();
+  window.location.href = 'giris.html';
+}
+girisDurumGuncelle();
+
+/* ── Fotoğraf ── */
+function handlePhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Fotoğraf 5MB\'dan küçük olmalı.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    compressImage(e.target.result, 800, 0.72, function(compressed) {
+      photoBase64 = compressed;
+      const preview = document.getElementById('photoPreview');
+      const placeholder = document.getElementById('uploadPlaceholder');
+      const removeBtn = document.getElementById('photoRemove');
+      const info = document.getElementById('photoInfo');
+      const area = document.getElementById('uploadArea');
+      preview.src = compressed;
+      preview.classList.add('show');
+      placeholder.style.display = 'none';
+      removeBtn.classList.add('show');
+      info.classList.add('show');
+      area.classList.add('has-photo');
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function compressImage(src, maxW, quality, callback) {
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    let w = img.width, h = img.height;
+    if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = src;
+}
+
+function removePhoto(e) {
+  e.stopPropagation();
+  photoBase64 = null;
+  document.getElementById('photoPreview').classList.remove('show');
+  document.getElementById('photoPreview').src = '';
+  document.getElementById('uploadPlaceholder').style.display = 'block';
+  document.getElementById('photoRemove').classList.remove('show');
+  document.getElementById('photoInfo').classList.remove('show');
+  document.getElementById('uploadArea').classList.remove('has-photo');
+  document.getElementById('photoInput').value = '';
+}
+
+/* ── Seçim ── */
+function selectIlanTuru(el) {
+  document.querySelectorAll('.ilan-turu-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+function selectHayvanTuru(el) {
+  document.querySelectorAll('.hayvan-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+/* ── Okuma ── */
+function getVal(id)    { const el=document.getElementById(id); return el?el.value.trim():''; }
+function getRadio(name){ const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:''; }
+function getChecks()   {
+  const map={'c-asili':'Aşılı','c-kisir':'Kısırlaştırılmış','c-cipli':'Çipli','c-evdost':'Evcil canlı dostu','c-cocuk':'Çocuk dostu'};
+  return Object.entries(map).filter(([id])=>document.getElementById(id).checked).map(([,l])=>l);
+}
+
+/* ── Validasyon ── */
+function clearErrors() {
+  document.querySelectorAll('.err-msg').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
+}
+function showErr(errId, inputId) {
+  const e=document.getElementById(errId); if(e) e.style.display='block';
+  const i=document.getElementById(inputId); if(i) i.classList.add('err');
+}
+function validateStep(step) {
+  clearErrors(); let ok=true;
+  if (step===0) {
+    if (!getRadio('ilanTuru')) { document.getElementById('err-ilanTuru').style.display='block'; ok=false; }
+    if (!getVal('f-sehir'))   { showErr('err-sehir','f-sehir'); ok=false; }
+  }
+  if (step===1) {
+    if (!getRadio('hayvanTuru')) { document.getElementById('err-hayvanTuru').style.display='block'; ok=false; }
+    if (!getVal('f-hayvanAdi'))  { showErr('err-hayvanAdi','f-hayvanAdi'); ok=false; }
+    if (!getVal('f-yas'))        { showErr('err-yas','f-yas'); ok=false; }
+    if (getVal('f-aciklama').length < 20) { showErr('err-aciklama','f-aciklama'); ok=false; }
+  }
+  // Adım 2 (fotoğraf) zorunlu değil — geç
+  if (step===3) {
+    if (!getVal('f-iletisim')) { showErr('err-iletisim','f-iletisim'); ok=false; }
+  }
+  return ok;
+}
+
+/* ── Adım geçişi ── */
+function goStep(n) {
+  document.querySelectorAll('.form-section').forEach((s,i) => s.classList.toggle('active', i===n));
+  for (let i=0; i<TOTAL; i++) {
+    const ind = document.getElementById('step-ind-'+i);
+    ind.classList.remove('active','done');
+    if (i < n)  ind.classList.add('done');
+    if (i === n) ind.classList.add('active');
+    ind.querySelector('.s-num').textContent = i < n ? '✓' : i+1;
+  }
+  document.getElementById('btnPrev').style.display   = n > 0 ? 'block' : 'none';
+  document.getElementById('btnNext').style.display   = n < TOTAL-1 ? 'flex' : 'none';
+  document.getElementById('btnSubmit').style.display = n === TOTAL-1 ? 'flex' : 'none';
+  if (n === TOTAL-1) buildSummary();
+  currentStep = n;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function nextStep() { if (validateStep(currentStep)) goStep(currentStep+1); }
+function prevStep() { goStep(currentStep-1); }
+
+/* ── Özet ── */
+function turLabel(v) {
+  return v==='sahiplendirme'?'🏠 Sahiplendirme':v==='kayip'?'🔴 Kayıp':v==='bulundu'?'✅ Bulundu':v;
+}
+function hayvanLabel(v) {
+  return v==='kedi'?'🐱 Kedi':v==='köpek'?'🐶 Köpek':v==='kuş'?'🐦 Kuş':'🐾 Diğer';
+}
+function buildSummary() {
+  // Fotoğraf önizleme
+  const spWrap = document.getElementById('summaryPhoto');
+  const spImg  = document.getElementById('summaryPhotoImg');
+  if (photoBase64) {
+    spImg.src = photoBase64;
+    spWrap.style.display = 'block';
+  } else {
+    spWrap.style.display = 'none';
+  }
+
+  const checks = getChecks();
+  const alanlar = [
+    ['İlan Türü',   turLabel(getRadio('ilanTuru'))],
+    ['Şehir',       getVal('f-sehir')],
+    ['Hayvan Türü', hayvanLabel(getRadio('hayvanTuru'))],
+    ['Adı',         getVal('f-hayvanAdi')],
+    ['Irk',         getVal('f-irk')||'—'],
+    ['Yaş',         getVal('f-yas')?getVal('f-yas')+' yaş':'—'],
+    ['Cinsiyet',    getVal('f-cinsiyet')||'—'],
+    ['Renk',        getVal('f-renk')||'—'],
+    ['Fotoğraf',    photoBase64 ? '✅ Eklendi' : '— Eklenmedi'],
+    ['Telefon',     getVal('f-iletisim')],
+    ['E-posta',     getVal('f-eposta')||'—'],
+    ['Özellikler',  checks.length?checks.join(', '):'—'],
+  ];
+  document.getElementById('summaryGrid').innerHTML = alanlar.map(([l,v])=>`
+    <div class="sum-item"><div class="sum-lbl">${l}</div><div class="sum-val">${v}</div></div>`).join('');
+  document.getElementById('summaryDesc').textContent = getVal('f-aciklama')||'—';
+}
+
+/* ── Gönderim ── */
+async function submitForm() {
+  const btn    = document.getElementById('btnSubmit');
+  const txt    = document.getElementById('submitText');
+  const spin   = document.getElementById('submitSpin');
+  const errBox = document.getElementById('alertErr');
+
+  btn.disabled = true;
+  txt.style.display  = 'none';
+  spin.style.display = 'block';
+  errBox.style.display = 'none';
+
+  const checks = getChecks();
+  const ozellikStr = checks.length ? '\n\nÖzellikler: ' + checks.join(', ') : '';
+  const aciklamaFull = getVal('f-aciklama') + ozellikStr;
+
+  const payload = {
+    ilanTuru:   getRadio('ilanTuru'),
+    hayvanTuru: getRadio('hayvanTuru'),
+    hayvanAdi:  getVal('f-hayvanAdi'),
+    irk:        getVal('f-irk'),
+    yas:        getVal('f-yas'),
+    cinsiyet:   getVal('f-cinsiyet'),
+    renk:       getVal('f-renk'),
+    sehir:      getVal('f-sehir'),
+    aciklama:   aciklamaFull,
+    iletisim:   getVal('f-iletisim'),
+    eposta:     getVal('f-eposta'),
+    fotoUrl:    photoBase64 || null,
+  };
+
+  const token = localStorage.getItem('pm_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  try {
+    const r = await fetch('/ilan-ekle', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    });
+
+    if (r.ok) {
+      document.getElementById('stepsBar').style.display = 'none';
+      document.getElementById('btnRow').style.display   = 'none';
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('successScreen').classList.add('show');
+    } else {
+      const msg = await r.text();
+      try { errBox.textContent = '❌ ' + JSON.parse(msg).error; }
+      catch { errBox.textContent = '❌ ' + msg; }
+      errBox.style.display = 'block';
+    }
+  } catch {
+    errBox.textContent   = '❌ Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
+    errBox.style.display = 'block';
+  } finally {
+    btn.disabled       = false;
+    txt.style.display  = 'inline';
+    spin.style.display = 'none';
+  }
+}
+</script>
 
 /* ── Giriş / Çıkış ── */
 function girisDurumGuncelle() {
