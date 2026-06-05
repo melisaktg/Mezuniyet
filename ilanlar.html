@@ -394,7 +394,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 const emoji    = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'🐱'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'🐶'; if(t.includes('ku\u015f')||t.includes('kus'))return'🐦'; return'🐾'; };
 const badgeCls = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'cb-sahip'; if(t.includes('kay'))return'cb-kayip'; if(t.includes('bulun'))return'cb-bulundu'; return'cb-diger'; };
 const badgeLbl = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'Sahiplendir'; if(t.includes('kay'))return'Kayıp'; if(t.includes('bulun'))return'Bulundu'; return'Diğer'; };
-const imgSrc   = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'kedi.jpg'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'k\u00f6pek.jpg'; if(t.includes('ku\u015f')||t.includes('kus'))return'kus.jpg'; return'hayvan.jpg'; };
+const imgSrc   = (t, fotoUrl) => { if(fotoUrl) return fotoUrl; t=(t||'').toLowerCase(); if(t.includes('kedi'))return'kedi.jpg'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'k\u00f6pek.jpg'; if(t.includes('ku\u015f')||t.includes('kus'))return'kus.jpg'; return'hayvan.jpg'; };
 
 let tumIlanlar = [];
 
@@ -404,7 +404,14 @@ function openModal(ilan) {
   const t  = (ilan.IlanTuru||'').toLowerCase();
   const bc = t.includes('sahip')?'pm-b-sahip':t.includes('kay')?'pm-b-kayip':t.includes('bulun')?'pm-b-bulundu':'pm-b-diger';
   document.getElementById('mBg').textContent    = e;
-  document.getElementById('mAva').textContent   = e;
+  document.getElementById('mAva').textContent   = ilan.FotoUrl ? '' : e;
+  if (ilan.FotoUrl) {
+    document.getElementById('mAva').style.backgroundImage = `url(${ilan.FotoUrl})`;
+    document.getElementById('mAva').style.backgroundSize = 'cover';
+    document.getElementById('mAva').style.backgroundPosition = 'center';
+  } else {
+    document.getElementById('mAva').style.backgroundImage = '';
+  }
   document.getElementById('mBadge').textContent = badgeLbl(ilan.IlanTuru);
   document.getElementById('mBadge').className   = `pm-badge-wrap ${bc}`;
   document.getElementById('mName').textContent  = ilan.HayvanAdi||'İsimsiz';
@@ -435,7 +442,7 @@ function makeCard(ilan, idx) {
   d.className='pet-card'; d.style.animationDelay=(idx*0.05)+'s';
   d.innerHTML=`
     <div class="card-photo">
-      <img src="${imgSrc(ilan.HayvanTuru)}" alt="${ilan.HayvanAdi||'Hayvan'}" onerror="this.style.display='none'">
+      <img src="${imgSrc(ilan.HayvanTuru, ilan.FotoUrl)}" alt="${ilan.HayvanAdi||'Hayvan'}" onerror="this.style.display='none'">
       <div class="card-emoji-bg">${e}</div>
       <span class="card-badge ${bc}">${bl}</span>
       ${ilan.Sehir?`<span class="card-city">📍 ${ilan.Sehir}</span>`:''}
