@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aşı Takibi — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #1c3557; --navy2: #274a7a; --navy3: #0f2240;
+  --orange:  #e07b2e; --orange2: #c96820; --orange-l: #fef3e8;
+  --cream:   #fdf9f5; --warm1: #f5ede3; --warm2: #ede0d0;
+  --text:    #1a1f2e; --muted: #7a7f8e; --border: #e8ddd2; --white: #ffffff;
+  --green:   #2e7d5e; --green-l: #d1fae5; --red: #c0392b; --red-l: #fee2e2;
+  --blue:    #2563eb; --blue-l: #dbeafe; --sidebar: 262px; --radius: 14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+.sb-brand{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
+.sb-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(224,123,46,0.45);flex-shrink:0;}
+.sb-brand-text strong{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;font-weight:700;line-height:1;}
+.sb-brand-text span{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.3px;}
+.sb-nav{padding:18px 12px;flex:1;}
+.sb-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,0.22);padding:0 10px 8px;}
+.sb-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.18s;margin-bottom:2px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.sb-link.active{background:rgba(224,123,46,0.18);color:#f0a05a;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--orange);}
+.sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:18px;text-align:center;}
+.sb-sep{height:1px;background:rgba(255,255,255,0.07);margin:12px 12px;}
+.sb-user{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:#fff;font-size:16px;flex-shrink:0;}
+.sb-uname{font-size:13px;color:rgba(255,255,255,0.85);font-weight:600;}
+.sb-role{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
+.sb-logout:hover{color:rgba(255,100,100,0.8);}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;box-shadow:0 1px 8px rgba(15,34,64,0.06);}
+.topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);line-height:1.1;}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;}
+.tb-btn-primary{background:var(--orange);color:#fff;border:none;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.tb-btn-primary:hover{background:var(--orange2);}
+.tb-btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--border);}
+.tb-btn-ghost:hover{border-color:var(--navy2);}
+.content{padding:28px 36px 52px;flex:1;}
+.hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+
+/* PAGE CONTENT */
+.filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
+.filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;transition:all 0.18s;}
+.filter-sel:focus{border-color:var(--orange);}
+.search-inp{padding:8px 13px 8px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all 0.18s;flex:1;min-width:200px;}
+.search-inp:focus{border-color:var(--orange);}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+
+.vax-table{width:100%;border-collapse:collapse;}
+.vax-table th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--warm2);background:var(--warm1);}
+.vax-table td{padding:14px;border-bottom:1px solid var(--warm2);font-size:13px;vertical-align:middle;}
+.vax-table tr:hover td{background:var(--warm1);}
+.vax-table tr:last-child td{border-bottom:none;}
+
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.s-urgent{background:var(--red-l);color:var(--red);}
+.s-soon{background:var(--orange-l);color:var(--orange2);}
+.s-ok{background:var(--green-l);color:var(--green);}
+
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.panel-head{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--warm2);}
+.panel-head h3{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--navy3);}
+
+.empty-state{text-align:center;padding:52px 20px;color:var(--muted);}
+.empty-state .es-ico{font-size:44px;display:block;margin-bottom:12px;}
+.empty-state p{font-size:14px;line-height:1.6;}
+
+.loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
+.spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#fff;border-radius:20px;width:500px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
+.modal-overlay.open .modal-box{transform:none;opacity:1;}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--warm2);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--warm1);border:1px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--red-l);border-color:var(--red);}
+.modal-body{padding:22px 24px 24px;}
+.m-field{margin-bottom:16px;}
+.m-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.m-field input,.m-field select,.m-field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--warm1);outline:none;transition:all 0.2s;}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(224,123,46,0.1);}
+.m-field textarea{min-height:80px;resize:vertical;line-height:1.6;}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-foot{padding:18px 24px;border-top:1px solid var(--warm2);display:flex;gap:10px;justify-content:flex-end;}
+.m-btn-cancel{padding:10px 20px;border-radius:9px;background:transparent;color:var(--muted);border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.m-btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+.m-btn-save{padding:10px 24px;border-radius:9px;background:var(--orange);color:#fff;border:none;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.m-btn-save:hover{background:var(--orange2);}
+
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--navy3);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.5,.64,1);}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+
+@media(max-width:768px){
+  :root{--sidebar:0px;}
+  .sidebar{transform:translateX(-262px);width:262px;}
+  .sidebar.open{transform:none;}
+  .main{margin-left:0;}
+  .topbar{padding:0 18px;}
+  .content{padding:18px 16px;}
+  .hamburger{display:flex;}
+  .m-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="index.html">
+    <div class="sb-logo">🐾</div>
+    <div class="sb-brand-text"><strong>PetMate</strong><span>Evcil Hayvan Yönetimi</span></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Genel</div>
+    <a href="index.html" class="sb-link"><span class="sb-icon">🌐</span> Ana Sayfa</a>
+    <a href="dashboard.html" class="sb-link"><span class="sb-icon">🏠</span> Dashboard</a>
+    <a href="hayvanlarim.html" class="sb-link"><span class="sb-icon">🐾</span> Hayvanlarım</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Sağlık</div>
+    <a href="asilar.html" class="sb-link active"><span class="sb-icon">💉</span> Aşı Takibi</a>
+    <a href="saglik.html" class="sb-link"><span class="sb-icon">🏥</span> Sağlık Kayıtları</a>
+    <a href="randevular.html" class="sb-link"><span class="sb-icon">📅</span> Randevular</a>
+    <a href="hatirlaticılar.html" class="sb-link"><span class="sb-icon">🔔</span> Hatırlatıcılar</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Platform</div>
+    <a href="ilanlar.html" class="sb-link"><span class="sb-icon">📋</span> İlanlar</a>
+    <a href="ilan-ekle.html" class="sb-link"><span class="sb-icon">➕</span> İlan Ver</a>
+    <a href="ayarlar.html" class="sb-link"><span class="sb-icon">⚙️</span> Ayarlar</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">?</div>
+    <div><div class="sb-uname" id="sbName">—</div><div class="sb-role" id="sbRole">—</div></div>
+    <button class="sb-logout" onclick="logout()" title="Çıkış">↩</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="topbar-left"><h1>💉 Aşı Takibi</h1><p>Hayvanlarınızın aşı geçmişi ve yaklaşan aşılar</p></div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="tb-btn tb-btn-ghost">🌐 Ana Sayfa</a>
+      <button class="tb-btn tb-btn-primary" onclick="openModal('vaxModal')">+ Aşı Ekle</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <input type="text" class="search-inp" id="searchInp" placeholder="Aşı adı veya hayvan ara..." oninput="filterList()">
+      </div>
+      <select class="filter-sel" id="petFilter" onchange="filterList()">
+        <option value="">Tüm Hayvanlar</option>
+      </select>
+      <select class="filter-sel" id="statusFilter" onchange="filterList()">
+        <option value="">Tüm Durumlar</option>
+        <option value="urgent">Gecikmiş</option>
+        <option value="soon">Yaklaşıyor (14 gün)</option>
+        <option value="ok">Zamanında</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>💉 Aşı Kayıtları</h3>
+        <span id="countLabel" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="vax-table" id="vaxTable">
+          <thead>
+            <tr>
+              <th>Hayvan</th>
+              <th>Aşı Adı</th>
+              <th>Aşı Tarihi</th>
+              <th>Sonraki Tarih</th>
+              <th>Durum</th>
+              <th>Veteriner</th>
+              <th>Notlar</th>
+            </tr>
+          </thead>
+          <tbody id="vaxBody">
+            <tr><td colspan="7"><div class="loading-row"><div class="spinner"></div> Yükleniyor...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Aşı Ekle Modal -->
+<div class="modal-overlay" id="vaxModal" onclick="if(event.target===this)closeModal('vaxModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>💉 Aşı Kaydı Ekle</h3>
+      <button class="modal-close" onclick="closeModal('vaxModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-field"><label>Hayvan *</label><select id="v-petId"></select></div>
+      <div class="m-field"><label>Aşı Adı *</label><input type="text" id="v-name" placeholder="Örn: Kuduz, Karma Aşı"></div>
+      <div class="m-row">
+        <div class="m-field"><label>Aşı Tarihi *</label><input type="date" id="v-date"></div>
+        <div class="m-field"><label>Sonraki Tarih</label><input type="date" id="v-next"></div>
+      </div>
+      <div class="m-field"><label>Veteriner</label><input type="text" id="v-vet" placeholder="Dr. Adı"></div>
+      <div class="m-field"><label>Notlar</label><textarea id="v-notes" placeholder="Yan etkiler, gözlemler..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="m-btn-cancel" onclick="closeModal('vaxModal')">İptal</button>
+      <button class="m-btn-save" onclick="saveVax()">💉 Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function getToken(){return localStorage.getItem('pm_token');}
+function getUser(){return localStorage.getItem('pm_user');}
+function getRole(){return localStorage.getItem('pm_role');}
+function authHeaders(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function logout(){localStorage.removeItem('pm_token');localStorage.removeItem('pm_user');localStorage.removeItem('pm_role');window.location.href='giris.html';}
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':'❌'}</span> ${msg}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+
+const daysBetween=d=>{const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return Math.round((dt-t)/(1000*60*60*24));};
+const fmtDate=d=>d?new Date(d).toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const speciesEmoji=s=>{const m={kedi:'🐱',köpek:'🐶',kuş:'🐦',tavşan:'🐰',balık:'🐟'};return m[(s||'').toLowerCase()]||'🐾';};
+
+let allVax=[], allPets=[];
+
+function getStatus(nextDate){
+  if(!nextDate)return null;
+  const d=daysBetween(nextDate);
+  if(d<0)return'urgent';
+  if(d<=14)return'soon';
+  return'ok';
+}
+function statusBadge(nextDate){
+  if(!nextDate)return'<span style="color:var(--muted);font-size:12px">—</span>';
+  const d=daysBetween(nextDate);
+  if(d<0)return`<span class="status-badge s-urgent">⚠️ ${Math.abs(d)}g gecikti</span>`;
+  if(d===0)return`<span class="status-badge s-urgent">🔴 Bugün!</span>`;
+  if(d<=14)return`<span class="status-badge s-soon">⏰ ${d}g sonra</span>`;
+  return`<span class="status-badge s-ok">✅ ${d}g sonra</span>`;
+}
+
+function filterList(){
+  const q=document.getElementById('searchInp').value.toLowerCase();
+  const pet=document.getElementById('petFilter').value;
+  const st=document.getElementById('statusFilter').value;
+  const filtered=allVax.filter(v=>{
+    if(q&&!v.VaccineName?.toLowerCase().includes(q)&&!v.PetName?.toLowerCase().includes(q))return false;
+    if(pet&&String(v.PetId)!==pet)return false;
+    if(st&&getStatus(v.NextDate)!==st)return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+function renderTable(list){
+  const body=document.getElementById('vaxBody');
+  document.getElementById('countLabel').textContent=list.length+' kayıt';
+  if(!list.length){body.innerHTML=`<tr><td colspan="7"><div class="empty-state"><span class="es-ico">💉</span><p>Kayıt bulunamadı.</p></div></td></tr>`;return;}
+  body.innerHTML=list.map(v=>`
+    <tr>
+      <td><strong>${speciesEmoji(v.PetSpecies||'')} ${v.PetName||'—'}</strong></td>
+      <td>${v.VaccineName||'—'}</td>
+      <td>${fmtDate(v.VaccineDate)}</td>
+      <td>${fmtDate(v.NextDate)}</td>
+      <td>${statusBadge(v.NextDate)}</td>
+      <td style="color:var(--muted)">${v.VetName||'—'}</td>
+      <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.Notes||'—'}</td>
+    </tr>`).join('');
+}
+
+async function saveVax(){
+  const petId=document.getElementById('v-petId').value;
+  const name=document.getElementById('v-name').value.trim();
+  const date=document.getElementById('v-date').value;
+  if(!petId||!name||!date){showToast('Hayvan, aşı adı ve tarih zorunludur.','error');return;}
+  try{
+    const r=await fetch(`/api/pets/${petId}/vaccinations`,{method:'POST',headers:authHeaders(),body:JSON.stringify({vaccineName:name,vaccineDate:date,nextDate:document.getElementById('v-next').value||null,vetName:document.getElementById('v-vet').value.trim()||null,notes:document.getElementById('v-notes').value.trim()||null})});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Aşı kaydı eklendi!','success');closeModal('vaxModal');loadData();
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+async function loadData(){
+  if(!getToken()){window.location.href='giris.html';return;}
+  document.getElementById('sbAv').textContent=(getUser()||'?').charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=getUser()||'—';
+  document.getElementById('sbRole').textContent=getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
+
+  try{
+    const pets=await fetch('/api/pets',{headers:authHeaders()}).then(r=>r.json());
+    allPets=pets;
+    const pf=document.getElementById('petFilter');
+    const vp=document.getElementById('v-petId');
+    const opts=pets.map(p=>`<option value="${p.Id}">${speciesEmoji(p.Species)} ${p.Name}</option>`).join('');
+    pf.innerHTML='<option value="">Tüm Hayvanlar</option>'+opts;
+    vp.innerHTML='<option value="">Hayvan seçin</option>'+opts;
+
+    const today=new Date().toISOString().split('T')[0];
+    document.getElementById('v-date').value=today;
+
+    // Tüm hayvanların aşılarını topla
+    const vaxPromises=pets.map(p=>fetch(`/api/pets/${p.Id}/vaccinations`,{headers:authHeaders()}).then(r=>r.json()).then(vs=>vs.map(v=>({...v,PetName:p.Name,PetSpecies:p.Species,PetId:p.Id}))));
+    const vaxArrays=await Promise.all(vaxPromises);
+    allVax=vaxArrays.flat().sort((a,b)=>new Date(a.NextDate||0)-new Date(b.NextDate||0));
+    filterList();
+  }catch(err){
+    console.error(err);
+    showToast('Veriler yüklenemedi','error');
+    document.getElementById('vaxBody').innerHTML=`<tr><td colspan="7"><div class="empty-state"><span class="es-ico">⚠️</span><p>Sunucu bağlantısı kurulamadı.</p></div></td></tr>`;
+  }
+}
+
+window.onload=loadData;
+</script>
+</body>
+</html>
