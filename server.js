@@ -1,50 +1,29 @@
-/**
- * PetMate — Güvenli Backend (server.js)
- * 
- * Değişiklikler:
- *  - bcrypt ile şifre hash'leme
- *  - .env ile credential yönetimi
- *  - JWT tabanlı session (basit token)
- *  - Admin endpoint'leri için auth middleware
- *  - Rate limiting (express-rate-limit)
- *  - Helmet ile HTTP header güvenliği
- *  - Input sanitizasyonu
- *  - Yeni tablolar: Pets, Vaccinations, MedicalRecords, Appointments, Reminders
- * 
- * Kurulum:
- *   npm install express mssql bcryptjs jsonwebtoken dotenv helmet express-rate-limit
- */
 
 require('dotenv').config();
 
-const express    = require('express');
-const sql        = require('mssql');
-const bcrypt     = require('bcryptjs');
-const jwt        = require('jsonwebtoken');
-const helmet     = require('helmet');
-const rateLimit  = require('express-rate-limit');
-const path       = require('path');
+const express   = require('express');
+const { Pool }  = require('pg');
+const bcrypt    = require('bcryptjs');
+const jwt       = require('jsonwebtoken');
+const helmet    = require('helmet');
+const rateLimit = require('express-rate-limit');
+const path      = require('path');
 
 const app = express();
 
-/* ══════════════════════════════════════════
-   GÜVENLİK MİDDLEWARE'LERİ
-══════════════════════════════════════════ */
 app.use(helmet());
 app.use(express.static('public'));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
-// Rate limiting — tüm API'ye
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 dakika
+    windowMs: 15 * 60 * 1000,
     max: 100,
     message: 'Çok fazla istek gönderildi. Lütfen 15 dakika bekleyin.',
     standardHeaders: true,
     legacyHeaders: false,
 });
 
-// Auth endpoint'lerine daha sıkı limit
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
@@ -55,196 +34,296 @@ app.use('/api/', apiLimiter);
 app.use('/kullanici-giris', authLimiter);
 app.use('/kullanici-kayit', authLimiter);
 
-/* ══════════════════════════════════════════
-   VERİTABANI BAĞLANTISI
-   .env dosyasında tanımla:
-   DB_USER=sa
-   DB_PASS=SifreninizBuraya
-   DB_SERVER=MELISA
-   DB_NAME=PetMateDB
-   JWT_SECRET=cok_gizli_bir_anahtar_buraya
-══════════════════════════════════════════ */
-const config = {
-    user:     process.env.DB_USER     || 'sa',
-    password: process.env.DB_PASS     || 'Sifre123.',
-    server:   process.env.DB_SERVER   || 'MELISA',
-    database: process.env.DB_NAME     || 'PetMateDB',
-    options: {
-        encrypt: true,
-        trustServerCertificate: true,
-    },
-    pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000,
-    },
-};
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }  // Render için gerekli
+        : false,
+});
 
-// Connection pool — her istekte yeniden bağlanmak yerine pool kullan
-let pool;
-async function getPool() {
-    if (!pool) {
-        pool = await sql.connect(config);
+pool.connect((err, client, release) => {
+    if (err) {
+        console.error('❌ Veritabanı bağlantı hatası:', err.message);
+    } else {
+        console.log('✅ PostgreSQL bağlantısı başarılı');
+        release();
     }
-    return pool;
+});
+
+async function initDB() {
+    const client = await pool.connect();
+    try {
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS kullanicilar (
+                kullanici_id  SERIAL PRIMARY KEY,
+                kullanici_adi VARCHAR(100) UNIQUE NOT NULL,
+                sifre         VARCHAR(255) NOT NULL,
+                email         VARCHAR(255),
+                rol           VARCHAR(20) DEFAULT 'user',
+                olusturulma   TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS hayvan_ilanlari (
+                id          SERIAL PRIMARY KEY,
+                ilan_turu   VARCHAR(50),
+                hayvan_turu VARCHAR(50),
+                hayvan_adi  VARCHAR(100),
+                irk         VARCHAR(100),
+                yas         INTEGER,
+                cinsiyet    VARCHAR(20),
+                renk        VARCHAR(100),
+                sehir       VARCHAR(100),
+                aciklama    TEXT,
+                iletisim    VARCHAR(100),
+                tarih       TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS one_cikan_ilanlar (
+                id      SERIAL PRIMARY KEY,
+                ilan_id INTEGER REFERENCES hayvan_ilanlari(id) ON DELETE CASCADE,
+                sira    INTEGER DEFAULT 0
+            );
+
+            CREATE TABLE IF NOT EXISTS pets (
+                id         SERIAL PRIMARY KEY,
+                user_id    INTEGER REFERENCES kullanicilar(kullanici_id) ON DELETE CASCADE,
+                name       VARCHAR(100) NOT NULL,
+                species    VARCHAR(50)  NOT NULL,
+                breed      VARCHAR(100),
+                birth_date DATE,
+                weight     NUMERIC(5,2),
+                gender     VARCHAR(20),
+                color      VARCHAR(100),
+                photo_url  VARCHAR(500),
+                notes      TEXT,
+                is_active  BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS vaccinations (
+                id           SERIAL PRIMARY KEY,
+                pet_id       INTEGER REFERENCES pets(id) ON DELETE CASCADE,
+                vaccine_name VARCHAR(200) NOT NULL,
+                vaccine_date DATE NOT NULL,
+                next_date    DATE,
+                vet_name     VARCHAR(200),
+                notes        TEXT,
+                created_at   TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS medical_records (
+                id           SERIAL PRIMARY KEY,
+                pet_id       INTEGER REFERENCES pets(id) ON DELETE CASCADE,
+                record_date  DATE NOT NULL,
+                record_type  VARCHAR(100) NOT NULL,
+                diagnosis    TEXT,
+                treatment    TEXT,
+                prescription TEXT,
+                vet_name     VARCHAR(200),
+                clinic_name  VARCHAR(200),
+                cost         NUMERIC(10,2),
+                notes        TEXT,
+                created_at   TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS appointments (
+                id               SERIAL PRIMARY KEY,
+                pet_id           INTEGER REFERENCES pets(id) ON DELETE CASCADE,
+                appointment_date DATE NOT NULL,
+                appointment_time VARCHAR(10),
+                clinic_name      VARCHAR(200),
+                vet_name         VARCHAR(200),
+                reason           VARCHAR(500),
+                status           VARCHAR(50) DEFAULT 'bekliyor',
+                notes            TEXT,
+                created_at       TIMESTAMP DEFAULT NOW()
+            );
+
+            CREATE TABLE IF NOT EXISTS reminders (
+                id                  SERIAL PRIMARY KEY,
+                pet_id              INTEGER REFERENCES pets(id) ON DELETE CASCADE,
+                reminder_type       VARCHAR(50),
+                title               VARCHAR(200) NOT NULL,
+                description         TEXT,
+                due_date            DATE NOT NULL,
+                is_recurring        BOOLEAN DEFAULT FALSE,
+                recurrence_interval INTEGER,
+                is_completed        BOOLEAN DEFAULT FALSE,
+                created_at          TIMESTAMP DEFAULT NOW()
+            );
+        `);
+        console.log('✅ Tablolar hazır');
+    } catch (err) {
+        console.error('❌ Tablo oluşturma hatası:', err.message);
+    } finally {
+        client.release();
+    }
 }
 
-/* ══════════════════════════════════════════
-   AUTH MİDDLEWARE
-══════════════════════════════════════════ */
+initDB();
+
 const JWT_SECRET = process.env.JWT_SECRET || 'degistirmeniz_gereken_gizli_anahtar';
 
 function authMiddleware(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // "Bearer TOKEN"
+    const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'Giriş yapmanız gerekiyor.' });
-
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded;
+        req.user = jwt.verify(token, JWT_SECRET);
         next();
     } catch {
         res.status(403).json({ error: 'Oturum süresi dolmuş. Tekrar giriş yapın.' });
     }
 }
 
-// Admin kontrolü (örnek: rol bazlı)
 function adminMiddleware(req, res, next) {
-    if (!req.user || req.user.rol !== 'admin') {
+    if (!req.user || req.user.rol !== 'admin')
         return res.status(403).json({ error: 'Bu işlem için yetkiniz yok.' });
-    }
     next();
 }
 
-/* ══════════════════════════════════════════
-   YARDIMCI FONKSİYONLAR
-══════════════════════════════════════════ */
-function sanitizeStr(val, maxLen = 255) {
+const sanitizeStr = (val, maxLen = 255) => {
     if (val === undefined || val === null) return null;
     return String(val).trim().substring(0, maxLen);
-}
+};
 
-function sanitizeInt(val) {
+const sanitizeInt = (val) => {
     const n = parseInt(val);
     return isNaN(n) ? null : n;
-}
+};
 
-/* ══════════════════════════════════════════
-   ═══════  MEVCUT İLAN ENDPOINT'LERİ  ══════
-══════════════════════════════════════════ */
+const sanitizeFloat = (val) => {
+    const n = parseFloat(val);
+    return isNaN(n) ? null : n;
+};
 
-// İlan ekle
 app.post('/ilan-ekle', async (req, res) => {
     if (!req.body || Object.keys(req.body).length === 0)
         return res.status(400).json({ error: 'Veri ulaşmıyor.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('ilanTuru',   sql.NVarChar(50),   sanitizeStr(req.body.ilanTuru, 50))
-            .input('hayvanTuru', sql.NVarChar(50),   sanitizeStr(req.body.hayvanTuru, 50))
-            .input('hayvanAdi',  sql.NVarChar(100),  sanitizeStr(req.body.hayvanAdi, 100))
-            .input('irk',        sql.NVarChar(100),  sanitizeStr(req.body.irk, 100))
-            .input('yas',        sql.Int,            sanitizeInt(req.body.yas))
-            .input('cinsiyet',   sql.NVarChar(20),   sanitizeStr(req.body.cinsiyet, 20))
-            .input('renk',       sql.NVarChar(100),  sanitizeStr(req.body.renk, 100))
-            .input('sehir',      sql.NVarChar(100),  sanitizeStr(req.body.sehir, 100))
-            .input('aciklama',   sql.NVarChar(2000), sanitizeStr(req.body.aciklama, 2000))
-            .input('iletisim',   sql.NVarChar(100),  sanitizeStr(req.body.iletisim, 100))
-            .query(`INSERT INTO dbo.HayvanIlanlari
-                    (IlanTuru,HayvanTuru,HayvanAdi,Irk,Yas,Cinsiyet,Renk,Sehir,Aciklama,Iletisim)
-                    VALUES
-                    (@ilanTuru,@hayvanTuru,@hayvanAdi,@irk,@yas,@cinsiyet,@renk,@sehir,@aciklama,@iletisim)`);
+        await pool.query(
+            `INSERT INTO hayvan_ilanlari
+             (ilan_turu, hayvan_turu, hayvan_adi, irk, yas, cinsiyet, renk, sehir, aciklama, iletisim)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+            [
+                sanitizeStr(req.body.ilanTuru, 50),
+                sanitizeStr(req.body.hayvanTuru, 50),
+                sanitizeStr(req.body.hayvanAdi, 100),
+                sanitizeStr(req.body.irk, 100),
+                sanitizeInt(req.body.yas),
+                sanitizeStr(req.body.cinsiyet, 20),
+                sanitizeStr(req.body.renk, 100),
+                sanitizeStr(req.body.sehir, 100),
+                sanitizeStr(req.body.aciklama, 2000),
+                sanitizeStr(req.body.iletisim, 100),
+            ]
+        );
         res.json({ success: true, message: 'İlan başarıyla kaydedildi.' });
     } catch (err) {
-        console.error('SQL Hatası (ilan-ekle):', err.message);
+        console.error('Hata (ilan-ekle):', err.message);
         res.status(500).json({ error: 'Veritabanı hatası oluştu.' });
     }
 });
 
-// İlanları getir
 app.get('/ilanlari-getir', async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .query('SELECT * FROM dbo.HayvanIlanlari ORDER BY Id DESC');
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT
+                id AS "Id",
+                ilan_turu   AS "IlanTuru",
+                hayvan_turu AS "HayvanTuru",
+                hayvan_adi  AS "HayvanAdi",
+                irk         AS "Irk",
+                yas         AS "Yas",
+                cinsiyet    AS "Cinsiyet",
+                renk        AS "Renk",
+                sehir       AS "Sehir",
+                aciklama    AS "Aciklama",
+                iletisim    AS "Iletisim",
+                tarih       AS "Tarih"
+             FROM hayvan_ilanlari
+             ORDER BY id DESC`
+        );
+        res.json(result.rows);
     } catch (err) {
-        console.error('SQL Hatası (ilanlari-getir):', err.message);
+        console.error('Hata (ilanlari-getir):', err.message);
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
 });
 
-// İlan sil — AUTH GEREKTİRİR
 app.delete('/ilan-sil/:id', authMiddleware, adminMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('id', sql.Int, id)
-            .query('DELETE FROM dbo.HayvanIlanlari WHERE Id = @id');
+        await pool.query('DELETE FROM hayvan_ilanlari WHERE id = $1', [id]);
         res.json({ success: true, message: 'İlan silindi.' });
     } catch (err) {
-        console.error('SQL Hatası (ilan-sil):', err.message);
+        console.error('Hata (ilan-sil):', err.message);
         res.status(500).json({ error: 'Silme hatası.' });
     }
 });
 
-// Öne çıkan ilanları getir
 app.get('/one-cikan-ilanlar', async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request().query(`
-            SELECT h.*
-            FROM dbo.HayvanIlanlari h
-            INNER JOIN dbo.OneCikanIlanlar o ON h.Id = o.IlanId
-            ORDER BY o.Sira ASC
+        const result = await pool.query(`
+            SELECT
+                h.id AS "Id",
+                h.ilan_turu   AS "IlanTuru",
+                h.hayvan_turu AS "HayvanTuru",
+                h.hayvan_adi  AS "HayvanAdi",
+                h.irk         AS "Irk",
+                h.yas         AS "Yas",
+                h.cinsiyet    AS "Cinsiyet",
+                h.renk        AS "Renk",
+                h.sehir       AS "Sehir",
+                h.aciklama    AS "Aciklama",
+                h.iletisim    AS "Iletisim"
+            FROM hayvan_ilanlari h
+            INNER JOIN one_cikan_ilanlar o ON h.id = o.ilan_id
+            ORDER BY o.sira ASC
         `);
-        res.json(result.recordset);
+        res.json(result.rows);
     } catch {
         res.json([]);
     }
 });
 
-// Öne çıkan ilanları güncelle — AUTH GEREKTİRİR
 app.post('/one-cikan-guncelle', authMiddleware, adminMiddleware, async (req, res) => {
     const { ilanIds } = req.body;
     if (!Array.isArray(ilanIds)) return res.status(400).json({ error: 'Geçersiz format.' });
     if (ilanIds.length > 6)     return res.status(400).json({ error: 'En fazla 6 ilan seçilebilir.' });
+    const client = await pool.connect();
     try {
-        const p = await getPool();
-        await p.request().query('DELETE FROM dbo.OneCikanIlanlar');
+        await client.query('BEGIN');
+        await client.query('DELETE FROM one_cikan_ilanlar');
         for (let i = 0; i < ilanIds.length; i++) {
             const id = sanitizeInt(ilanIds[i]);
             if (!id) continue;
-            await p.request()
-                .input('ilanId', sql.Int, id)
-                .input('sira',   sql.Int, i + 1)
-                .query('INSERT INTO dbo.OneCikanIlanlar (IlanId, Sira) VALUES (@ilanId, @sira)');
+            await client.query(
+                'INSERT INTO one_cikan_ilanlar (ilan_id, sira) VALUES ($1, $2)',
+                [id, i + 1]
+            );
         }
+        await client.query('COMMIT');
         res.json({ success: true, message: 'Güncellendi.' });
     } catch (err) {
-        console.error('SQL Hatası (one-cikan-guncelle):', err.message);
+        await client.query('ROLLBACK');
+        console.error('Hata (one-cikan-guncelle):', err.message);
         res.status(500).json({ error: err.message });
+    } finally {
+        client.release();
     }
 });
 
 app.get('/one-cikan-idler', authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .query('SELECT IlanId FROM dbo.OneCikanIlanlar ORDER BY Sira ASC');
-        res.json(result.recordset.map(r => r.IlanId));
+        const result = await pool.query('SELECT ilan_id FROM one_cikan_ilanlar ORDER BY sira ASC');
+        res.json(result.rows.map(r => r.ilan_id));
     } catch {
         res.json([]);
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  KULLANICI YÖNETİMİ  ══════════
-══════════════════════════════════════════ */
-
-// Kayıt — bcrypt ile hash
 app.post('/kullanici-kayit', async (req, res) => {
     const { kullanici, sifre, email } = req.body;
     if (!kullanici || !sifre)
@@ -255,70 +334,72 @@ app.post('/kullanici-kayit', async (req, res) => {
         return res.status(400).json({ error: 'Şifre en az 8 karakter olmalı.' });
 
     try {
-        const p = await getPool();
-        const kontrol = await p.request()
-            .input('kullanici', sql.NVarChar(100), kullanici)
-            .query('SELECT COUNT(*) AS sayi FROM dbo.Kullanicilar WHERE KullaniciAdi=@kullanici');
-        if (kontrol.recordset[0].sayi > 0)
+        const kontrol = await pool.query(
+            'SELECT COUNT(*) AS sayi FROM kullanicilar WHERE kullanici_adi = $1',
+            [kullanici]
+        );
+        if (parseInt(kontrol.rows[0].sayi) > 0)
             return res.status(409).json({ error: 'Bu kullanıcı adı zaten alınmış.' });
 
         const hashedSifre = await bcrypt.hash(sifre, 12);
-        await p.request()
-            .input('kullanici', sql.NVarChar(100), kullanici)
-            .input('sifre',     sql.NVarChar(255), hashedSifre)
-            .input('email',     sql.NVarChar(255), sanitizeStr(email, 255))
-            .query(`INSERT INTO dbo.Kullanicilar (KullaniciAdi, Sifre, Email, Rol, OlusturulmaTarihi)
-                    VALUES (@kullanici, @sifre, @email, 'user', GETDATE())`);
+        await pool.query(
+            `INSERT INTO kullanicilar (kullanici_adi, sifre, email, rol)
+             VALUES ($1, $2, $3, 'user')`,
+            [kullanici, hashedSifre, sanitizeStr(email)]
+        );
         res.json({ success: true, message: 'Kayıt başarılı.' });
     } catch (err) {
-        console.error('SQL Hatası (kullanici-kayit):', err.message);
+        console.error('Hata (kullanici-kayit):', err.message);
         res.status(500).json({ error: 'Sunucu hatası.' });
     }
 });
 
-// Giriş — bcrypt karşılaştırma + JWT
 app.post('/kullanici-giris', async (req, res) => {
     const { kullanici, sifre } = req.body;
     if (!kullanici || !sifre)
         return res.status(400).json({ error: 'Zorunlu alanlar eksik.' });
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('kullanici', sql.NVarChar(100), kullanici)
-            .query('SELECT KullaniciId, KullaniciAdi, Sifre, Rol FROM dbo.Kullanicilar WHERE KullaniciAdi=@kullanici');
-
-        if (result.recordset.length === 0)
+        const result = await pool.query(
+            'SELECT kullanici_id, kullanici_adi, sifre, rol FROM kullanicilar WHERE kullanici_adi = $1',
+            [kullanici]
+        );
+        if (!result.rows.length)
             return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.' });
 
-        const user = result.recordset[0];
-        const sifreUyumu = await bcrypt.compare(sifre, user.Sifre);
+        const user = result.rows[0];
+        const sifreUyumu = await bcrypt.compare(sifre, user.sifre);
         if (!sifreUyumu)
             return res.status(401).json({ error: 'Kullanıcı adı veya şifre hatalı.' });
 
         const token = jwt.sign(
-            { id: user.KullaniciId, kullanici: user.KullaniciAdi, rol: user.Rol },
+            { id: user.kullanici_id, kullanici: user.kullanici_adi, rol: user.rol },
             JWT_SECRET,
             { expiresIn: '7d' }
         );
-        res.json({ success: true, token, kullanici: user.KullaniciAdi, rol: user.Rol });
+        res.json({ success: true, token, kullanici: user.kullanici_adi, rol: user.rol });
     } catch (err) {
-        console.error('SQL Hatası (kullanici-giris):', err.message);
+        console.error('Hata (kullanici-giris):', err.message);
         res.status(500).json({ error: 'Sunucu hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═════  PET MANAGEMENT ENDPOINT'LERİ  ════
-══════════════════════════════════════════ */
 
-// Kullanıcının hayvanlarını getir
 app.get('/api/pets', authMiddleware, async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('userId', sql.Int, req.user.id)
-            .query('SELECT * FROM dbo.Pets WHERE UserId=@userId AND IsActive=1 ORDER BY CreatedAt DESC');
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT
+                id AS "Id", user_id AS "UserId", name AS "Name",
+                species AS "Species", breed AS "Breed",
+                birth_date AS "BirthDate", weight AS "Weight",
+                gender AS "Gender", color AS "Color",
+                photo_url AS "PhotoUrl", notes AS "Notes",
+                is_active AS "IsActive", created_at AS "CreatedAt"
+             FROM pets
+             WHERE user_id = $1 AND is_active = TRUE
+             ORDER BY created_at DESC`,
+            [req.user.id]
+        );
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
@@ -330,90 +411,85 @@ app.post('/api/pets', authMiddleware, async (req, res) => {
     if (!name || !species)
         return res.status(400).json({ error: 'Ad ve tür zorunludur.' });
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('userId',    sql.Int,          req.user.id)
-            .input('name',      sql.NVarChar(100), sanitizeStr(name, 100))
-            .input('species',   sql.NVarChar(50),  sanitizeStr(species, 50))
-            .input('breed',     sql.NVarChar(100), sanitizeStr(breed, 100))
-            .input('birthDate', sql.Date,          birthDate || null)
-            .input('weight',    sql.Decimal(5,2),  parseFloat(weight) || null)
-            .input('gender',    sql.NVarChar(20),  sanitizeStr(gender, 20))
-            .input('color',     sql.NVarChar(100), sanitizeStr(color, 100))
-            .input('photoUrl',  sql.NVarChar(500), sanitizeStr(photoUrl, 500))
-            .input('notes',     sql.NVarChar(2000),sanitizeStr(notes, 2000))
-            .query(`INSERT INTO dbo.Pets
-                    (UserId,Name,Species,Breed,BirthDate,Weight,Gender,Color,PhotoUrl,Notes,IsActive,CreatedAt)
-                    OUTPUT INSERTED.Id
-                    VALUES (@userId,@name,@species,@breed,@birthDate,@weight,@gender,@color,@photoUrl,@notes,1,GETDATE())`);
-        res.status(201).json({ success: true, id: result.recordset[0].Id });
+        const result = await pool.query(
+            `INSERT INTO pets
+             (user_id, name, species, breed, birth_date, weight, gender, color, photo_url, notes)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+             RETURNING id`,
+            [
+                req.user.id,
+                sanitizeStr(name, 100),
+                sanitizeStr(species, 50),
+                sanitizeStr(breed, 100),
+                birthDate || null,
+                sanitizeFloat(weight),
+                sanitizeStr(gender, 20),
+                sanitizeStr(color, 100),
+                sanitizeStr(photoUrl, 500),
+                sanitizeStr(notes, 2000),
+            ]
+        );
+        res.status(201).json({ success: true, id: result.rows[0].id });
     } catch (err) {
-        console.error('SQL Hatası (pets POST):', err.message);
+        console.error('Hata (pets POST):', err.message);
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
 
-// Hayvan güncelle
 app.put('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
     const { name, species, breed, birthDate, weight, gender, color, photoUrl, notes } = req.body;
     try {
-        const p = await getPool();
-        await p.request()
-            .input('id',        sql.Int,           id)
-            .input('userId',    sql.Int,           req.user.id)
-            .input('name',      sql.NVarChar(100), sanitizeStr(name, 100))
-            .input('species',   sql.NVarChar(50),  sanitizeStr(species, 50))
-            .input('breed',     sql.NVarChar(100), sanitizeStr(breed, 100))
-            .input('birthDate', sql.Date,          birthDate || null)
-            .input('weight',    sql.Decimal(5,2),  parseFloat(weight) || null)
-            .input('gender',    sql.NVarChar(20),  sanitizeStr(gender, 20))
-            .input('color',     sql.NVarChar(100), sanitizeStr(color, 100))
-            .input('photoUrl',  sql.NVarChar(500), sanitizeStr(photoUrl, 500))
-            .input('notes',     sql.NVarChar(2000),sanitizeStr(notes, 2000))
-            .query(`UPDATE dbo.Pets
-                    SET Name=@name,Species=@species,Breed=@breed,BirthDate=@birthDate,
-                        Weight=@weight,Gender=@gender,Color=@color,PhotoUrl=@photoUrl,Notes=@notes
-                    WHERE Id=@id AND UserId=@userId`);
+        await pool.query(
+            `UPDATE pets
+             SET name=$1, species=$2, breed=$3, birth_date=$4,
+                 weight=$5, gender=$6, color=$7, photo_url=$8, notes=$9
+             WHERE id=$10 AND user_id=$11`,
+            [
+                sanitizeStr(name, 100), sanitizeStr(species, 50),
+                sanitizeStr(breed, 100), birthDate || null,
+                sanitizeFloat(weight), sanitizeStr(gender, 20),
+                sanitizeStr(color, 100), sanitizeStr(photoUrl, 500),
+                sanitizeStr(notes, 2000), id, req.user.id,
+            ]
+        );
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Güncelleme hatası.' });
     }
 });
 
-// Hayvan sil (soft delete)
 app.delete('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('id',     sql.Int, id)
-            .input('userId', sql.Int, req.user.id)
-            .query('UPDATE dbo.Pets SET IsActive=0 WHERE Id=@id AND UserId=@userId');
+        await pool.query(
+            'UPDATE pets SET is_active = FALSE WHERE id = $1 AND user_id = $2',
+            [id, req.user.id]
+        );
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Silme hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  AŞI TAKİBİ  ══════════════════
-══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('petId',  sql.Int, petId)
-            .input('userId', sql.Int, req.user.id)
-            .query(`SELECT v.* FROM dbo.Vaccinations v
-                    INNER JOIN dbo.Pets pt ON v.PetId=pt.Id
-                    WHERE v.PetId=@petId AND pt.UserId=@userId
-                    ORDER BY v.VaccineDate DESC`);
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT v.id AS "Id", v.pet_id AS "PetId",
+                    v.vaccine_name AS "VaccineName", v.vaccine_date AS "VaccineDate",
+                    v.next_date AS "NextDate", v.vet_name AS "VetName",
+                    v.notes AS "Notes", v.created_at AS "CreatedAt"
+             FROM vaccinations v
+             INNER JOIN pets p ON v.pet_id = p.id
+             WHERE v.pet_id = $1 AND p.user_id = $2
+             ORDER BY v.vaccine_date DESC`,
+            [petId, req.user.id]
+        );
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
@@ -425,38 +501,37 @@ app.post('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     if (!vaccineName || !vaccineDate)
         return res.status(400).json({ error: 'Aşı adı ve tarih zorunludur.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('petId',       sql.Int,           petId)
-            .input('vaccineName', sql.NVarChar(200),  sanitizeStr(vaccineName, 200))
-            .input('vaccineDate', sql.Date,            vaccineDate)
-            .input('nextDate',    sql.Date,            nextDate || null)
-            .input('vetName',     sql.NVarChar(200),  sanitizeStr(vetName, 200))
-            .input('notes',       sql.NVarChar(1000), sanitizeStr(notes, 1000))
-            .query(`INSERT INTO dbo.Vaccinations (PetId,VaccineName,VaccineDate,NextDate,VetName,Notes,CreatedAt)
-                    VALUES (@petId,@vaccineName,@vaccineDate,@nextDate,@vetName,@notes,GETDATE())`);
+        await pool.query(
+            `INSERT INTO vaccinations (pet_id, vaccine_name, vaccine_date, next_date, vet_name, notes)
+             VALUES ($1,$2,$3,$4,$5,$6)`,
+            [
+                petId,
+                sanitizeStr(vaccineName, 200),
+                vaccineDate,
+                nextDate || null,
+                sanitizeStr(vetName, 200),
+                sanitizeStr(notes, 1000),
+            ]
+        );
         res.status(201).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  SAĞLIK KAYITLARI  ════════════
-══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('petId',  sql.Int, petId)
-            .input('userId', sql.Int, req.user.id)
-            .query(`SELECT m.* FROM dbo.MedicalRecords m
-                    INNER JOIN dbo.Pets pt ON m.PetId=pt.Id
-                    WHERE m.PetId=@petId AND pt.UserId=@userId
-                    ORDER BY m.RecordDate DESC`);
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT m.*
+             FROM medical_records m
+             INNER JOIN pets p ON m.pet_id = p.id
+             WHERE m.pet_id = $1 AND p.user_id = $2
+             ORDER BY m.record_date DESC`,
+            [petId, req.user.id]
+        );
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
@@ -468,43 +543,46 @@ app.post('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
     if (!recordDate || !recordType)
         return res.status(400).json({ error: 'Tarih ve kayıt türü zorunludur.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('petId',       sql.Int,           petId)
-            .input('recordDate',  sql.Date,           recordDate)
-            .input('recordType',  sql.NVarChar(100),  sanitizeStr(recordType, 100))
-            .input('diagnosis',   sql.NVarChar(1000), sanitizeStr(diagnosis, 1000))
-            .input('treatment',   sql.NVarChar(1000), sanitizeStr(treatment, 1000))
-            .input('prescription',sql.NVarChar(1000), sanitizeStr(prescription, 1000))
-            .input('vetName',     sql.NVarChar(200),  sanitizeStr(vetName, 200))
-            .input('clinicName',  sql.NVarChar(200),  sanitizeStr(clinicName, 200))
-            .input('cost',        sql.Decimal(10,2),  parseFloat(cost) || null)
-            .input('notes',       sql.NVarChar(2000), sanitizeStr(notes, 2000))
-            .query(`INSERT INTO dbo.MedicalRecords
-                    (PetId,RecordDate,RecordType,Diagnosis,Treatment,Prescription,VetName,ClinicName,Cost,Notes,CreatedAt)
-                    VALUES (@petId,@recordDate,@recordType,@diagnosis,@treatment,@prescription,
-                            @vetName,@clinicName,@cost,@notes,GETDATE())`);
+        await pool.query(
+            `INSERT INTO medical_records
+             (pet_id, record_date, record_type, diagnosis, treatment, prescription, vet_name, clinic_name, cost, notes)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+            [
+                petId, recordDate,
+                sanitizeStr(recordType, 100),
+                sanitizeStr(diagnosis, 1000),
+                sanitizeStr(treatment, 1000),
+                sanitizeStr(prescription, 1000),
+                sanitizeStr(vetName, 200),
+                sanitizeStr(clinicName, 200),
+                sanitizeFloat(cost),
+                sanitizeStr(notes, 2000),
+            ]
+        );
         res.status(201).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  RANDEVULAR  ═══════════════════
-══════════════════════════════════════════ */
-
 app.get('/api/appointments', authMiddleware, async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('userId', sql.Int, req.user.id)
-            .query(`SELECT a.*, pt.Name AS PetName, pt.Species AS PetSpecies
-                    FROM dbo.Appointments a
-                    INNER JOIN dbo.Pets pt ON a.PetId=pt.Id
-                    WHERE pt.UserId=@userId AND a.AppointmentDate >= CAST(GETDATE() AS DATE)
-                    ORDER BY a.AppointmentDate ASC, a.AppointmentTime ASC`);
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT
+                a.id AS "Id", a.pet_id AS "PetId",
+                a.appointment_date AS "AppointmentDate",
+                a.appointment_time AS "AppointmentTime",
+                a.clinic_name AS "ClinicName", a.vet_name AS "VetName",
+                a.reason AS "Reason", a.status AS "Status",
+                a.notes AS "Notes",
+                p.name AS "PetName", p.species AS "PetSpecies"
+             FROM appointments a
+             INNER JOIN pets p ON a.pet_id = p.id
+             WHERE p.user_id = $1 AND a.appointment_date >= CURRENT_DATE
+             ORDER BY a.appointment_date ASC, a.appointment_time ASC`,
+            [req.user.id]
+        );
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
@@ -515,39 +593,44 @@ app.post('/api/appointments', authMiddleware, async (req, res) => {
     if (!petId || !appointmentDate)
         return res.status(400).json({ error: 'Hayvan ve tarih zorunludur.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('petId',           sql.Int,           sanitizeInt(petId))
-            .input('appointmentDate', sql.Date,           appointmentDate)
-            .input('appointmentTime', sql.NVarChar(10),   sanitizeStr(appointmentTime, 10))
-            .input('clinicName',      sql.NVarChar(200),  sanitizeStr(clinicName, 200))
-            .input('vetName',         sql.NVarChar(200),  sanitizeStr(vetName, 200))
-            .input('reason',          sql.NVarChar(500),  sanitizeStr(reason, 500))
-            .input('notes',           sql.NVarChar(1000), sanitizeStr(notes, 1000))
-            .query(`INSERT INTO dbo.Appointments
-                    (PetId,AppointmentDate,AppointmentTime,ClinicName,VetName,Reason,Status,Notes,CreatedAt)
-                    VALUES (@petId,@appointmentDate,@appointmentTime,@clinicName,@vetName,@reason,'bekliyor',@notes,GETDATE())`);
+        await pool.query(
+            `INSERT INTO appointments
+             (pet_id, appointment_date, appointment_time, clinic_name, vet_name, reason, status, notes)
+             VALUES ($1,$2,$3,$4,$5,$6,'bekliyor',$7)`,
+            [
+                sanitizeInt(petId), appointmentDate,
+                sanitizeStr(appointmentTime, 10),
+                sanitizeStr(clinicName, 200),
+                sanitizeStr(vetName, 200),
+                sanitizeStr(reason, 500),
+                sanitizeStr(notes, 1000),
+            ]
+        );
         res.status(201).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  HATIRLATICILАР  ═══════════════
-══════════════════════════════════════════ */
 
 app.get('/api/reminders', authMiddleware, async (req, res) => {
     try {
-        const p = await getPool();
-        const result = await p.request()
-            .input('userId', sql.Int, req.user.id)
-            .query(`SELECT r.*, pt.Name AS PetName
-                    FROM dbo.Reminders r
-                    INNER JOIN dbo.Pets pt ON r.PetId=pt.Id
-                    WHERE pt.UserId=@userId AND r.IsCompleted=0
-                    ORDER BY r.DueDate ASC`);
-        res.json(result.recordset);
+        const result = await pool.query(
+            `SELECT
+                r.id AS "Id", r.pet_id AS "PetId",
+                r.reminder_type AS "ReminderType", r.title AS "Title",
+                r.description AS "Description", r.due_date AS "DueDate",
+                r.is_recurring AS "IsRecurring",
+                r.recurrence_interval AS "RecurrenceInterval",
+                r.is_completed AS "IsCompleted",
+                p.name AS "PetName"
+             FROM reminders r
+             INNER JOIN pets p ON r.pet_id = p.id
+             WHERE p.user_id = $1 AND r.is_completed = FALSE
+             ORDER BY r.due_date ASC`,
+            [req.user.id]
+        );
+        res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
@@ -558,79 +641,96 @@ app.post('/api/reminders', authMiddleware, async (req, res) => {
     if (!petId || !title || !dueDate)
         return res.status(400).json({ error: 'Hayvan, başlık ve tarih zorunludur.' });
     try {
-        const p = await getPool();
-        await p.request()
-            .input('petId',              sql.Int,           sanitizeInt(petId))
-            .input('reminderType',       sql.NVarChar(50),   sanitizeStr(reminderType, 50))
-            .input('title',              sql.NVarChar(200),  sanitizeStr(title, 200))
-            .input('description',        sql.NVarChar(1000), sanitizeStr(description, 1000))
-            .input('dueDate',            sql.Date,           dueDate)
-            .input('isRecurring',        sql.Bit,            isRecurring ? 1 : 0)
-            .input('recurrenceInterval', sql.Int,            sanitizeInt(recurrenceInterval))
-            .query(`INSERT INTO dbo.Reminders
-                    (PetId,ReminderType,Title,Description,DueDate,IsRecurring,RecurrenceInterval,IsCompleted,CreatedAt)
-                    VALUES (@petId,@reminderType,@title,@description,@dueDate,
-                            @isRecurring,@recurrenceInterval,0,GETDATE())`);
+        await pool.query(
+            `INSERT INTO reminders
+             (pet_id, reminder_type, title, description, due_date, is_recurring, recurrence_interval)
+             VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+            [
+                sanitizeInt(petId),
+                sanitizeStr(reminderType, 50),
+                sanitizeStr(title, 200),
+                sanitizeStr(description, 1000),
+                dueDate,
+                isRecurring ? true : false,
+                sanitizeInt(recurrenceInterval),
+            ]
+        );
         res.status(201).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Kayıt hatası.' });
     }
 });
 
-// Hatırlatıcı tamamlandı olarak işaretle
 app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     try {
-        const p = await getPool();
-        await p.request()
-            .input('id',     sql.Int, id)
-            .input('userId', sql.Int, req.user.id)
-            .query(`UPDATE dbo.Reminders SET IsCompleted=1
-                    WHERE Id=@id AND PetId IN (SELECT Id FROM dbo.Pets WHERE UserId=@userId)`);
+        await pool.query(
+            `UPDATE reminders SET is_completed = TRUE
+             WHERE id = $1
+               AND pet_id IN (SELECT id FROM pets WHERE user_id = $2)`,
+            [id, req.user.id]
+        );
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Güncelleme hatası.' });
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  DASHBOARD ÖZET  ══════════════
-══════════════════════════════════════════ */
 
 app.get('/api/dashboard', authMiddleware, async (req, res) => {
+    const uid = req.user.id;
     try {
-        const p    = await getPool();
-        const uid  = req.user.id;
-
-        const [pets, upcoming_vax, upcoming_apt, reminders] = await Promise.all([
-            p.request()
-             .input('userId', sql.Int, uid)
-             .query('SELECT * FROM dbo.Pets WHERE UserId=@userId AND IsActive=1'),
-            p.request()
-             .input('userId', sql.Int, uid)
-             .query(`SELECT v.*, pt.Name AS PetName FROM dbo.Vaccinations v
-                     INNER JOIN dbo.Pets pt ON v.PetId=pt.Id
-                     WHERE pt.UserId=@userId AND v.NextDate BETWEEN GETDATE() AND DATEADD(day,30,GETDATE())
-                     ORDER BY v.NextDate ASC`),
-            p.request()
-             .input('userId', sql.Int, uid)
-             .query(`SELECT a.*, pt.Name AS PetName FROM dbo.Appointments a
-                     INNER JOIN dbo.Pets pt ON a.PetId=pt.Id
-                     WHERE pt.UserId=@userId AND a.AppointmentDate >= CAST(GETDATE() AS DATE)
-                     ORDER BY a.AppointmentDate ASC`),
-            p.request()
-             .input('userId', sql.Int, uid)
-             .query(`SELECT r.*, pt.Name AS PetName FROM dbo.Reminders r
-                     INNER JOIN dbo.Pets pt ON r.PetId=pt.Id
-                     WHERE pt.UserId=@userId AND r.IsCompleted=0 AND r.DueDate <= DATEADD(day,7,GETDATE())
-                     ORDER BY r.DueDate ASC`),
+        const [pets, vax, apt, rem] = await Promise.all([
+            pool.query(
+                `SELECT id AS "Id", name AS "Name", species AS "Species",
+                        breed AS "Breed", birth_date AS "BirthDate",
+                        weight AS "Weight", gender AS "Gender",
+                        color AS "Color", photo_url AS "PhotoUrl", notes AS "Notes"
+                 FROM pets WHERE user_id = $1 AND is_active = TRUE`,
+                [uid]
+            ),
+            pool.query(
+                `SELECT v.id AS "Id", v.vaccine_name AS "VaccineName",
+                        v.vaccine_date AS "VaccineDate", v.next_date AS "NextDate",
+                        v.vet_name AS "VetName", p.name AS "PetName"
+                 FROM vaccinations v
+                 INNER JOIN pets p ON v.pet_id = p.id
+                 WHERE p.user_id = $1
+                   AND v.next_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'
+                 ORDER BY v.next_date ASC`,
+                [uid]
+            ),
+            pool.query(
+                `SELECT a.id AS "Id", a.appointment_date AS "AppointmentDate",
+                        a.appointment_time AS "AppointmentTime",
+                        a.clinic_name AS "ClinicName", a.vet_name AS "VetName",
+                        a.reason AS "Reason", a.status AS "Status",
+                        p.name AS "PetName"
+                 FROM appointments a
+                 INNER JOIN pets p ON a.pet_id = p.id
+                 WHERE p.user_id = $1 AND a.appointment_date >= CURRENT_DATE
+                 ORDER BY a.appointment_date ASC`,
+                [uid]
+            ),
+            pool.query(
+                `SELECT r.id AS "Id", r.reminder_type AS "ReminderType",
+                        r.title AS "Title", r.due_date AS "DueDate",
+                        r.is_recurring AS "IsRecurring", p.name AS "PetName"
+                 FROM reminders r
+                 INNER JOIN pets p ON r.pet_id = p.id
+                 WHERE p.user_id = $1
+                   AND r.is_completed = FALSE
+                   AND r.due_date <= CURRENT_DATE + INTERVAL '7 days'
+                 ORDER BY r.due_date ASC`,
+                [uid]
+            ),
         ]);
 
         res.json({
-            pets:           pets.recordset,
-            upcomingVax:    upcoming_vax.recordset,
-            upcomingApt:    upcoming_apt.recordset,
-            activeReminders: reminders.recordset,
+            pets:            pets.rows,
+            upcomingVax:     vax.rows,
+            upcomingApt:     apt.rows,
+            activeReminders: rem.rows,
         });
     } catch (err) {
         console.error('Dashboard hatası:', err.message);
@@ -638,9 +738,6 @@ app.get('/api/dashboard', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   SUNUCU BAŞLAT
-══════════════════════════════════════════ */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`✅ PetMate sunucu çalışıyor: http://localhost:${PORT}`);
