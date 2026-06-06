@@ -1,18 +1,4 @@
-/**
- * PetMate — PostgreSQL Backend (server.js)
- *
- * MSSQL → PostgreSQL dönüşümü yapılmıştır.
- * Tüm endpoint'ler, auth, rate limiting ve güvenlik korunmuştur.
- *
- * Kurulum:
- *   npm install express pg bcryptjs jsonwebtoken dotenv helmet express-rate-limit
- *
- * .env dosyası örneği:
- *   DATABASE_URL=postgresql://kullanici:sifre@host:5432/petmatedb
- *   JWT_SECRET=cok_gizli_bir_anahtar
- *   PORT=3000
- *   NODE_ENV=production
- */
+
 
 require('dotenv').config();
 
@@ -26,9 +12,6 @@ const path      = require('path');
 
 const app = express();
 
-/* ══════════════════════════════════════════
-   GÜVENLİK MİDDLEWARE'LERİ
-══════════════════════════════════════════ */
 app.use(helmet());
 app.use(express.static('public'));
 app.use(express.json({ limit: '2mb' }));
@@ -52,12 +35,6 @@ app.use('/api/', apiLimiter);
 app.use('/kullanici-giris', authLimiter);
 app.use('/kullanici-kayit', authLimiter);
 
-/* ══════════════════════════════════════════
-   VERİTABANI BAĞLANTISI (PostgreSQL)
-   Render'da DATABASE_URL otomatik gelir.
-   Yerel test için .env dosyasına ekleyin:
-   DATABASE_URL=postgresql://user:pass@localhost:5432/petmatedb
-══════════════════════════════════════════ */
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production'
@@ -65,7 +42,6 @@ const pool = new Pool({
         : false,
 });
 
-// Bağlantı testi
 pool.connect((err, client, release) => {
     if (err) {
         console.error('❌ Veritabanı bağlantı hatası:', err.message);
@@ -75,11 +51,6 @@ pool.connect((err, client, release) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   TABLOLARI OLUŞTUR (ilk çalıştırmada)
-   Render'da her deploy'da çalışır, IF NOT
-   EXISTS sayesinde veri silinmez.
-══════════════════════════════════════════ */
 async function initDB() {
     const client = await pool.connect();
     try {
@@ -93,7 +64,7 @@ async function initDB() {
                 olusturulma   TIMESTAMP DEFAULT NOW()
             );
 
-            CREATE TABLE IF NOT EXISTS hayvan_ilanlari (
+            DROP TABLE IF EXISTS hayvan_ilanlari CASCADE; CREATE TABLE hayvan_ilanlari (
                 id          SERIAL PRIMARY KEY,
                 ilan_turu   VARCHAR(50),
                 hayvan_turu VARCHAR(50),
@@ -193,9 +164,6 @@ async function initDB() {
 
 initDB();
 
-/* ══════════════════════════════════════════
-   AUTH MİDDLEWARE
-══════════════════════════════════════════ */
 const JWT_SECRET = process.env.JWT_SECRET || 'degistirmeniz_gereken_gizli_anahtar';
 
 function authMiddleware(req, res, next) {
@@ -216,9 +184,6 @@ function adminMiddleware(req, res, next) {
     next();
 }
 
-/* ══════════════════════════════════════════
-   YARDIMCI FONKSİYONLAR
-══════════════════════════════════════════ */
 const sanitizeStr = (val, maxLen = 255) => {
     if (val === undefined || val === null) return null;
     return String(val).trim().substring(0, maxLen);
@@ -234,11 +199,6 @@ const sanitizeFloat = (val) => {
     return isNaN(n) ? null : n;
 };
 
-/* ══════════════════════════════════════════
-   ═══════  İLAN ENDPOINT'LERİ  ═══════════
-══════════════════════════════════════════ */
-
-// İlan ekle
 app.post('/ilan-ekle', async (req, res) => {
     if (!req.body || Object.keys(req.body).length === 0)
         return res.status(400).json({ error: 'Veri ulaşmıyor.' });
@@ -258,7 +218,7 @@ app.post('/ilan-ekle', async (req, res) => {
                 sanitizeStr(req.body.sehir, 100),
                 sanitizeStr(req.body.aciklama, 2000),
                 sanitizeStr(req.body.iletisim, 100),
-                req.body.fotoUrl || null,  // base64 — TEXT kolonuna
+                req.body.fotoUrl || null,
             ]
         );
         res.json({ success: true, message: 'İlan başarıyla kaydedildi.' });
@@ -268,7 +228,6 @@ app.post('/ilan-ekle', async (req, res) => {
     }
 });
 
-// İlanları getir
 app.get('/ilanlari-getir', async (req, res) => {
     try {
         const result = await pool.query(
@@ -296,7 +255,6 @@ app.get('/ilanlari-getir', async (req, res) => {
     }
 });
 
-// İlan sil (admin)
 app.delete('/ilan-sil/:id', authMiddleware, adminMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -309,7 +267,6 @@ app.delete('/ilan-sil/:id', authMiddleware, adminMiddleware, async (req, res) =>
     }
 });
 
-// Öne çıkan ilanları getir
 app.get('/one-cikan-ilanlar', async (req, res) => {
     try {
         const result = await pool.query(`
@@ -335,7 +292,6 @@ app.get('/one-cikan-ilanlar', async (req, res) => {
     }
 });
 
-// Öne çıkan ilanları güncelle (admin)
 app.post('/one-cikan-guncelle', authMiddleware, adminMiddleware, async (req, res) => {
     const { ilanIds } = req.body;
     if (!Array.isArray(ilanIds)) return res.status(400).json({ error: 'Geçersiz format.' });
@@ -372,11 +328,6 @@ app.get('/one-cikan-idler', authMiddleware, adminMiddleware, async (req, res) =>
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  KULLANICI YÖNETİMİ  ═══════════
-══════════════════════════════════════════ */
-
-// Kayıt
 app.post('/kullanici-kayit', async (req, res) => {
     const { kullanici, sifre, email } = req.body;
     if (!kullanici || !sifre)
