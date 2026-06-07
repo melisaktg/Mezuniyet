@@ -66,7 +66,7 @@ async function initDB() {
                 olusturulma   TIMESTAMP DEFAULT NOW()
             );
 
-            DROP TABLE IF EXISTS hayvan_ilanlari CASCADE; CREATE TABLE hayvan_ilanlari (
+           CREATE TABLE IF NOT EXISTS hayvan_ilanlari (
                 id          SERIAL PRIMARY KEY,
                 ilan_turu   VARCHAR(50),
                 hayvan_turu VARCHAR(50),
