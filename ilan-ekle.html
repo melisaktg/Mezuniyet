@@ -26,6 +26,7 @@
 html { scroll-behavior:smooth; }
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--cream); color:var(--text); overflow-x:hidden; }
 
+/* ── HEADER ── */
 header {
   background:var(--navy3); height:70px;
   display:flex; align-items:center; justify-content:space-between;
@@ -54,6 +55,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .h-btn-logout:hover { background:rgba(192,57,43,0.25); color:#fff; border-color:rgba(192,57,43,0.7); }
 .h-user-name { font-size:13px; color:rgba(255,255,255,0.75); font-weight:600; display:none; align-items:center; gap:6px; }
 
+/* ── SAYFA HERO ── */
 .page-hero {
   background:var(--navy3); padding:52px 52px 48px; position:relative; overflow:hidden;
 }
@@ -68,6 +70,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .page-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,44px); font-weight:700; color:#fff; line-height:1.1; margin-bottom:10px; }
 .page-hero p { font-size:14px; color:rgba(255,255,255,0.5); max-width:420px; line-height:1.7; font-weight:300; }
 
+/* ── ADIM GÖSTERGESİ ── */
 .outer { max-width:780px; margin:0 auto; padding:0 24px 64px; }
 .steps-wrap {
   display:flex; background:var(--white); border-radius:16px 16px 0 0;
@@ -93,12 +96,14 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .step.done   .s-num { background:var(--green);  color:#fff; }
 .s-label { display:block; }
 
+/* ── FORM KARTI ── */
 .form-card {
   background:var(--white); border-radius:0 0 18px 18px;
   border:1px solid var(--border); border-top:none;
   box-shadow:0 16px 48px rgba(15,34,64,0.1);
 }
 
+/* ── BÖLÜM ── */
 .form-section { padding:32px 36px; display:none; animation:fadeInSec 0.3s ease; }
 .form-section.active { display:block; }
 @keyframes fadeInSec { from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:none;} }
@@ -110,6 +115,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 }
 .sec-title::after { content:''; flex:1; height:1px; background:var(--warm2); }
 
+/* ── ALANLAR ── */
 .field { margin-bottom:20px; }
 .field label {
   display:block; margin-bottom:7px;
@@ -142,6 +148,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
 
+/* ── İLAN TÜRÜ KARTLARI ── */
 .ilan-turu-group { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
 .ilan-turu-card {
   border:2px solid var(--border); border-radius:14px;
@@ -155,6 +162,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .itan-desc { font-size:11px; color:var(--muted); margin-top:3px; }
 .ilan-turu-card input { display:none; }
 
+/* ── HAYVAN TÜRÜ ── */
 .hayvan-group { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
 .hayvan-btn {
   border:2px solid var(--border); border-radius:12px;
@@ -167,6 +175,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .hayvan-btn.selected span { color:var(--orange); }
 .hayvan-btn input { display:none; }
 
+/* ── ÖZELLİK CHECKBOX ── */
 .check-group { display:flex; flex-wrap:wrap; gap:8px; }
 .check-item {
   display:flex; align-items:center; gap:7px;
@@ -177,6 +186,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .check-item input[type="checkbox"] { width:14px; height:14px; accent-color:var(--orange); cursor:pointer; }
 .check-item:has(input:checked) { background:var(--warm1); border-color:var(--orange); color:var(--navy2); font-weight:600; }
 
+/* ── ÖZET ── */
 .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
 .sum-item { background:var(--cream); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
 .sum-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; margin-bottom:3px; }
@@ -188,6 +198,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 }
 .sum-desc-lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; margin-bottom:8px; }
 
+/* ── BUTON SATIRI ── */
 .btn-row {
   display:flex; gap:12px; padding:20px 36px 32px;
   border-top:1px solid var(--warm2);
@@ -221,9 +232,11 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .btn-submit:hover { background:linear-gradient(120deg,var(--orange2),#b05b18); }
 .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
 
+/* Spinner */
 .spin { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:rot 0.7s linear infinite; display:none; }
 @keyframes rot { to{transform:rotate(360deg);} }
 
+/* ── BAŞARI ── */
 .success-screen { display:none; text-align:center; padding:56px 36px; animation:fadeInSec 0.4s ease; }
 .success-screen.show { display:block; }
 .success-ico { font-size:68px; display:block; margin-bottom:18px; }
@@ -239,18 +252,21 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .s-btn-s { background:var(--white); color:var(--navy3); border:1.5px solid var(--border); }
 .s-btn-s:hover { border-color:var(--navy3); }
 
+/* ── HATA KUTUSU ── */
 .alert-err {
   background:#fff5f5; border:1px solid #fca5a5; border-radius:10px;
   padding:12px 16px; color:#991b1b; font-size:13px; font-weight:500;
   margin:0 36px 16px; display:none;
 }
 
+/* ── GÜVENLİK NOTU ── */
 .security-note {
   background:var(--warm1); border:1px solid var(--warm2);
   border-radius:10px; padding:14px 16px;
   font-size:13px; color:var(--navy2); line-height:1.6;
 }
 
+/* ── FOOTER ── */
 footer { background:var(--navy3); padding:52px 52px 28px; }
 .footer-top { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:60px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:28px; }
 .f-brand-desc { font-size:13px; color:rgba(255,255,255,0.4); line-height:1.75; margin-top:16px; max-width:220px; }
@@ -263,6 +279,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 .f-social { width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:13px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.08); }
 .f-social:hover { background:rgba(255,255,255,0.15); color:#fff; }
 
+/* ── FOTOĞRAF YÜKLEME ── */
 .photo-upload-area {
   border:2px dashed var(--border); border-radius:14px;
   padding:32px 20px; text-align:center; cursor:pointer;
@@ -300,6 +317,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 .photo-info { font-size:11px; color:var(--green); margin-top:8px; font-weight:600; display:none; }
 .photo-info.show { display:block; }
 
+/* ── RESPONSİF ── */
 @media(max-width:900px){
   header{padding:0 24px;} nav{display:none;}
   .page-hero{padding:40px 24px 44px;}
@@ -321,6 +339,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <a class="logo" href="index.html">
     <div class="logo-mark">🐾</div>
@@ -340,6 +359,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   </div>
 </header>
 
+<!-- SAYFA HERO -->
 <div class="page-hero">
   <div class="page-hero-inner">
     <div class="hero-eyebrow">
@@ -353,6 +373,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 
 <div class="outer">
 
+  <!-- ADIM GÖSTERGESİ -->
   <div class="steps-wrap" id="stepsBar">
     <div class="step active" id="step-ind-0"><div class="s-num">1</div><span class="s-label">İlan Türü</span></div>
     <div class="step"        id="step-ind-1"><div class="s-num">2</div><span class="s-label">Hayvan Bilgisi</span></div>
@@ -363,6 +384,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 
   <div class="form-card">
 
+    <!-- ── ADIM 1: İLAN TÜRÜ ── -->
     <div class="form-section active" id="sec-0">
       <div class="sec-title">📋 İlan Türünü Seçin</div>
 
@@ -397,6 +419,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
+    <!-- ── ADIM 2: HAYVAN BİLGİSİ ── -->
     <div class="form-section" id="sec-1">
       <div class="sec-title">🐾 Hayvan Bilgileri</div>
 
@@ -475,6 +498,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
+    <!-- ── ADIM 3: FOTOĞRAF ── -->
     <div class="form-section" id="sec-2">
       <div class="sec-title">📷 Fotoğraf Ekle</div>
 
@@ -499,6 +523,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
+    <!-- ── ADIM 4: İLETİŞİM ── -->
     <div class="form-section" id="sec-3">
       <div class="sec-title">📞 İletişim Bilgileri</div>
 
@@ -520,6 +545,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
+    <!-- ── ADIM 5: ÖNİZLEME ── -->
     <div class="form-section" id="sec-4">
       <div class="sec-title">👁️ İlanınızı Kontrol Edin</div>
       <div id="summaryPhoto" style="margin-bottom:16px;display:none">
@@ -531,6 +557,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       <div class="sum-desc" id="summaryDesc"></div>
     </div>
 
+    <!-- ── BAŞARI ── -->
     <div class="success-screen" id="successScreen">
       <span class="success-ico">🎉</span>
       <h3>İlanınız Yayınlandı!</h3>
@@ -541,8 +568,10 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
       </div>
     </div>
 
+    <!-- HATA KUTUSU -->
     <div class="alert-err" id="alertErr"></div>
 
+    <!-- BUTON SATIRI -->
     <div class="btn-row" id="btnRow">
       <button class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none">← Geri</button>
       <button class="btn-next" id="btnNext" onclick="nextStep()">Devam Et →</button>
@@ -555,6 +584,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-top">
     <div>
@@ -584,8 +614,9 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 <script>
 let currentStep = 0;
 const TOTAL = 5;
-let photoBase64 = null; 
+let photoBase64 = null; // sıkıştırılmış fotoğraf
 
+/* ── Giriş / Çıkış ── */
 function girisDurumGuncelle() {
   const user         = localStorage.getItem('pm_user');
   const btnGiris     = document.getElementById('btnGiris');
@@ -611,6 +642,7 @@ function cikisYap() {
 }
 girisDurumGuncelle();
 
+/* ── Fotoğraf ── */
 function handlePhoto(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -663,6 +695,7 @@ function removePhoto(e) {
   document.getElementById('photoInput').value = '';
 }
 
+/* ── Seçim ── */
 function selectIlanTuru(el) {
   document.querySelectorAll('.ilan-turu-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
@@ -682,6 +715,7 @@ function getChecks()   {
   return Object.entries(map).filter(([id])=>document.getElementById(id).checked).map(([,l])=>l);
 }
 
+/* ── Validasyon ── */
 function clearErrors() {
   document.querySelectorAll('.err-msg').forEach(e=>e.style.display='none');
   document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
@@ -702,13 +736,14 @@ function validateStep(step) {
     if (!getVal('f-yas'))        { showErr('err-yas','f-yas'); ok=false; }
     if (getVal('f-aciklama').length < 20) { showErr('err-aciklama','f-aciklama'); ok=false; }
   }
-  
+  // Adım 2 (fotoğraf) zorunlu değil — geç
   if (step===3) {
     if (!getVal('f-iletisim')) { showErr('err-iletisim','f-iletisim'); ok=false; }
   }
   return ok;
 }
 
+/* ── Adım geçişi ── */
 function goStep(n) {
   document.querySelectorAll('.form-section').forEach((s,i) => s.classList.toggle('active', i===n));
   for (let i=0; i<TOTAL; i++) {
@@ -728,6 +763,7 @@ function goStep(n) {
 function nextStep() { if (validateStep(currentStep)) goStep(currentStep+1); }
 function prevStep() { goStep(currentStep-1); }
 
+/* ── Özet ── */
 function turLabel(v) {
   return v==='sahiplendirme'?'🏠 Sahiplendirme':v==='kayip'?'🔴 Kayıp':v==='bulundu'?'✅ Bulundu':v;
 }
@@ -735,6 +771,7 @@ function hayvanLabel(v) {
   return v==='kedi'?'🐱 Kedi':v==='köpek'?'🐶 Köpek':v==='kuş'?'🐦 Kuş':'🐾 Diğer';
 }
 function buildSummary() {
+  // Fotoğraf önizleme
   const spWrap = document.getElementById('summaryPhoto');
   const spImg  = document.getElementById('summaryPhotoImg');
   if (photoBase64) {
@@ -764,6 +801,7 @@ function buildSummary() {
   document.getElementById('summaryDesc').textContent = getVal('f-aciklama')||'—';
 }
 
+/* ── Gönderim ── */
 async function submitForm() {
   const btn    = document.getElementById('btnSubmit');
   const txt    = document.getElementById('submitText');
@@ -814,180 +852,6 @@ async function submitForm() {
       const msg = await r.text();
       try { errBox.textContent = '❌ ' + JSON.parse(msg).error; }
       catch { errBox.textContent = '❌ ' + msg; }
-      errBox.style.display = 'block';
-    }
-  } catch {
-    errBox.textContent   = '❌ Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
-    errBox.style.display = 'block';
-  } finally {
-    btn.disabled       = false;
-    txt.style.display  = 'inline';
-    spin.style.display = 'none';
-  }
-}
-
-function girisDurumGuncelle() {
-  const user         = localStorage.getItem('pm_user');
-  const btnGiris     = document.getElementById('btnGiris');
-  const userLabel    = document.getElementById('userLabel');
-  const userNameText = document.getElementById('userNameText');
-  const btnCikis     = document.getElementById('btnCikis');
-  if (user) {
-    btnGiris.style.display   = 'none';
-    userLabel.style.display  = 'flex';
-    userNameText.textContent = user;
-    btnCikis.style.display   = 'flex';
-  } else {
-    btnGiris.style.display   = '';
-    userLabel.style.display  = 'none';
-    btnCikis.style.display   = 'none';
-  }
-}
-function cikisYap() {
-  localStorage.removeItem('pm_user');
-  localStorage.removeItem('pm_token');
-  girisDurumGuncelle();
-  window.location.href = 'giris.html';
-}
-girisDurumGuncelle();
-
-function selectIlanTuru(el) {
-  document.querySelectorAll('.ilan-turu-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  el.querySelector('input').checked = true;
-}
-function selectHayvanTuru(el) {
-  document.querySelectorAll('.hayvan-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  el.querySelector('input').checked = true;
-}
-
-function getVal(id)    { const el=document.getElementById(id); return el?el.value.trim():''; }
-function getRadio(name){ const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:''; }
-function getChecks()   {
-  const map={'c-asili':'Aşılı','c-kisir':'Kısırlaştırılmış','c-cipli':'Çipli','c-evdost':'Evcil canlı dostu','c-cocuk':'Çocuk dostu'};
-  return Object.entries(map).filter(([id])=>document.getElementById(id).checked).map(([,l])=>l);
-}
-
-function clearErrors() {
-  document.querySelectorAll('.err-msg').forEach(e=>e.style.display='none');
-  document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
-}
-function showErr(errId, inputId) {
-  const e=document.getElementById(errId); if(e) e.style.display='block';
-  const i=document.getElementById(inputId); if(i) i.classList.add('err');
-}
-function validateStep(step) {
-  clearErrors(); let ok=true;
-  if (step===0) {
-    if (!getRadio('ilanTuru')) { document.getElementById('err-ilanTuru').style.display='block'; ok=false; }
-    if (!getVal('f-sehir'))   { showErr('err-sehir','f-sehir'); ok=false; }
-  }
-  if (step===1) {
-    if (!getRadio('hayvanTuru')) { document.getElementById('err-hayvanTuru').style.display='block'; ok=false; }
-    if (!getVal('f-hayvanAdi'))  { showErr('err-hayvanAdi','f-hayvanAdi'); ok=false; }
-    if (!getVal('f-yas'))        { showErr('err-yas','f-yas'); ok=false; }
-    if (getVal('f-aciklama').length < 20) { showErr('err-aciklama','f-aciklama'); ok=false; }
-  }
-  if (step===2) {
-    if (!getVal('f-iletisim')) { showErr('err-iletisim','f-iletisim'); ok=false; }
-  }
-  return ok;
-}
-
-function goStep(n) {
-  document.querySelectorAll('.form-section').forEach((s,i) => s.classList.toggle('active', i===n));
-  for (let i=0; i<TOTAL; i++) {
-    const ind = document.getElementById('step-ind-'+i);
-    ind.classList.remove('active','done');
-    if (i < n)  ind.classList.add('done');
-    if (i === n) ind.classList.add('active');
-    ind.querySelector('.s-num').textContent = i < n ? '✓' : i+1;
-  }
-  document.getElementById('btnPrev').style.display   = n > 0 ? 'block' : 'none';
-  document.getElementById('btnNext').style.display   = n < TOTAL-1 ? 'flex' : 'none';
-  document.getElementById('btnSubmit').style.display = n === TOTAL-1 ? 'flex' : 'none';
-  if (n === TOTAL-1) buildSummary();
-  currentStep = n;
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-function nextStep() { if (validateStep(currentStep)) goStep(currentStep+1); }
-function prevStep() { goStep(currentStep-1); }
-
-function turLabel(v) {
-  return v==='sahiplendirme'?'🏠 Sahiplendirme':v==='kayip'?'🔴 Kayıp':v==='bulundu'?'✅ Bulundu':v;
-}
-function hayvanLabel(v) {
-  return v==='kedi'?'🐱 Kedi':v==='köpek'?'🐶 Köpek':v==='kuş'?'🐦 Kuş':'🐾 Diğer';
-}
-function buildSummary() {
-  const checks = getChecks();
-  const alanlar = [
-    ['İlan Türü',   turLabel(getRadio('ilanTuru'))],
-    ['Şehir',       getVal('f-sehir')],
-    ['Hayvan Türü', hayvanLabel(getRadio('hayvanTuru'))],
-    ['Adı',         getVal('f-hayvanAdi')],
-    ['Irk',         getVal('f-irk')||'—'],
-    ['Yaş',         getVal('f-yas')?getVal('f-yas')+' yaş':'—'],
-    ['Cinsiyet',    getVal('f-cinsiyet')||'—'],
-    ['Renk',        getVal('f-renk')||'—'],
-    ['Telefon',     getVal('f-iletisim')],
-    ['E-posta',     getVal('f-eposta')||'—'],
-    ['Özellikler',  checks.length?checks.join(', '):'—'],
-  ];
-  document.getElementById('summaryGrid').innerHTML = alanlar.map(([l,v])=>`
-    <div class="sum-item"><div class="sum-lbl">${l}</div><div class="sum-val">${v}</div></div>`).join('');
-  document.getElementById('summaryDesc').textContent = getVal('f-aciklama')||'—';
-}
-
-async function submitForm() {
-  const btn     = document.getElementById('btnSubmit');
-  const txt     = document.getElementById('submitText');
-  const spin    = document.getElementById('submitSpin');
-  const errBox  = document.getElementById('alertErr');
-
-  btn.disabled = true;
-  txt.style.display  = 'none';
-  spin.style.display = 'block';
-  errBox.style.display = 'none';
-
-  const checks = getChecks();
-  const ozellikStr = checks.length ? '\n\nÖzellikler: ' + checks.join(', ') : '';
-  const aciklamaFull = getVal('f-aciklama') + ozellikStr;
-
-  const payload = {
-    ilanTuru:   getRadio('ilanTuru'),
-    hayvanTuru: getRadio('hayvanTuru'),
-    hayvanAdi:  getVal('f-hayvanAdi'),
-    irk:        getVal('f-irk'),
-    yas:        getVal('f-yas'),
-    cinsiyet:   getVal('f-cinsiyet'),
-    renk:       getVal('f-renk'),
-    sehir:      getVal('f-sehir'),
-    aciklama:   aciklamaFull,
-    iletisim:   getVal('f-iletisim'),
-    eposta:     getVal('f-eposta'),
-  };
-
-  const token = localStorage.getItem('pm_token');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-
-  try {
-    const r = await fetch('/ilan-ekle', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(payload),
-    });
-
-    if (r.ok) {
-      document.getElementById('stepsBar').style.display = 'none';
-      document.getElementById('btnRow').style.display   = 'none';
-      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-      document.getElementById('successScreen').classList.add('show');
-    } else {
-      const msg = await r.text();
-      errBox.textContent   = '❌ ' + (JSON.parse(msg).error || msg);
       errBox.style.display = 'block';
     }
   } catch {
