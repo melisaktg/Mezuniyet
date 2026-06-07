@@ -12,7 +12,9 @@ const path      = require('path');
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 app.use(express.static('.'));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
