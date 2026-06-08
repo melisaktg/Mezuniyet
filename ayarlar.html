@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayarlar — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1c3557;--navy2:#274a7a;--navy3:#0f2240;
+  --orange:#e07b2e;--orange2:#c96820;--orange-l:#fef3e8;
+  --cream:#fdf9f5;--warm1:#f5ede3;--warm2:#ede0d0;
+  --text:#1a1f2e;--muted:#7a7f8e;--border:#e8ddd2;--white:#ffffff;
+  --green:#2e7d5e;--green-l:#d1fae5;--red:#c0392b;--red-l:#fee2e2;
+  --sidebar:262px;--radius:14px;
+}
+
+/* Koyu mod */
+body.dark-mode {
+  --cream:#111827;--warm1:#1f2937;--warm2:#374151;
+  --white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;
+  --navy3:#0a1628;
+}
+body.dark-mode .sidebar{background:#0a1628;}
+body.dark-mode .topbar{background:#1f2937;border-color:#374151;}
+body.dark-mode .settings-card{background:#1f2937;border-color:#374151;}
+body.dark-mode .setting-row{border-color:#374151;}
+body.dark-mode .s-input{background:#111827;border-color:#374151;color:#f9fafb;}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;transition:background 0.3s,color 0.3s;}
+
+.sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;}
+.sb-brand{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
+.sb-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(224,123,46,0.45);flex-shrink:0;}
+.sb-brand-text strong{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;font-weight:700;line-height:1;}
+.sb-brand-text span{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-nav{padding:18px 12px;flex:1;}
+.sb-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,0.22);padding:0 10px 8px;}
+.sb-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.18s;margin-bottom:2px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.sb-link.active{background:rgba(224,123,46,0.18);color:#f0a05a;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--orange);}
+.sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:rgba(255,255,255,0.07);margin:12px 12px;}
+.sb-user{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:#fff;font-size:16px;flex-shrink:0;}
+.sb-uname{font-size:13px;color:rgba(255,255,255,0.85);font-weight:600;}
+.sb-role{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;}
+.sb-logout:hover{color:rgba(255,100,100,0.8);}
+
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;box-shadow:0 1px 8px rgba(15,34,64,0.06);}
+.topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;}
+.tb-btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--border);}
+.tb-btn-ghost:hover{border-color:var(--navy2);}
+.content{padding:28px 36px 52px;flex:1;}
+.hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+
+/* Settings layout */
+.settings-layout{display:grid;grid-template-columns:220px 1fr;gap:24px;max-width:900px;}
+.settings-nav{display:flex;flex-direction:column;gap:4px;}
+.snav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.18s;}
+.snav-item:hover{background:var(--warm1);color:var(--navy3);}
+.snav-item.active{background:var(--orange-l);color:var(--orange2);}
+.snav-icon{font-size:16px;}
+
+.settings-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.settings-section{display:none;}
+.settings-section.active{display:block;}
+.sc-head{padding:22px 24px;border-bottom:1px solid var(--warm2);}
+.sc-head h2{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--navy3);}
+.sc-head p{font-size:12px;color:var(--muted);margin-top:3px;}
+
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--warm2);gap:16px;}
+.setting-row:last-child{border-bottom:none;}
+.sr-left{flex:1;}
+.sr-title{font-size:14px;font-weight:600;color:var(--text);}
+.sr-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.sr-right{flex-shrink:0;}
+
+/* Toggle switch */
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:var(--warm2);border-radius:12px;transition:background 0.2s;}
+.toggle input:checked ~ .toggle-track{background:var(--orange);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(20px);}
+
+/* Select & input */
+.s-input{padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;transition:all 0.2s;min-width:160px;}
+.s-input:focus{border-color:var(--orange);background:var(--white);box-shadow:0 0 0 3px rgba(224,123,46,0.1);}
+
+/* Tema kartları */
+.theme-cards{display:flex;gap:12px;flex-wrap:wrap;}
+.theme-card{border:2px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;transition:all 0.2s;text-align:center;min-width:90px;}
+.theme-card:hover{border-color:var(--orange);}
+.theme-card.selected{border-color:var(--orange);background:var(--orange-l);}
+.tc-ico{font-size:26px;display:block;margin-bottom:6px;}
+.tc-lbl{font-size:12px;font-weight:600;color:var(--navy3);}
+
+/* Profil avatar */
+.profile-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:#fff;font-size:28px;flex-shrink:0;}
+
+/* Save btn */
+.save-bar{padding:16px 24px;border-top:1px solid var(--warm2);display:flex;justify-content:flex-end;gap:10px;}
+.btn-save{padding:10px 24px;border-radius:9px;background:var(--orange);color:#fff;border:none;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.btn-save:hover{background:var(--orange2);}
+.btn-cancel{padding:10px 20px;border-radius:9px;background:transparent;color:var(--muted);border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+
+/* Danger zone */
+.danger-btn{padding:10px 20px;border-radius:9px;background:var(--red-l);color:var(--red);border:1.5px solid var(--red);font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.danger-btn:hover{background:var(--red);color:#fff;}
+
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--navy3);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.5,.64,1);}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+.toast.info{border-left:4px solid var(--orange);}
+
+@media(max-width:900px){.settings-layout{grid-template-columns:1fr;}.settings-nav{flex-direction:row;overflow-x:auto;padding-bottom:4px;}}
+@media(max-width:768px){
+  :root{--sidebar:0px;}
+  .sidebar{transform:translateX(-262px);width:262px;}
+  .sidebar.open{transform:none;}
+  .main{margin-left:0;}
+  .topbar{padding:0 18px;}
+  .content{padding:18px 16px;}
+  .hamburger{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="index.html">
+    <div class="sb-logo">🐾</div>
+    <div class="sb-brand-text"><strong>PetMate</strong><span>Evcil Hayvan Yönetimi</span></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Genel</div>
+    <a href="index.html" class="sb-link"><span class="sb-icon">🌐</span> Ana Sayfa</a>
+    <a href="dashboard.html" class="sb-link"><span class="sb-icon">🏠</span> Dashboard</a>
+    <a href="hayvanlarim.html" class="sb-link"><span class="sb-icon">🐾</span> Hayvanlarım</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Sağlık</div>
+    <a href="asilar.html" class="sb-link"><span class="sb-icon">💉</span> Aşı Takibi</a>
+    <a href="saglik.html" class="sb-link"><span class="sb-icon">🏥</span> Sağlık Kayıtları</a>
+    <a href="randevular.html" class="sb-link"><span class="sb-icon">📅</span> Randevular</a>
+    <a href="hatirlatici.html" class="sb-link"><span class="sb-icon">🔔</span> Hatırlatıcılar</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Platform</div>
+    <a href="ilanlar.html" class="sb-link"><span class="sb-icon">📋</span> İlanlar</a>
+    <a href="ilan-ekle.html" class="sb-link"><span class="sb-icon">➕</span> İlan Ver</a>
+    <a href="ayarlar.html" class="sb-link active"><span class="sb-icon">⚙️</span> Ayarlar</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">?</div>
+    <div><div class="sb-uname" id="sbName">—</div><div class="sb-role" id="sbRole">—</div></div>
+    <button class="sb-logout" onclick="logout()">↩</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="topbar-left"><h1>⚙️ Ayarlar</h1><p>Uygulama tercihlerinizi yönetin</p></div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="tb-btn tb-btn-ghost">🌐 Ana Sayfa</a>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="settings-layout">
+
+      <!-- Sol menü -->
+      <div class="settings-nav">
+        <div class="snav-item active" onclick="showSection('gorünüm')"><span class="snav-icon">🎨</span> Görünüm</div>
+        <div class="snav-item" onclick="showSection('dil')"><span class="snav-icon">🌐</span> Dil</div>
+        <div class="snav-item" onclick="showSection('profil')"><span class="snav-icon">👤</span> Profil</div>
+        <div class="snav-item" onclick="showSection('bildirim')"><span class="snav-icon">🔔</span> Bildirimler</div>
+        <div class="snav-item" onclick="showSection('gizlilik')"><span class="snav-icon">🔒</span> Gizlilik</div>
+        <div class="snav-item" onclick="showSection('hesap')"><span class="snav-icon">⚠️</span> Hesap</div>
+      </div>
+
+      <!-- Sağ içerik -->
+      <div class="settings-card">
+
+        <!-- Görünüm -->
+        <div class="settings-section active" id="sec-gorünüm">
+          <div class="sc-head"><h2>🎨 Görünüm</h2><p>Tema ve renk tercihlerinizi ayarlayın</p></div>
+
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Tema</div>
+              <div class="sr-desc">Aydınlık veya koyu tema seçin</div>
+            </div>
+            <div class="sr-right">
+              <div class="theme-cards">
+                <div class="theme-card selected" id="tc-light" onclick="setTheme('light')">
+                  <span class="tc-ico">☀️</span>
+                  <div class="tc-lbl">Aydınlık</div>
+                </div>
+                <div class="theme-card" id="tc-dark" onclick="setTheme('dark')">
+                  <span class="tc-ico">🌙</span>
+                  <div class="tc-lbl">Koyu</div>
+                </div>
+                <div class="theme-card" id="tc-system" onclick="setTheme('system')">
+                  <span class="tc-ico">💻</span>
+                  <div class="tc-lbl">Sistem</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Koyu Mod</div>
+              <div class="sr-desc">Hızlı koyu/aydınlık geçişi</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="darkToggle" onchange="toggleDark(this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Animasyonlar</div>
+              <div class="sr-desc">Geçiş animasyonlarını etkinleştir</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="animToggle" checked onchange="savePref('animations', this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dil -->
+        <div class="settings-section" id="sec-dil">
+          <div class="sc-head"><h2>🌐 Dil</h2><p>Uygulama dilini seçin</p></div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Uygulama Dili</div>
+              <div class="sr-desc">Arayüz dilini değiştirin</div>
+            </div>
+            <div class="sr-right">
+              <select class="s-input" id="langSelect" onchange="savePref('lang', this.value)">
+                <option value="tr" selected>🇹🇷 Türkçe</option>
+                <option value="en">🇬🇧 English</option>
+              </select>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Tarih Formatı</div>
+              <div class="sr-desc">Tarihlerin gösterim biçimi</div>
+            </div>
+            <div class="sr-right">
+              <select class="s-input" id="dateFormat" onchange="savePref('dateFormat', this.value)">
+                <option value="tr" selected>GG.AA.YYYY</option>
+                <option value="iso">YYYY-AA-GG</option>
+                <option value="us">AA/GG/YYYY</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profil -->
+        <div class="settings-section" id="sec-profil">
+          <div class="sc-head"><h2>👤 Profil</h2><p>Hesap bilgilerinizi güncelleyin</p></div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Profil Fotoğrafı</div>
+              <div class="sr-desc">Baş harfiniz avatarınız olarak kullanılır</div>
+            </div>
+            <div class="sr-right">
+              <div class="profile-av" id="profileAv">?</div>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Kullanıcı Adı</div>
+              <div class="sr-desc">Giriş yaparken kullandığınız ad</div>
+            </div>
+            <div class="sr-right">
+              <input type="text" class="s-input" id="usernameInput" placeholder="Kullanıcı adı" readonly style="background:var(--warm2);cursor:not-allowed;">
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">E-posta</div>
+              <div class="sr-desc">İletişim e-posta adresiniz</div>
+            </div>
+            <div class="sr-right">
+              <input type="email" class="s-input" id="emailInput" placeholder="ornek@mail.com">
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-save" onclick="saveProfile()">💾 Kaydet</button>
+          </div>
+        </div>
+
+        <!-- Bildirimler -->
+        <div class="settings-section" id="sec-bildirim">
+          <div class="sc-head"><h2>🔔 Bildirimler</h2><p>Hangi bildirimleri almak istediğinizi seçin</p></div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Aşı Hatırlatmaları</div>
+              <div class="sr-desc">Yaklaşan aşılar için bildirim al</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="notifVax" checked onchange="savePref('notifVax', this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Randevu Bildirimleri</div>
+              <div class="sr-desc">Yaklaşan randevular için bildirim al</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="notifApt" checked onchange="savePref('notifApt', this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Hatırlatıcı Bildirimleri</div>
+              <div class="sr-desc">Günlük hatırlatıcılar için bildirim al</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="notifRem" checked onchange="savePref('notifRem', this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Erken Uyarı Süresi</div>
+              <div class="sr-desc">Kaç gün önce bildirim gönderilsin</div>
+            </div>
+            <div class="sr-right">
+              <select class="s-input" id="notifDays" onchange="savePref('notifDays', this.value)">
+                <option value="1">1 gün önce</option>
+                <option value="3" selected>3 gün önce</option>
+                <option value="7">7 gün önce</option>
+                <option value="14">14 gün önce</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gizlilik -->
+        <div class="settings-section" id="sec-gizlilik">
+          <div class="sc-head"><h2>🔒 Gizlilik</h2><p>Veri ve gizlilik tercihleriniz</p></div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">İlan Telefonu Göster</div>
+              <div class="sr-desc">İlanlarda telefon numaranız görünsün mü?</div>
+            </div>
+            <div class="sr-right">
+              <label class="toggle">
+                <input type="checkbox" id="showPhone" checked onchange="savePref('showPhone', this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Gizlilik Politikası</div>
+              <div class="sr-desc">Verilerinizin nasıl kullanıldığını öğrenin</div>
+            </div>
+            <div class="sr-right">
+              <a href="#" class="tb-btn tb-btn-ghost" style="font-size:12px;padding:7px 14px;">Görüntüle →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hesap -->
+        <div class="settings-section" id="sec-hesap">
+          <div class="sc-head"><h2>⚠️ Hesap</h2><p>Hesap yönetimi ve tehlikeli işlemler</p></div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Oturumu Kapat</div>
+              <div class="sr-desc">Bu cihazdaki oturumunuzu kapatın</div>
+            </div>
+            <div class="sr-right">
+              <button class="danger-btn" onclick="logout()">↩ Çıkış Yap</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Tüm Verileri Temizle</div>
+              <div class="sr-desc">Tarayıcıdaki önbellek ve ayarları sil</div>
+            </div>
+            <div class="sr-right">
+              <button class="danger-btn" onclick="clearCache()">🗑️ Temizle</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left">
+              <div class="sr-title">Uygulama Versiyonu</div>
+              <div class="sr-desc">PetMate sürüm bilgisi</div>
+            </div>
+            <div class="sr-right">
+              <span style="font-size:13px;color:var(--muted);font-weight:600;">v1.0.0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function getToken(){return localStorage.getItem('pm_token');}
+function getUser(){return localStorage.getItem('pm_user');}
+function getRole(){return localStorage.getItem('pm_role');}
+function logout(){localStorage.removeItem('pm_token');localStorage.removeItem('pm_user');localStorage.removeItem('pm_role');window.location.href='giris.html';}
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span> ${msg}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+/* Bölüm geçişi */
+function showSection(id){
+  document.querySelectorAll('.settings-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* Tema */
+function setTheme(theme){
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('tc-'+theme).classList.add('selected');
+  localStorage.setItem('pm_theme', theme);
+  if(theme==='dark'){
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkToggle').checked=true;
+  } else if(theme==='light'){
+    document.body.classList.remove('dark-mode');
+    document.getElementById('darkToggle').checked=false;
+  } else {
+    const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.body.classList.toggle('dark-mode', prefersDark);
+    document.getElementById('darkToggle').checked=prefersDark;
+  }
+  showToast('Tema değiştirildi!','info');
+}
+
+function toggleDark(isDark){
+  document.body.classList.toggle('dark-mode', isDark);
+  localStorage.setItem('pm_theme', isDark?'dark':'light');
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(isDark?'tc-dark':'tc-light').classList.add('selected');
+  showToast(isDark?'Koyu mod aktif 🌙':'Aydınlık mod aktif ☀️','info');
+}
+
+/* Tercih kaydet */
+function savePref(key, value){
+  localStorage.setItem('pm_pref_'+key, value);
+  showToast('Ayar kaydedildi','success');
+}
+
+/* Profil kaydet */
+function saveProfile(){
+  const email=document.getElementById('emailInput').value.trim();
+  localStorage.setItem('pm_email', email);
+  showToast('Profil güncellendi!','success');
+}
+
+/* Cache temizle */
+function clearCache(){
+  if(confirm('Tarayıcı ayarları ve önbellek temizlenecek. Devam et?')){
+    const token=getToken();
+    const user=getUser();
+    const role=getRole();
+    localStorage.clear();
+    if(token)localStorage.setItem('pm_token',token);
+    if(user)localStorage.setItem('pm_user',user);
+    if(role)localStorage.setItem('pm_role',role);
+    showToast('Önbellek temizlendi!','success');
+  }
+}
+
+/* Ayarları yükle */
+function loadPrefs(){
+  const theme=localStorage.getItem('pm_theme')||'light';
+  if(theme==='dark'){document.body.classList.add('dark-mode');document.getElementById('darkToggle').checked=true;document.getElementById('tc-dark').classList.add('selected');document.getElementById('tc-light').classList.remove('selected');}
+  else if(theme==='system'){document.getElementById('tc-system').classList.add('selected');document.getElementById('tc-light').classList.remove('selected');}
+
+  const prefs=['animations','notifVax','notifApt','notifRem','showPhone'];
+  prefs.forEach(p=>{
+    const el=document.getElementById(p+'Toggle')||document.getElementById('notif'+p.charAt(0).toUpperCase()+p.slice(1));
+    if(el&&localStorage.getItem('pm_pref_'+p)!==null) el.checked=localStorage.getItem('pm_pref_'+p)==='true';
+  });
+
+  const lang=localStorage.getItem('pm_pref_lang');
+  if(lang)document.getElementById('langSelect').value=lang;
+  const df=localStorage.getItem('pm_pref_dateFormat');
+  if(df)document.getElementById('dateFormat').value=df;
+  const nd=localStorage.getItem('pm_pref_notifDays');
+  if(nd)document.getElementById('notifDays').value=nd;
+  const email=localStorage.getItem('pm_email');
+  if(email)document.getElementById('emailInput').value=email;
+}
+
+window.onload=()=>{
+  if(!getToken()){window.location.href='giris.html';return;}
+  const user=getUser()||'?';
+  document.getElementById('sbAv').textContent=user.charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=user;
+  document.getElementById('sbRole').textContent=getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
+  document.getElementById('profileAv').textContent=user.charAt(0).toUpperCase();
+  document.getElementById('usernameInput').value=user;
+  loadPrefs();
+};
+</script>
+</body>
+</html>
