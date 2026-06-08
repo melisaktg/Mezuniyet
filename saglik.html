@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sağlık Kayıtları — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1c3557;--navy2:#274a7a;--navy3:#0f2240;
+  --orange:#e07b2e;--orange2:#c96820;--orange-l:#fef3e8;
+  --cream:#fdf9f5;--warm1:#f5ede3;--warm2:#ede0d0;
+  --text:#1a1f2e;--muted:#7a7f8e;--border:#e8ddd2;--white:#ffffff;
+  --green:#2e7d5e;--green-l:#d1fae5;--red:#c0392b;--red-l:#fee2e2;
+  --blue:#2563eb;--blue-l:#dbeafe;--sidebar:262px;--radius:14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;}
+
+.sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
+.sb-brand{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
+.sb-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(224,123,46,0.45);flex-shrink:0;}
+.sb-brand-text strong{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;font-weight:700;line-height:1;}
+.sb-brand-text span{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.3px;}
+.sb-nav{padding:18px 12px;flex:1;}
+.sb-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,0.22);padding:0 10px 8px;}
+.sb-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.18s;margin-bottom:2px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.sb-link.active{background:rgba(224,123,46,0.18);color:#f0a05a;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--orange);}
+.sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:rgba(255,255,255,0.07);margin:12px 12px;}
+.sb-user{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:#fff;font-size:16px;flex-shrink:0;}
+.sb-uname{font-size:13px;color:rgba(255,255,255,0.85);font-weight:600;}
+.sb-role{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
+.sb-logout:hover{color:rgba(255,100,100,0.8);}
+
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;box-shadow:0 1px 8px rgba(15,34,64,0.06);}
+.topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);line-height:1.1;}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;}
+.tb-btn-primary{background:var(--orange);color:#fff;border:none;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.tb-btn-primary:hover{background:var(--orange2);}
+.tb-btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--border);}
+.tb-btn-ghost:hover{border-color:var(--navy2);}
+.content{padding:28px 36px 52px;flex:1;}
+.hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+
+.filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
+.filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;transition:all 0.18s;}
+.filter-sel:focus{border-color:var(--orange);}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+.search-inp{width:100%;padding:8px 13px 8px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;transition:all 0.18s;}
+.search-inp:focus{border-color:var(--orange);}
+
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+.panel-head{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--warm2);}
+.panel-head h3{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--navy3);}
+
+.records-list{padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.record-card{background:var(--warm1);border:1px solid var(--warm2);border-radius:12px;padding:16px 18px;transition:all 0.2s;}
+.record-card:hover{background:var(--white);border-color:var(--navy2);box-shadow:0 4px 14px rgba(15,34,64,0.08);}
+.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.rc-type{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.rc-muayene{background:var(--blue-l);color:var(--blue);}
+.rc-ameliyat{background:var(--red-l);color:var(--red);}
+.rc-kontrol{background:var(--green-l);color:var(--green);}
+.rc-asi{background:var(--orange-l);color:var(--orange2);}
+.rc-diger{background:var(--warm2);color:var(--muted);}
+.rc-date{font-size:12px;color:var(--muted);font-weight:600;}
+.rc-pet{font-size:14px;font-weight:700;color:var(--navy3);margin-bottom:4px;}
+.rc-vet{font-size:12px;color:var(--muted);}
+.rc-body{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.rc-field{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 11px;}
+.rc-label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:700;margin-bottom:2px;}
+.rc-value{font-size:13px;font-weight:600;color:var(--navy3);}
+.rc-notes{grid-column:1/-1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--muted);line-height:1.6;}
+
+.empty-state{text-align:center;padding:52px 20px;color:var(--muted);}
+.empty-state .es-ico{font-size:44px;display:block;margin-bottom:12px;}
+.empty-state p{font-size:14px;line-height:1.6;}
+.loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
+.spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#fff;border-radius:20px;width:540px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
+.modal-overlay.open .modal-box{transform:none;opacity:1;}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--warm2);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--warm1);border:1px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--red-l);border-color:var(--red);}
+.modal-body{padding:22px 24px 24px;}
+.m-field{margin-bottom:16px;}
+.m-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.m-field input,.m-field select,.m-field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--warm1);outline:none;transition:all 0.2s;}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(224,123,46,0.1);}
+.m-field textarea{min-height:80px;resize:vertical;line-height:1.6;}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-foot{padding:18px 24px;border-top:1px solid var(--warm2);display:flex;gap:10px;justify-content:flex-end;}
+.m-btn-cancel{padding:10px 20px;border-radius:9px;background:transparent;color:var(--muted);border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.m-btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+.m-btn-save{padding:10px 24px;border-radius:9px;background:var(--orange);color:#fff;border:none;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.m-btn-save:hover{background:var(--orange2);}
+
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--navy3);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.5,.64,1);}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:768px){
+  :root{--sidebar:0px;}
+  .sidebar{transform:translateX(-262px);width:262px;}
+  .sidebar.open{transform:none;}
+  .main{margin-left:0;}
+  .topbar{padding:0 18px;}
+  .content{padding:18px 16px;}
+  .hamburger{display:flex;}
+  .m-row{grid-template-columns:1fr;}
+  .rc-body{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="index.html">
+    <div class="sb-logo">🐾</div>
+    <div class="sb-brand-text"><strong>PetMate</strong><span>Evcil Hayvan Yönetimi</span></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Genel</div>
+    <a href="index.html" class="sb-link"><span class="sb-icon">🌐</span> Ana Sayfa</a>
+    <a href="dashboard.html" class="sb-link"><span class="sb-icon">🏠</span> Dashboard</a>
+    <a href="hayvanlarim.html" class="sb-link"><span class="sb-icon">🐾</span> Hayvanlarım</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Sağlık</div>
+    <a href="asilar.html" class="sb-link"><span class="sb-icon">💉</span> Aşı Takibi</a>
+    <a href="saglik.html" class="sb-link active"><span class="sb-icon">🏥</span> Sağlık Kayıtları</a>
+    <a href="randevular.html" class="sb-link"><span class="sb-icon">📅</span> Randevular</a>
+    <a href="hatirlatici.html" class="sb-link"><span class="sb-icon">🔔</span> Hatırlatıcılar</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Platform</div>
+    <a href="ilanlar.html" class="sb-link"><span class="sb-icon">📋</span> İlanlar</a>
+    <a href="ilan-ekle.html" class="sb-link"><span class="sb-icon">➕</span> İlan Ver</a>
+    <a href="ayarlar.html" class="sb-link"><span class="sb-icon">⚙️</span> Ayarlar</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">?</div>
+    <div><div class="sb-uname" id="sbName">—</div><div class="sb-role" id="sbRole">—</div></div>
+    <button class="sb-logout" onclick="logout()">↩</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="topbar-left"><h1>🏥 Sağlık Kayıtları</h1><p>Veteriner ziyaretleri ve sağlık geçmişi</p></div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="tb-btn tb-btn-ghost">🌐 Ana Sayfa</a>
+      <button class="tb-btn tb-btn-primary" onclick="openModal('saglikModal')">+ Kayıt Ekle</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <input type="text" class="search-inp" id="searchInp" placeholder="Tanı, tedavi veya hayvan ara..." oninput="filterList()">
+      </div>
+      <select class="filter-sel" id="petFilter" onchange="filterList()">
+        <option value="">Tüm Hayvanlar</option>
+      </select>
+      <select class="filter-sel" id="typeFilter" onchange="filterList()">
+        <option value="">Tüm Türler</option>
+        <option value="muayene">Muayene</option>
+        <option value="ameliyat">Ameliyat</option>
+        <option value="kontrol">Kontrol</option>
+        <option value="aşı">Aşı</option>
+        <option value="diğer">Diğer</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>🏥 Sağlık Kayıtları</h3>
+        <span id="countLabel" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="records-list" id="recordsList">
+        <div class="loading-row"><div class="spinner"></div> Yükleniyor...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sağlık Kaydı Ekle Modal -->
+<div class="modal-overlay" id="saglikModal" onclick="if(event.target===this)closeModal('saglikModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>🏥 Sağlık Kaydı Ekle</h3>
+      <button class="modal-close" onclick="closeModal('saglikModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-row">
+        <div class="m-field"><label>Hayvan *</label><select id="s-petId"></select></div>
+        <div class="m-field"><label>Kayıt Türü *</label>
+          <select id="s-type">
+            <option value="muayene">🔍 Muayene</option>
+            <option value="ameliyat">⚕️ Ameliyat</option>
+            <option value="kontrol">✅ Kontrol</option>
+            <option value="aşı">💉 Aşı</option>
+            <option value="diğer">📋 Diğer</option>
+          </select>
+        </div>
+      </div>
+      <div class="m-field"><label>Tarih *</label><input type="date" id="s-date"></div>
+      <div class="m-field"><label>Tanı</label><input type="text" id="s-diagnosis" placeholder="Konulan tanı"></div>
+      <div class="m-field"><label>Tedavi</label><textarea id="s-treatment" placeholder="Uygulanan tedavi..."></textarea></div>
+      <div class="m-field"><label>Reçete / İlaçlar</label><input type="text" id="s-prescription" placeholder="Yazılan ilaçlar"></div>
+      <div class="m-row">
+        <div class="m-field"><label>Veteriner</label><input type="text" id="s-vet" placeholder="Dr. Adı"></div>
+        <div class="m-field"><label>Klinik</label><input type="text" id="s-clinic" placeholder="Klinik adı"></div>
+      </div>
+      <div class="m-row">
+        <div class="m-field"><label>Ücret (₺)</label><input type="number" id="s-cost" step="0.01" min="0" placeholder="0.00"></div>
+        <div class="m-field"><label>Notlar</label><input type="text" id="s-notes" placeholder="Ek notlar"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="m-btn-cancel" onclick="closeModal('saglikModal')">İptal</button>
+      <button class="m-btn-save" onclick="saveRecord()">🏥 Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function getToken(){return localStorage.getItem('pm_token');}
+function getUser(){return localStorage.getItem('pm_user');}
+function getRole(){return localStorage.getItem('pm_role');}
+function authHeaders(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function logout(){localStorage.removeItem('pm_token');localStorage.removeItem('pm_user');localStorage.removeItem('pm_role');window.location.href='giris.html';}
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':'❌'}</span> ${msg}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+
+const speciesEmoji=s=>{const m={kedi:'🐱',köpek:'🐶',kuş:'🐦',tavşan:'🐰',balık:'🐟'};return m[(s||'').toLowerCase()]||'🐾';};
+const fmtDate=d=>d?new Date(d).toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric'}):'—';
+const fmtCost=c=>c?'₺'+parseFloat(c).toLocaleString('tr-TR',{minimumFractionDigits:2}):'—';
+
+const typeConfig={
+  muayene:{label:'Muayene',cls:'rc-muayene',ico:'🔍'},
+  ameliyat:{label:'Ameliyat',cls:'rc-ameliyat',ico:'⚕️'},
+  kontrol:{label:'Kontrol',cls:'rc-kontrol',ico:'✅'},
+  'aşı':{label:'Aşı',cls:'rc-asi',ico:'💉'},
+  diğer:{label:'Diğer',cls:'rc-diger',ico:'📋'},
+};
+
+let allRecords=[], allPets=[];
+
+function filterList(){
+  const q=document.getElementById('searchInp').value.toLowerCase();
+  const pet=document.getElementById('petFilter').value;
+  const type=document.getElementById('typeFilter').value;
+  const filtered=allRecords.filter(r=>{
+    if(q&&!r.diagnosis?.toLowerCase().includes(q)&&!r.treatment?.toLowerCase().includes(q)&&!r.PetName?.toLowerCase().includes(q))return false;
+    if(pet&&String(r.PetId)!==pet)return false;
+    if(type&&r.record_type!==type)return false;
+    return true;
+  });
+  renderList(filtered);
+}
+
+function renderList(list){
+  const el=document.getElementById('recordsList');
+  document.getElementById('countLabel').textContent=list.length+' kayıt';
+  if(!list.length){el.innerHTML=`<div class="empty-state"><span class="es-ico">🏥</span><p>Kayıt bulunamadı.</p></div>`;return;}
+  el.innerHTML=list.map(r=>{
+    const tc=typeConfig[r.record_type]||typeConfig['diğer'];
+    return `<div class="record-card">
+      <div class="rc-top">
+        <span class="rc-type ${tc.cls}">${tc.ico} ${tc.label}</span>
+        <span class="rc-date">${fmtDate(r.record_date)}</span>
+      </div>
+      <div class="rc-pet">${speciesEmoji(r.PetSpecies||'')} ${r.PetName||'—'}</div>
+      ${r.vet_name?`<div class="rc-vet">👨‍⚕️ ${r.vet_name}${r.clinic_name?' · '+r.clinic_name:''}</div>`:''}
+      <div class="rc-body">
+        ${r.diagnosis?`<div class="rc-field"><div class="rc-label">Tanı</div><div class="rc-value">${r.diagnosis}</div></div>`:''}
+        ${r.prescription?`<div class="rc-field"><div class="rc-label">Reçete</div><div class="rc-value">${r.prescription}</div></div>`:''}
+        ${r.cost?`<div class="rc-field"><div class="rc-label">Ücret</div><div class="rc-value">${fmtCost(r.cost)}</div></div>`:''}
+        ${r.treatment?`<div class="rc-notes"><strong>Tedavi:</strong> ${r.treatment}</div>`:''}
+        ${r.notes?`<div class="rc-notes"><strong>Not:</strong> ${r.notes}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function saveRecord(){
+  const petId=document.getElementById('s-petId').value;
+  const type=document.getElementById('s-type').value;
+  const date=document.getElementById('s-date').value;
+  if(!petId||!date){showToast('Hayvan ve tarih zorunludur.','error');return;}
+  const payload={
+    recordDate:date, recordType:type,
+    diagnosis:document.getElementById('s-diagnosis').value.trim()||null,
+    treatment:document.getElementById('s-treatment').value.trim()||null,
+    prescription:document.getElementById('s-prescription').value.trim()||null,
+    vetName:document.getElementById('s-vet').value.trim()||null,
+    clinicName:document.getElementById('s-clinic').value.trim()||null,
+    cost:document.getElementById('s-cost').value||null,
+    notes:document.getElementById('s-notes').value.trim()||null,
+  };
+  try{
+    const r=await fetch(`/api/pets/${petId}/medical`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Kayıt eklendi!','success');closeModal('saglikModal');loadData();
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+async function loadData(){
+  if(!getToken()){window.location.href='giris.html';return;}
+  document.getElementById('sbAv').textContent=(getUser()||'?').charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=getUser()||'—';
+  document.getElementById('sbRole').textContent=getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
+  try{
+    const pets=await fetch('/api/pets',{headers:authHeaders()}).then(r=>r.json());
+    allPets=pets;
+    const pf=document.getElementById('petFilter');
+    const sp=document.getElementById('s-petId');
+    const opts=pets.map(p=>`<option value="${p.Id}">${speciesEmoji(p.Species)} ${p.Name}</option>`).join('');
+    pf.innerHTML='<option value="">Tüm Hayvanlar</option>'+opts;
+    sp.innerHTML='<option value="">Hayvan seçin</option>'+opts;
+    document.getElementById('s-date').value=new Date().toISOString().split('T')[0];
+
+    const recs=await Promise.all(pets.map(p=>
+      fetch(`/api/pets/${p.Id}/medical`,{headers:authHeaders()}).then(r=>r.json())
+        .then(rs=>rs.map(r=>({...r,PetName:p.Name,PetSpecies:p.Species,PetId:p.Id})))
+    ));
+    allRecords=recs.flat().sort((a,b)=>new Date(b.record_date)-new Date(a.record_date));
+    filterList();
+  }catch(err){
+    console.error(err);
+    showToast('Veriler yüklenemedi','error');
+    document.getElementById('recordsList').innerHTML=`<div class="empty-state"><span class="es-ico">⚠️</span><p>Sunucu bağlantısı kurulamadı.</p></div>`;
+  }
+}
+
+window.onload=loadData;
+</script>
+</body>
+</html>

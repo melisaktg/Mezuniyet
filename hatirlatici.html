@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hatırlatıcılar — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1c3557;--navy2:#274a7a;--navy3:#0f2240;
+  --orange:#e07b2e;--orange2:#c96820;--orange-l:#fef3e8;
+  --cream:#fdf9f5;--warm1:#f5ede3;--warm2:#ede0d0;
+  --text:#1a1f2e;--muted:#7a7f8e;--border:#e8ddd2;--white:#ffffff;
+  --green:#2e7d5e;--green-l:#d1fae5;--red:#c0392b;--red-l:#fee2e2;
+  --blue:#2563eb;--blue-l:#dbeafe;--sidebar:262px;--radius:14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;}
+
+.sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;}
+.sb-brand{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
+.sb-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(224,123,46,0.45);flex-shrink:0;}
+.sb-brand-text strong{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;font-weight:700;line-height:1;}
+.sb-brand-text span{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-nav{padding:18px 12px;flex:1;}
+.sb-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,0.22);padding:0 10px 8px;}
+.sb-link{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.18s;margin-bottom:2px;position:relative;}
+.sb-link:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.sb-link.active{background:rgba(224,123,46,0.18);color:#f0a05a;}
+.sb-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--orange);}
+.sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:rgba(255,255,255,0.07);margin:12px 12px;}
+.sb-user{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:11px;}
+.sb-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:#fff;font-size:16px;flex-shrink:0;}
+.sb-uname{font-size:13px;color:rgba(255,255,255,0.85);font-weight:600;}
+.sb-role{font-size:10px;color:rgba(255,255,255,0.35);}
+.sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;}
+.sb-logout:hover{color:rgba(255,100,100,0.8);}
+
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;box-shadow:0 1px 8px rgba(15,34,64,0.06);}
+.topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);}
+.topbar-left p{font-size:12px;color:var(--muted);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;}
+.tb-btn-primary{background:var(--orange);color:#fff;border:none;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.tb-btn-primary:hover{background:var(--orange2);}
+.tb-btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--border);}
+.tb-btn-ghost:hover{border-color:var(--navy2);}
+.content{padding:28px 36px 52px;flex:1;}
+.hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+
+/* Stats */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sc-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.ic-red{background:var(--red-l);}
+.ic-orange{background:var(--orange-l);}
+.ic-green{background:var(--green-l);}
+.ic-blue{background:var(--blue-l);}
+.sc-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--navy3);line-height:1;display:block;margin-bottom:3px;}
+.sc-label{font-size:11px;color:var(--muted);font-weight:500;}
+
+/* Filters */
+.filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;}
+.filter-sel:focus{border-color:var(--orange);}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;}
+.search-inp{width:100%;padding:8px 13px 8px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;}
+.search-inp:focus{border-color:var(--orange);}
+
+/* Reminder cards */
+.rem-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rem-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all 0.2s;position:relative;}
+.rem-card:hover{box-shadow:0 4px 16px rgba(15,34,64,0.08);transform:translateY(-2px);}
+.rem-card.overdue{border-left:3px solid var(--red);background:#fff8f8;}
+.rem-card.today{border-left:3px solid var(--orange);background:var(--orange-l);}
+.rem-card.upcoming{border-left:3px solid var(--green);}
+.rem-card.completed{opacity:0.5;}
+.rc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.rc-ico-wrap{width:40px;height:40px;border-radius:10px;background:var(--warm1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.rc-title{font-size:14px;font-weight:700;color:var(--navy3);line-height:1.3;}
+.rc-pet{font-size:11px;color:var(--muted);margin-top:3px;}
+.rc-due{text-align:right;flex-shrink:0;}
+.rc-due-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.due-overdue{background:var(--red-l);color:var(--red);}
+.due-today{background:var(--orange-l);color:var(--orange2);}
+.due-upcoming{background:var(--green-l);color:var(--green);}
+.due-future{background:var(--warm2);color:var(--muted);}
+.rc-date{font-size:11px;color:var(--muted);margin-top:3px;}
+.rc-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.rc-footer{display:flex;align-items:center;justify-content:space-between;}
+.rc-recurring{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.rc-complete-btn{padding:6px 14px;border-radius:8px;background:var(--green);color:#fff;border:none;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.rc-complete-btn:hover{background:#236b4a;}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-head h3{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--navy3);}
+.section-divider{height:1px;background:var(--warm2);margin:24px 0;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-state .es-ico{font-size:40px;display:block;margin-bottom:10px;}
+.loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
+.spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#fff;border-radius:20px;width:500px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
+.modal-overlay.open .modal-box{transform:none;opacity:1;}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--warm2);display:flex;align-items:center;justify-content:space-between;}
+.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--warm1);border:1px solid var(--border);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--red-l);border-color:var(--red);}
+.modal-body{padding:22px 24px 24px;}
+.m-field{margin-bottom:16px;}
+.m-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.m-field input,.m-field select,.m-field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--warm1);outline:none;transition:all 0.2s;}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(224,123,46,0.1);}
+.m-field textarea{min-height:80px;resize:vertical;line-height:1.6;}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-foot{padding:18px 24px;border-top:1px solid var(--warm2);display:flex;gap:10px;justify-content:flex-end;}
+.m-btn-cancel{padding:10px 20px;border-radius:9px;background:transparent;color:var(--muted);border:1.5px solid var(--border);font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;}
+.m-btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+.m-btn-save{padding:10px 24px;border-radius:9px;background:var(--orange);color:#fff;border:none;font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 3px 12px rgba(224,123,46,0.35);}
+.m-btn-save:hover{background:var(--orange2);}
+
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--navy3);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,0.3);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all 0.3s cubic-bezier(.34,1.5,.64,1);}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:1100px){.rem-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){
+  :root{--sidebar:0px;}
+  .sidebar{transform:translateX(-262px);width:262px;}
+  .sidebar.open{transform:none;}
+  .main{margin-left:0;}
+  .topbar{padding:0 18px;}
+  .content{padding:18px 16px;}
+  .hamburger{display:flex;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .m-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="sb-brand" href="index.html">
+    <div class="sb-logo">🐾</div>
+    <div class="sb-brand-text"><strong>PetMate</strong><span>Evcil Hayvan Yönetimi</span></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="sb-section-label">Genel</div>
+    <a href="index.html" class="sb-link"><span class="sb-icon">🌐</span> Ana Sayfa</a>
+    <a href="dashboard.html" class="sb-link"><span class="sb-icon">🏠</span> Dashboard</a>
+    <a href="hayvanlarim.html" class="sb-link"><span class="sb-icon">🐾</span> Hayvanlarım</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Sağlık</div>
+    <a href="asilar.html" class="sb-link"><span class="sb-icon">💉</span> Aşı Takibi</a>
+    <a href="saglik.html" class="sb-link"><span class="sb-icon">🏥</span> Sağlık Kayıtları</a>
+    <a href="randevular.html" class="sb-link"><span class="sb-icon">📅</span> Randevular</a>
+    <a href="hatirlatici.html" class="sb-link active"><span class="sb-icon">🔔</span> Hatırlatıcılar</a>
+    <div class="sb-sep"></div>
+    <div class="sb-section-label">Platform</div>
+    <a href="ilanlar.html" class="sb-link"><span class="sb-icon">📋</span> İlanlar</a>
+    <a href="ilan-ekle.html" class="sb-link"><span class="sb-icon">➕</span> İlan Ver</a>
+    <a href="ayarlar.html" class="sb-link"><span class="sb-icon">⚙️</span> Ayarlar</a>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">?</div>
+    <div><div class="sb-uname" id="sbName">—</div><div class="sb-role" id="sbRole">—</div></div>
+    <button class="sb-logout" onclick="logout()">↩</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <div class="topbar-left"><h1>🔔 Hatırlatıcılar</h1><p>İlaç, bakım ve rutin hatırlatmaları</p></div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="tb-btn tb-btn-ghost">🌐 Ana Sayfa</a>
+      <button class="tb-btn tb-btn-primary" onclick="openModal('remModal')">+ Hatırlatıcı Ekle</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-red">🚨</div></div><span class="sc-num" id="statOverdue">—</span><span class="sc-label">Gecikmiş</span></div>
+      <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-orange">⏰</div></div><span class="sc-num" id="statToday">—</span><span class="sc-label">Bugün</span></div>
+      <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-blue">📅</div></div><span class="sc-num" id="statUpcoming">—</span><span class="sc-label">Bu Hafta</span></div>
+      <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-green">✅</div></div><span class="sc-num" id="statTotal">—</span><span class="sc-label">Toplam Aktif</span></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <input type="text" class="search-inp" id="searchInp" placeholder="Başlık veya hayvan ara..." oninput="filterList()">
+      </div>
+      <select class="filter-sel" id="petFilter" onchange="filterList()">
+        <option value="">Tüm Hayvanlar</option>
+      </select>
+      <select class="filter-sel" id="typeFilter" onchange="filterList()">
+        <option value="">Tüm Türler</option>
+        <option value="ilaç">💊 İlaç</option>
+        <option value="aşı">💉 Aşı</option>
+        <option value="bakım">✂️ Bakım</option>
+        <option value="mama">🍖 Mama</option>
+        <option value="su">💧 Su</option>
+        <option value="yürüyüş">🦮 Yürüyüş</option>
+        <option value="diğer">📌 Diğer</option>
+      </select>
+      <select class="filter-sel" id="statusFilter" onchange="filterList()">
+        <option value="active">Aktif</option>
+        <option value="all">Tümü</option>
+      </select>
+    </div>
+
+    <!-- List -->
+    <div id="remContainer">
+      <div class="loading-row"><div class="spinner"></div> Yükleniyor...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Hatırlatıcı Modal -->
+<div class="modal-overlay" id="remModal" onclick="if(event.target===this)closeModal('remModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>🔔 Hatırlatıcı Ekle</h3>
+      <button class="modal-close" onclick="closeModal('remModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-row">
+        <div class="m-field"><label>Hayvan *</label><select id="r-petId"></select></div>
+        <div class="m-field"><label>Tür</label>
+          <select id="r-type">
+            <option value="ilaç">💊 İlaç</option>
+            <option value="aşı">💉 Aşı</option>
+            <option value="bakım">✂️ Bakım</option>
+            <option value="mama">🍖 Mama</option>
+            <option value="su">💧 Su</option>
+            <option value="yürüyüş">🦮 Yürüyüş</option>
+            <option value="diğer">📌 Diğer</option>
+          </select>
+        </div>
+      </div>
+      <div class="m-field"><label>Başlık *</label><input type="text" id="r-title" placeholder="Örn: Sabah ilacını ver"></div>
+      <div class="m-row">
+        <div class="m-field"><label>Tarih *</label><input type="date" id="r-date"></div>
+        <div class="m-field"><label>Tekrar (gün)</label><input type="number" id="r-interval" min="1" placeholder="Boş = tek seferlik"></div>
+      </div>
+      <div class="m-field"><label>Açıklama</label><textarea id="r-desc" placeholder="Detaylar..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="m-btn-cancel" onclick="closeModal('remModal')">İptal</button>
+      <button class="m-btn-save" onclick="saveRem()">🔔 Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function getToken(){return localStorage.getItem('pm_token');}
+function getUser(){return localStorage.getItem('pm_user');}
+function getRole(){return localStorage.getItem('pm_role');}
+function authHeaders(){return{'Content-Type':'application/json','Authorization':'Bearer '+getToken()};}
+function logout(){localStorage.removeItem('pm_token');localStorage.removeItem('pm_user');localStorage.removeItem('pm_role');window.location.href='giris.html';}
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.className=`toast ${type}`;t.innerHTML=`<span>${type==='success'?'✅':'❌'}</span> ${msg}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+
+const speciesEmoji=s=>{const m={kedi:'🐱',köpek:'🐶',kuş:'🐦',tavşan:'🐰',balık:'🐟'};return m[(s||'').toLowerCase()]||'🐾';};
+const typeIcons={ilaç:'💊',aşı:'💉',bakım:'✂️',mama:'🍖',su:'💧',yürüyüş:'🦮',diğer:'📌'};
+const fmtDate=d=>d?new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long'}):'—';
+
+const daysBetween=d=>{const t=new Date();t.setHours(0,0,0,0);const dt=new Date(d);dt.setHours(0,0,0,0);return Math.round((dt-t)/(1000*60*60*24));};
+
+let allRems=[];
+
+function getDueInfo(dueDate){
+  const d=daysBetween(dueDate);
+  if(d<0) return{cls:'overdue',badge:'due-overdue',label:`${Math.abs(d)}g gecikti`};
+  if(d===0) return{cls:'today',badge:'due-today',label:'Bugün!'};
+  if(d<=7) return{cls:'upcoming',badge:'due-upcoming',label:`${d}g sonra`};
+  return{cls:'',badge:'due-future',label:`${d}g sonra`};
+}
+
+function filterList(){
+  const q=document.getElementById('searchInp').value.toLowerCase();
+  const pet=document.getElementById('petFilter').value;
+  const type=document.getElementById('typeFilter').value;
+  const status=document.getElementById('statusFilter').value;
+
+  let filtered=allRems.filter(r=>{
+    if(status==='active'&&r.IsCompleted)return false;
+    if(q&&!r.Title?.toLowerCase().includes(q)&&!r.PetName?.toLowerCase().includes(q))return false;
+    if(pet&&String(r.PetId)!==pet)return false;
+    if(type&&r.ReminderType!==type)return false;
+    return true;
+  });
+  renderList(filtered);
+}
+
+function renderList(list){
+  const container=document.getElementById('remContainer');
+
+  // Stats
+  const active=allRems.filter(r=>!r.IsCompleted);
+  document.getElementById('statTotal').textContent=active.length;
+  document.getElementById('statOverdue').textContent=active.filter(r=>daysBetween(r.DueDate)<0).length;
+  document.getElementById('statToday').textContent=active.filter(r=>daysBetween(r.DueDate)===0).length;
+  document.getElementById('statUpcoming').textContent=active.filter(r=>{const d=daysBetween(r.DueDate);return d>0&&d<=7;}).length;
+
+  if(!list.length){
+    container.innerHTML=`<div class="empty-state"><span class="es-ico">🔔</span><p>Hatırlatıcı bulunamadı.</p></div>`;
+    return;
+  }
+
+  // Gecikmiş + bugün
+  const urgent=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)<=0);
+  // Bu hafta
+  const thisWeek=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)>0&&daysBetween(r.DueDate)<=7);
+  // Gelecek
+  const future=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)>7);
+  // Tamamlananlar
+  const done=list.filter(r=>r.IsCompleted);
+
+  const makeCard=r=>{
+    const di=getDueInfo(r.DueDate);
+    const ico=typeIcons[r.ReminderType]||'📌';
+    return `<div class="rem-card ${r.IsCompleted?'completed':di.cls}">
+      <div class="rc-header">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div class="rc-ico-wrap">${ico}</div>
+          <div>
+            <div class="rc-title">${r.Title}</div>
+            <div class="rc-pet">${speciesEmoji('')} ${r.PetName||'—'}</div>
+          </div>
+        </div>
+        <div class="rc-due">
+          <span class="rc-due-badge ${di.badge}">${di.label}</span>
+          <div class="rc-date">${fmtDate(r.DueDate)}</div>
+        </div>
+      </div>
+      ${r.Description?`<div class="rc-desc">${r.Description}</div>`:''}
+      <div class="rc-footer">
+        <span class="rc-recurring">${r.IsRecurring?`🔄 Her ${r.RecurrenceInterval} günde bir`:'🔂 Tek seferlik'}</span>
+        ${!r.IsCompleted?`<button class="rc-complete-btn" onclick="completeRem(${r.Id},this)">✓ Tamamlandı</button>`:'<span style="font-size:11px;color:var(--green);font-weight:600">✅ Tamamlandı</span>'}
+      </div>
+    </div>`;
+  };
+
+  let html='';
+  if(urgent.length){html+=`<div class="section-head"><h3>🚨 Acil & Bugün</h3></div><div class="rem-grid">${urgent.map(makeCard).join('')}</div>`;}
+  if(thisWeek.length){html+=`<div class="section-divider"></div><div class="section-head"><h3>📅 Bu Hafta</h3></div><div class="rem-grid">${thisWeek.map(makeCard).join('')}</div>`;}
+  if(future.length){html+=`<div class="section-divider"></div><div class="section-head"><h3>🗓️ Gelecek</h3></div><div class="rem-grid">${future.map(makeCard).join('')}</div>`;}
+  if(done.length&&document.getElementById('statusFilter').value==='all'){html+=`<div class="section-divider"></div><div class="section-head"><h3>✅ Tamamlananlar</h3></div><div class="rem-grid">${done.map(makeCard).join('')}</div>`;}
+
+  container.innerHTML=html||`<div class="empty-state"><span class="es-ico">✅</span><p>Tüm hatırlatıcılar tamamlandı!</p></div>`;
+}
+
+async function completeRem(id,btn){
+  try{
+    const r=await fetch(`/api/reminders/${id}/complete`,{method:'PATCH',headers:authHeaders()});
+    if(!r.ok){showToast('Hata','error');return;}
+    btn.closest('.rem-card').classList.add('completed');
+    btn.innerHTML='✅ Tamamlandı';
+    btn.disabled=true;
+    showToast('Tamamlandı olarak işaretlendi!','success');
+    setTimeout(loadData,800);
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+async function saveRem(){
+  const petId=document.getElementById('r-petId').value;
+  const title=document.getElementById('r-title').value.trim();
+  const date=document.getElementById('r-date').value;
+  if(!petId||!title||!date){showToast('Hayvan, başlık ve tarih zorunludur.','error');return;}
+  const interval=parseInt(document.getElementById('r-interval').value)||null;
+  const payload={petId,reminderType:document.getElementById('r-type').value,title,dueDate:date,description:document.getElementById('r-desc').value.trim()||null,isRecurring:!!interval,recurrenceInterval:interval};
+  try{
+    const r=await fetch('/api/reminders',{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json();showToast(e.error||'Hata','error');return;}
+    showToast('Hatırlatıcı eklendi!','success');closeModal('remModal');loadData();
+  }catch{showToast('Bağlantı hatası','error');}
+}
+
+async function loadData(){
+  if(!getToken()){window.location.href='giris.html';return;}
+  document.getElementById('sbAv').textContent=(getUser()||'?').charAt(0).toUpperCase();
+  document.getElementById('sbName').textContent=getUser()||'—';
+  document.getElementById('sbRole').textContent=getRole()==='admin'?'👑 Yönetici':'🐾 Üye';
+  try{
+    const [pets,rems]=await Promise.all([
+      fetch('/api/pets',{headers:authHeaders()}).then(r=>r.json()),
+      fetch('/api/reminders',{headers:authHeaders()}).then(r=>r.json()),
+    ]);
+    const pf=document.getElementById('petFilter');
+    const rp=document.getElementById('r-petId');
+    const opts=pets.map(p=>`<option value="${p.Id}">${speciesEmoji(p.Species)} ${p.Name}</option>`).join('');
+    pf.innerHTML='<option value="">Tüm Hayvanlar</option>'+opts;
+    rp.innerHTML='<option value="">Hayvan seçin</option>'+opts;
+    document.getElementById('r-date').value=new Date().toISOString().split('T')[0];
+    allRems=rems;
+    filterList();
+  }catch(err){
+    console.error(err);
+    showToast('Veriler yüklenemedi','error');
+    document.getElementById('remContainer').innerHTML=`<div class="empty-state"><span class="es-ico">⚠️</span><p>Sunucu bağlantısı kurulamadı.</p></div>`;
+  }
+}
+
+window.onload=loadData;
+</script>
+</body>
+</html>
