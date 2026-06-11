@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İletişim — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1c3557;--navy2:#274a7a;--navy3:#0f2240;--orange:#e07b2e;--orange2:#c96820;--orange-l:#fef3e8;--cream:#fdf9f5;--warm1:#f5ede3;--warm2:#ede0d0;--text:#1a1f2e;--muted:#7a7f8e;--border:#e8ddd2;--white:#ffffff;--green:#2e7d5e;--green-l:#d1fae5;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);}
+header{background:var(--navy3);padding:0 52px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-words strong{font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff;font-weight:700;}
+nav{display:flex;gap:4px;}
+nav a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;padding:8px 15px;border-radius:8px;transition:all 0.18s;}
+nav a:hover{color:#fff;background:rgba(255,255,255,0.08);}
+.h-btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.8);background:transparent;}
+.hero-section{background:linear-gradient(135deg,var(--navy3),var(--navy2));padding:60px 52px;text-align:center;}
+.hero-section h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;font-weight:700;margin-bottom:12px;}
+.hero-section p{color:rgba(255,255,255,0.55);font-size:14px;}
+.page-content{max-width:960px;margin:0 auto;padding:64px 24px 100px;display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:start;}
+.contact-info h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--navy3);font-weight:700;margin-bottom:20px;}
+.contact-item{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;}
+.c-icon{width:44px;height:44px;border-radius:11px;background:var(--orange-l);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.c-title{font-size:13px;font-weight:700;color:var(--navy3);margin-bottom:3px;}
+.c-val{font-size:13px;color:var(--muted);line-height:1.6;}
+.c-val a{color:var(--orange2);text-decoration:none;}
+.contact-form{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px;}
+.contact-form h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--navy3);font-weight:700;margin-bottom:24px;}
+.f-field{margin-bottom:18px;}
+.f-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+.f-field input,.f-field select,.f-field textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--warm1);outline:none;transition:all 0.2s;}
+.f-field input:focus,.f-field select:focus,.f-field textarea:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(224,123,46,0.1);}
+.f-field textarea{min-height:120px;resize:vertical;line-height:1.6;}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-submit{width:100%;padding:13px;border-radius:10px;background:var(--orange);color:#fff;border:none;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all 0.18s;box-shadow:0 4px 14px rgba(224,123,46,0.35);}
+.btn-submit:hover{background:var(--orange2);}
+.success-msg{display:none;background:var(--green-l);border:1px solid var(--green);border-radius:10px;padding:16px;color:var(--green);font-size:14px;font-weight:600;text-align:center;margin-top:16px;}
+footer{background:var(--navy3);padding:36px 52px;text-align:center;}
+footer p{color:rgba(255,255,255,0.4);font-size:13px;}
+footer a{color:rgba(255,255,255,0.6);text-decoration:none;margin:0 10px;}
+footer a:hover{color:#fff;}
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;}
+.hamburger-btn span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;}
+.mob-nav-overlay{display:none;position:fixed;inset:0;z-index:999;}
+.mob-nav-overlay.open{display:block;}
+.mob-nav-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.mob-nav-drawer{position:absolute;top:0;right:0;width:260px;height:100%;background:var(--navy3);display:flex;flex-direction:column;padding:24px 20px;gap:8px;}
+.mob-nav-close{align-self:flex-end;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;margin-bottom:12px;}
+.mob-nav-drawer a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:15px;font-weight:500;padding:12px 14px;border-radius:10px;}
+.mob-nav-drawer a:hover{background:rgba(224,123,46,0.18);color:#f0a05a;}
+@media(max-width:900px){nav{display:none;}.hamburger-btn{display:flex;}.hero-section{padding:48px 20px;}.page-content{grid-template-columns:1fr;gap:32px;}footer{padding:28px 20px;}}
+@media(max-width:480px){.f-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html">
+    <div class="logo-mark">🐾</div>
+    <div class="logo-words"><strong>PetMate</strong></div>
+  </a>
+  <nav>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="ilanlar.html">İlanlar</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+  <a href="giris.html" class="h-btn">Giriş Yap</a>
+  <button class="hamburger-btn" onclick="document.getElementById('mobNav').classList.add('open')">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+<div class="mob-nav-overlay" id="mobNav">
+  <div class="mob-nav-backdrop" onclick="document.getElementById('mobNav').classList.remove('open')"></div>
+  <div class="mob-nav-drawer">
+    <button class="mob-nav-close" onclick="document.getElementById('mobNav').classList.remove('open')">✕</button>
+    <a href="index.html">🏠 Ana Sayfa</a>
+    <a href="ilanlar.html">📋 İlanlar</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="giris.html">🔑 Giriş Yap</a>
+  </div>
+</div>
+
+<div class="hero-section">
+  <h1>İletişim</h1>
+  <p>Sorularınız, önerileriniz veya geri bildirimleriniz için buradayız.</p>
+</div>
+
+<div class="page-content">
+  <div class="contact-info">
+    <h2>Bize Ulaşın</h2>
+    <div class="contact-item">
+      <div class="c-icon">📧</div>
+      <div>
+        <div class="c-title">E-posta</div>
+        <div class="c-val"><a href="mailto:destek@petmate.com.tr">destek@petmate.com.tr</a></div>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon">⏰</div>
+      <div>
+        <div class="c-title">Yanıt Süresi</div>
+        <div class="c-val">Hafta içi 09:00–18:00 arası mesajlara genellikle 24 saat içinde yanıt verilir.</div>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon">🐾</div>
+      <div>
+        <div class="c-title">Acil İlan Bildirimi</div>
+        <div class="c-val">Kayıp veya acil sahiplendirme durumları için formu kullanın, öncelikli olarak incelenir.</div>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="c-icon">🔒</div>
+      <div>
+        <div class="c-title">Gizlilik</div>
+        <div class="c-val">Mesajlarınız yalnızca ekibimiz tarafından okunur, üçüncü taraflarla paylaşılmaz.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-form">
+    <h2>Mesaj Gönder</h2>
+    <div class="f-row">
+      <div class="f-field">
+        <label>Adınız</label>
+        <input type="text" id="cName" placeholder="Adınız Soyadınız">
+      </div>
+      <div class="f-field">
+        <label>E-posta</label>
+        <input type="email" id="cEmail" placeholder="ornek@mail.com">
+      </div>
+    </div>
+    <div class="f-field">
+      <label>Konu</label>
+      <select id="cSubject">
+        <option value="">Seçin</option>
+        <option>Hesap Sorunu</option>
+        <option>İlan Sorunu</option>
+        <option>Teknik Sorun</option>
+        <option>Gizlilik Talebi</option>
+        <option>Öneri / Geri Bildirim</option>
+        <option>Diğer</option>
+      </select>
+    </div>
+    <div class="f-field">
+      <label>Mesajınız</label>
+      <textarea id="cMsg" placeholder="Mesajınızı buraya yazın..."></textarea>
+    </div>
+    <button class="btn-submit" onclick="submitForm()">📨 Gönder</button>
+    <div class="success-msg" id="successMsg">✅ Mesajınız alındı! En kısa sürede dönüş yapacağız.</div>
+  </div>
+</div>
+
+<footer>
+  <p>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="hakkimizda.html">Hakkımızda</a>
+    <a href="gizlilik.html">Gizlilik</a>
+  </p>
+  <p style="margin-top:12px">© 2026 PetMate — Tüm hakları saklıdır.</p>
+</footer>
+
+<script>
+function submitForm(){
+  var name=document.getElementById('cName').value.trim();
+  var email=document.getElementById('cEmail').value.trim();
+  var msg=document.getElementById('cMsg').value.trim();
+  if(!name||!email||!msg){alert('Lütfen adınızı, e-postanızı ve mesajınızı doldurun.');return;}
+  document.getElementById('successMsg').style.display='block';
+  document.getElementById('cName').value='';
+  document.getElementById('cEmail').value='';
+  document.getElementById('cMsg').value='';
+  document.getElementById('cSubject').value='';
+}
+</script>
+</body>
+</html>

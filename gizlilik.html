@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gizlilik Politikası — PetMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1c3557;--navy2:#274a7a;--navy3:#0f2240;--orange:#e07b2e;--orange2:#c96820;--orange-l:#fef3e8;--cream:#fdf9f5;--warm1:#f5ede3;--warm2:#ede0d0;--text:#1a1f2e;--muted:#7a7f8e;--border:#e8ddd2;--white:#ffffff;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);}
+header{background:var(--navy3);padding:0 52px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-words strong{font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff;font-weight:700;}
+nav{display:flex;gap:4px;}
+nav a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;padding:8px 15px;border-radius:8px;transition:all 0.18s;}
+nav a:hover{color:#fff;background:rgba(255,255,255,0.08);}
+.h-btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.18s;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.8);background:transparent;}
+.hero-section{background:linear-gradient(135deg,var(--navy3),var(--navy2));padding:60px 52px;text-align:center;}
+.hero-section h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;font-weight:700;margin-bottom:12px;}
+.hero-section p{color:rgba(255,255,255,0.55);font-size:14px;}
+.page-content{max-width:800px;margin:0 auto;padding:64px 24px 100px;}
+.last-updated{background:var(--orange-l);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--orange2);font-weight:600;margin-bottom:40px;display:inline-block;}
+.section{margin-bottom:44px;}
+.section h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--navy3);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.section p{font-size:14px;color:var(--text);line-height:1.85;margin-bottom:12px;}
+.section ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;}
+.section ul li{font-size:14px;color:var(--text);line-height:1.7;padding-left:20px;position:relative;}
+.section ul li::before{content:'•';position:absolute;left:0;color:var(--orange);}
+.highlight-box{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--orange);border-radius:10px;padding:18px 20px;margin-top:16px;}
+.highlight-box p{margin:0;font-size:13px;color:var(--muted);}
+footer{background:var(--navy3);padding:36px 52px;text-align:center;}
+footer p{color:rgba(255,255,255,0.4);font-size:13px;}
+footer a{color:rgba(255,255,255,0.6);text-decoration:none;margin:0 10px;}
+footer a:hover{color:#fff;}
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;}
+.hamburger-btn span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;}
+.mob-nav-overlay{display:none;position:fixed;inset:0;z-index:999;}
+.mob-nav-overlay.open{display:block;}
+.mob-nav-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.mob-nav-drawer{position:absolute;top:0;right:0;width:260px;height:100%;background:var(--navy3);display:flex;flex-direction:column;padding:24px 20px;gap:8px;}
+.mob-nav-close{align-self:flex-end;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;margin-bottom:12px;}
+.mob-nav-drawer a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:15px;font-weight:500;padding:12px 14px;border-radius:10px;}
+.mob-nav-drawer a:hover{background:rgba(224,123,46,0.18);color:#f0a05a;}
+@media(max-width:900px){nav{display:none;}.hamburger-btn{display:flex;}.hero-section{padding:48px 20px;}footer{padding:28px 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html">
+    <div class="logo-mark">🐾</div>
+    <div class="logo-words"><strong>PetMate</strong></div>
+  </a>
+  <nav>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="ilanlar.html">İlanlar</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+  <a href="giris.html" class="h-btn">Giriş Yap</a>
+  <button class="hamburger-btn" onclick="document.getElementById('mobNav').classList.add('open')">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+<div class="mob-nav-overlay" id="mobNav">
+  <div class="mob-nav-backdrop" onclick="document.getElementById('mobNav').classList.remove('open')"></div>
+  <div class="mob-nav-drawer">
+    <button class="mob-nav-close" onclick="document.getElementById('mobNav').classList.remove('open')">✕</button>
+    <a href="index.html">🏠 Ana Sayfa</a>
+    <a href="ilanlar.html">📋 İlanlar</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="giris.html">🔑 Giriş Yap</a>
+  </div>
+</div>
+
+<div class="hero-section">
+  <h1>Gizlilik Politikası</h1>
+  <p>Verilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklıyoruz.</p>
+</div>
+
+<div class="page-content">
+  <span class="last-updated">📅 Son güncelleme: Haziran 2026</span>
+
+  <div class="section">
+    <h2>🔍 Topladığımız Bilgiler</h2>
+    <p>PetMate'i kullanırken şu bilgileri toplayabiliriz:</p>
+    <ul>
+      <li>Kayıt sırasında verdiğiniz kullanıcı adı ve e-posta adresi</li>
+      <li>Oluşturduğunuz ilan ve hayvan profili bilgileri</li>
+      <li>Platform kullanım verileri (sayfa görüntülemeleri, özellik kullanımı)</li>
+      <li>Tarayıcı türü ve cihaz bilgileri (anonim)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📦 Bilgileri Nasıl Kullanıyoruz</h2>
+    <ul>
+      <li>Hesabınızı oluşturmak ve yönetmek için</li>
+      <li>İlan ve hayvan kayıtlarınızı saklamak için</li>
+      <li>Aşı, randevu ve hatırlatıcı bildirimlerini göstermek için</li>
+      <li>Platform güvenliğini sağlamak ve kötüye kullanımı önlemek için</li>
+    </ul>
+    <div class="highlight-box">
+      <p>⚠️ Kişisel verileriniz hiçbir zaman üçüncü şahıslarla ticari amaçla paylaşılmaz veya satılmaz.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🍪 Çerezler</h2>
+    <p>PetMate, oturum yönetimi ve tercih kaydı için yalnızca tarayıcı yerel depolama (localStorage) kullanır. Üçüncü taraf takip çerezi kullanılmamaktadır.</p>
+  </div>
+
+  <div class="section">
+    <h2>🛡️ Veri Güvenliği</h2>
+    <p>Şifreleriniz bcrypt ile hash'lenerek saklanır. Sunucu ile tüm iletişim HTTPS üzerinden şifrelenmiş olarak gerçekleşir. JWT token'ları kısa ömürlüdür ve güvenli şekilde yönetilir.</p>
+  </div>
+
+  <div class="section">
+    <h2>👤 Haklarınız</h2>
+    <ul>
+      <li>Hesabınızı ve tüm verilerinizi istediğiniz zaman silebilirsiniz</li>
+      <li>Kişisel bilgilerinize erişim ve düzeltme hakkına sahipsiniz</li>
+      <li>Veri işleme itirazlarınız için bizimle iletişime geçebilirsiniz</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📬 İletişim</h2>
+    <p>Gizlilik politikamıza ilişkin sorularınız için <a href="iletisim.html" style="color:var(--orange2);font-weight:600;">iletişim sayfamızı</a> ziyaret edebilirsiniz.</p>
+  </div>
+</div>
+
+<footer>
+  <p>
+    <a href="index.html">Ana Sayfa</a>
+    <a href="hakkimizda.html">Hakkımızda</a>
+    <a href="iletisim.html">İletişim</a>
+  </p>
+  <p style="margin-top:12px">© 2026 PetMate — Tüm hakları saklıdır.</p>
+</footer>
+</body>
+</html>
