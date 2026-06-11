@@ -334,6 +334,11 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   .alert-err{margin:0 18px 14px;}
   .summary-grid{grid-template-columns:1fr;}
 }
+body.dark-mode{--cream:#111827;--warm1:#1f2937;--warm2:#374151;--white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;}
+body.dark-mode header,body.dark-mode .topbar{background:#0a1628 !important;}
+body.dark-mode .modal-box,body.dark-mode .pm-modal,body.dark-mode .card,body.dark-mode .ilan-card,body.dark-mode .filter-card{background:#1f2937;border-color:#374151;}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#111827;border-color:#374151;color:#f9fafb;}
+body.dark-mode footer{background:#0a1628;}
 </style>
 </head>
 <body>
@@ -611,6 +616,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 </footer>
 
 <script>
+(function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
 let currentStep = 0;
 const TOTAL = 5;
 let photoBase64 = null; // sıkıştırılmış fotoğraf
