@@ -130,10 +130,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
   .m-row{grid-template-columns:1fr;}
   .apt-card{flex-wrap:wrap;}
 }
+body.dark-mode{--cream:#111827;--warm1:#1f2937;--warm2:#374151;--white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;}
+body.dark-mode .sidebar{background:#0a1628;}
+body.dark-mode .topbar{background:#1f2937;border-color:#374151;}
+body.dark-mode .modal-box,.dark-mode .panel,.dark-mode .stat-card,.dark-mode .card,.dark-mode .rec-card,.dark-mode .apt-card,.dark-mode .rem-card,.dark-mode .vax-card{background:#1f2937;border-color:#374151;}
+body.dark-mode .pet-row,body.dark-mode .vax-row,body.dark-mode .apt-row,body.dark-mode .rem-row,body.dark-mode .rec-row,body.dark-mode .table-row,body.dark-mode .pet-card,body.dark-mode .ilan-card{background:#1f2937;border-color:#374151;}
+body.dark-mode table thead tr{background:#0a1628;}
+body.dark-mode .m-field input,body.dark-mode .m-field select,body.dark-mode .m-field textarea{background:#111827;border-color:#374151;color:#f9fafb;}
+body.dark-mode .settings-card,body.dark-mode .setting-row,body.dark-mode .s-input{background:#1f2937;border-color:#374151;color:#f9fafb;}
+body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-search{background:#1f2937;border-color:#374151;color:#f9fafb;}
+
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.sidebar-backdrop.show{display:block;}
 </style>
 </head>
 <body>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <a class="sb-brand" href="index.html">
     <div class="sb-logo">🐾</div>
@@ -166,7 +179,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 <div class="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-left"><h1>📅 Randevular</h1><p>Veteriner randevularınızı takip edin</p></div>
     </div>
     <div class="topbar-right">
@@ -223,6 +236,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 <div class="toast" id="toast"></div>
 
 <script>
+(function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
 function getToken(){return localStorage.getItem('pm_token');}
 function getUser(){return localStorage.getItem('pm_user');}
 function getRole(){return localStorage.getItem('pm_role');}
@@ -333,6 +347,14 @@ async function loadData(){
 }
 
 window.onload=loadData;
+
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var bd=document.getElementById('sidebarBackdrop');
+  sb.classList.toggle('open');
+  if(bd){bd.classList.toggle('show');}
+  document.body.style.overflow=sb.classList.contains('open')?'hidden':'';
+}
 </script>
 </body>
 </html>
