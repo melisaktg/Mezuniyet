@@ -200,6 +200,11 @@ body {
   .left-panel { display:none; }
   .right-panel { padding:40px 28px; }
 }
+body.dark-mode{--cream:#111827;--warm1:#1f2937;--warm2:#374151;--white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;}
+body.dark-mode header,body.dark-mode .topbar{background:#0a1628 !important;}
+body.dark-mode .modal-box,body.dark-mode .pm-modal,body.dark-mode .card,body.dark-mode .ilan-card,body.dark-mode .filter-card{background:#1f2937;border-color:#374151;}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#111827;border-color:#374151;color:#f9fafb;}
+body.dark-mode footer{background:#0a1628;}
 </style>
 </head>
 <body>
@@ -304,6 +309,7 @@ body {
 </div>
 
 <script>
+(function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
 function switchTab(tab) {
   const isGiris = tab === 'giris';
   document.getElementById('tabGiris').classList.toggle('active', isGiris);
