@@ -157,12 +157,17 @@ async function initDB() {
                 created_at          TIMESTAMP DEFAULT NOW()
             );
         `);
-        console.log('✅ Tablolar hazır');
-    } catch (err) {
-        console.error('❌ Tablo oluşturma hatası:', err.message);
-    } finally {
-        client.release();
-    }
+     try {
+    await client.query(`
+        ALTER TABLE hayvan_ilanlari
+        ADD COLUMN IF NOT EXISTS user_id INTEGER
+        REFERENCES kullanicilar(kullanici_id)
+        ON DELETE SET NULL;
+    `);
+
+    console.log('✅ user_id sütunu kontrol edildi');
+} catch (err) {
+    console.error(err.message);
 }
 
 initDB();
