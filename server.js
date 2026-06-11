@@ -1,4 +1,3 @@
-
 process.env.NODE_ENV = 'production';
 require('dotenv').config();
 
@@ -11,6 +10,7 @@ const rateLimit = require('express-rate-limit');
 const path      = require('path');
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet({
     contentSecurityPolicy: false,
@@ -79,7 +79,8 @@ async function initDB() {
                 aciklama    TEXT,
                 iletisim    VARCHAR(100),
                 foto_url    TEXT,
-                tarih       TIMESTAMP DEFAULT NOW()
+                tarih       TIMESTAMP DEFAULT NOW(),
+                user_id     INTEGER REFERENCES kullanicilar(kullanici_id) ON DELETE SET NULL
             );
 
             CREATE TABLE IF NOT EXISTS one_cikan_ilanlar (
@@ -201,14 +202,14 @@ const sanitizeFloat = (val) => {
     return isNaN(n) ? null : n;
 };
 
-app.post('/ilan-ekle', async (req, res) => {
+app.post('/ilan-ekle', authMiddleware, async (req, res) => {
     if (!req.body || Object.keys(req.body).length === 0)
         return res.status(400).json({ error: 'Veri ulaşmıyor.' });
     try {
         await pool.query(
             `INSERT INTO hayvan_ilanlari
-             (ilan_turu, hayvan_turu, hayvan_adi, irk, yas, cinsiyet, renk, sehir, aciklama, iletisim, foto_url)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+             (ilan_turu, hayvan_turu, hayvan_adi, irk, yas, cinsiyet, renk, sehir, aciklama, iletisim, foto_url, user_id)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
             [
                 sanitizeStr(req.body.ilanTuru, 50),
                 sanitizeStr(req.body.hayvanTuru, 50),
@@ -221,6 +222,7 @@ app.post('/ilan-ekle', async (req, res) => {
                 sanitizeStr(req.body.aciklama, 2000),
                 sanitizeStr(req.body.iletisim, 100),
                 req.body.fotoUrl || null,
+                req.user ? req.user.id : null,
             ]
         );
         res.json({ success: true, message: 'İlan başarıyla kaydedildi.' });
@@ -710,7 +712,7 @@ app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
 app.get('/api/dashboard', authMiddleware, async (req, res) => {
     const uid = req.user.id;
     try {
-        const [pets, vax, apt, rem] = await Promise.all([
+        const [pets, vax, apt, rem, ilanlar] = await Promise.all([
             pool.query(
                 `SELECT id AS "Id", name AS "Name", species AS "Species",
                         breed AS "Breed", birth_date AS "BirthDate",
@@ -754,6 +756,10 @@ app.get('/api/dashboard', authMiddleware, async (req, res) => {
                  ORDER BY r.due_date ASC`,
                 [uid]
             ),
+            pool.query(
+                `SELECT COUNT(*) AS "Total" FROM hayvan_ilanlari WHERE user_id = $1`,
+                [uid]
+            ),
         ]);
 
         res.json({
@@ -761,9 +767,77 @@ app.get('/api/dashboard', authMiddleware, async (req, res) => {
             upcomingVax:     vax.rows,
             upcomingApt:     apt.rows,
             activeReminders: rem.rows,
+            ilanCount:       parseInt(ilanlar.rows[0]?.Total || 0),
         });
     } catch (err) {
         console.error('Dashboard hatası:', err.message);
+        res.status(500).json({ error: 'Veri çekme hatası.' });
+    }
+});
+
+
+app.get('/api/user/me', authMiddleware, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT kullanici_id AS "Id", kullanici_adi AS "Username", email AS "Email", rol AS "Rol", olusturulma AS "CreatedAt" FROM kullanicilar WHERE kullanici_id = $1',
+            [req.user.id]
+        );
+        if (!result.rows.length) return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Sunucu hatası.' });
+    }
+});
+
+app.put('/api/user/profile', authMiddleware, async (req, res) => {
+    const { email, showPhone } = req.body;
+    try {
+        await pool.query(
+            'UPDATE kullanicilar SET email = $1 WHERE kullanici_id = $2',
+            [sanitizeStr(email, 255), req.user.id]
+        );
+        res.json({ success: true, message: 'Profil güncellendi.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Güncelleme hatası.' });
+    }
+});
+
+app.put('/api/user/password', authMiddleware, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Mevcut ve yeni şifre gerekli.' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'Yeni şifre en az 8 karakter olmalı.' });
+    try {
+        const result = await pool.query('SELECT sifre FROM kullanicilar WHERE kullanici_id = $1', [req.user.id]);
+        if (!result.rows.length) return res.status(404).json({ error: 'Kullanıcı bulunamadı.' });
+        const match = await bcrypt.compare(currentPassword, result.rows[0].sifre);
+        if (!match) return res.status(401).json({ error: 'Mevcut şifre yanlış.' });
+        const hashed = await bcrypt.hash(newPassword, 12);
+        await pool.query('UPDATE kullanicilar SET sifre = $1 WHERE kullanici_id = $2', [hashed, req.user.id]);
+        res.json({ success: true, message: 'Şifre güncellendi.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Güncelleme hatası.' });
+    }
+});
+
+app.delete('/api/user/account', authMiddleware, async (req, res) => {
+    try {
+        await pool.query('DELETE FROM kullanicilar WHERE kullanici_id = $1', [req.user.id]);
+        res.json({ success: true, message: 'Hesap silindi.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Silme hatası.' });
+    }
+});
+
+app.get('/api/user/ilanlar', authMiddleware, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id AS "Id", ilan_turu AS "IlanTuru", hayvan_turu AS "HayvanTuru",
+                    hayvan_adi AS "HayvanAdi", sehir AS "Sehir", tarih AS "Tarih", foto_url AS "FotoUrl"
+             FROM hayvan_ilanlari WHERE user_id = $1 ORDER BY tarih DESC`,
+            [req.user.id]
+        );
+        res.json(result.rows);
+    } catch (err) {
         res.status(500).json({ error: 'Veri çekme hatası.' });
     }
 });
