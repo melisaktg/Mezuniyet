@@ -161,21 +161,15 @@ async function initDB() {
    ALTER TABLE hayvan_ilanlari
    ADD COLUMN IF NOT EXISTS user_id INTEGER;
 `);
-
-try {
-    await client.query(`
-        ALTER TABLE hayvan_ilanlari
-        ADD CONSTRAINT hayvan_ilanlari_user_fk
-        FOREIGN KEY (user_id)
-        REFERENCES kullanicilar(kullanici_id)
-        ON DELETE SET NULL;
-    `);
-} catch (e) {
-    // constraint zaten varsa hata verme
+  console.log('✅ Tablolar hazır');
+} catch (err) {
+    console.error('❌ Tablo oluşturma hatası:', err.message);
+} finally {
+    client.release();
 }
 
-console.log('✅ Tablolar hazır');
-        
+}
+
 initDB();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'degistirmeniz_gereken_gizli_anahtar';
