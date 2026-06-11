@@ -241,6 +241,38 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
   .footer-bottom{flex-direction:column;gap:16px;}
   .pm-grid{grid-template-columns:repeat(2,1fr);}
 }
+
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;}
+.hamburger-btn span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
+.mob-nav-overlay{display:none;position:fixed;inset:0;z-index:999;}
+.mob-nav-overlay.open{display:block;}
+.mob-nav-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.mob-nav-drawer{position:absolute;top:0;right:0;width:260px;height:100%;background:var(--navy3);display:flex;flex-direction:column;padding:24px 20px;gap:8px;box-shadow:-8px 0 32px rgba(0,0,0,0.4);}
+.mob-nav-close{align-self:flex-end;background:none;border:none;color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;margin-bottom:12px;}
+.mob-nav-drawer a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:15px;font-weight:500;padding:12px 14px;border-radius:10px;transition:all 0.18s;}
+.mob-nav-drawer a:hover,.mob-nav-drawer a.active{background:rgba(224,123,46,0.18);color:#f0a05a;}
+.mob-nav-drawer .mob-nav-sep{height:1px;background:rgba(255,255,255,0.1);margin:8px 0;}
+@media(max-width:900px){.hamburger-btn{display:flex;}}
+@media(max-width:480px){
+  .hero-h1{font-size:clamp(2.2rem,9vw,3.5rem);}
+  .hero-inner{padding:0 18px;gap:32px;}
+  .hero-cta{flex-direction:column;gap:12px;}
+  .btn-primary-lg,.btn-outline-lg{width:100%;text-align:center;justify-content:center;}
+  .hero-stats{grid-template-columns:1fr 1fr;gap:10px;}
+  .trust-bar{flex-direction:column;gap:10px;}
+  .featured-wrap,.testi-wrap,.cta-outer{padding-left:16px;padding-right:16px;}
+  .features-bg{padding:52px 16px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .pm-grid{grid-template-columns:1fr;}
+  .cta-box{padding:28px 20px;}
+  .section-title{font-size:clamp(1.6rem,7vw,2.4rem);}
+  .footer-links{flex-direction:column;gap:6px;}
+}
+body.dark-mode{--cream:#111827;--warm1:#1f2937;--warm2:#374151;--white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;}
+body.dark-mode header,body.dark-mode .topbar{background:#0a1628 !important;}
+body.dark-mode .modal-box,body.dark-mode .pm-modal,body.dark-mode .card,body.dark-mode .ilan-card,body.dark-mode .filter-card{background:#1f2937;border-color:#374151;}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#111827;border-color:#374151;color:#f9fafb;}
+body.dark-mode footer{background:#0a1628;}
 </style>
 </head>
 <body>
@@ -262,7 +294,25 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
     <button class="h-btn-logout" id="btnCikis" onclick="cikisYap()">Çıkış Yap</button>
     <a href="ilan-ekle.html" class="h-btn-fill">+ İlan Ver</a>
   </div>
+  <button class="hamburger-btn" onclick="openMobNav()" aria-label="Menü">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<div class="mob-nav-overlay" id="mobNavOverlay">
+  <div class="mob-nav-backdrop" onclick="closeMobNav()"></div>
+  <div class="mob-nav-drawer">
+    <button class="mob-nav-close" onclick="closeMobNav()">✕</button>
+    <a href="index.html" class="active">🏠 Ana Sayfa</a>
+    <a href="ilanlar.html">📋 Tüm İlanlar</a>
+    <a href="ilan-ekle.html">➕ İlan Ekle</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <div class="mob-nav-sep"></div>
+    <a href="giris.html" id="mobBtnGiris">🔑 Giriş Yap</a>
+    <a href="dashboard.html" id="mobBtnDash" style="display:none">👤 Hesabım</a>
+  </div>
+</div>
+
 
 <section class="hero">
   <div class="hero-photo"></div>
@@ -361,9 +411,9 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
     </div>
     <div class="f-col">
       <h4>Şirket</h4>
-      <a href="#">Hakkımızda</a>
-      <a href="#">Gizlilik Politikası</a>
-      <a href="#">İletişim</a>
+      <a href="hakkimizda.html">Hakkımızda</a>
+      <a href="gizlilik.html">Gizlilik Politikası</a>
+      <a href="iletisim.html">İletişim</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -397,6 +447,7 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 </div>
 
 <script>
+(function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
 /* Yardımcılar */
 const emoji = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'🐱'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'🐶'; if(t.includes('ku\u015f')||t.includes('kus'))return'🐦'; return'🐾'; };
 const badgeCls = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'cb-sahip'; if(t.includes('kay'))return'cb-kayip'; if(t.includes('bulun'))return'cb-bulundu'; return'cb-diger'; };
@@ -544,6 +595,9 @@ window.onload = async () => {
     ['sToplam','sSahip','sKayip','sBulundu'].forEach(id=>document.getElementById(id).textContent='0');
   }
 };
+
+function openMobNav(){document.getElementById('mobNavOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeMobNav(){document.getElementById('mobNavOverlay').classList.remove('open');document.body.style.overflow='';}
 </script>
 </body>
 </html>
