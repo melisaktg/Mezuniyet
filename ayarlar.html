@@ -133,10 +133,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
   .content{padding:18px 16px;}
   .hamburger{display:flex;}
 }
+
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.sidebar-backdrop.show{display:block;}
 </style>
 </head>
 <body>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <a class="sb-brand" href="index.html">
     <div class="sb-logo">🐾</div>
@@ -169,7 +173,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 <div class="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-left"><h1>⚙️ Ayarlar</h1><p>Uygulama tercihlerinizi yönetin</p></div>
     </div>
     <div class="topbar-right">
@@ -185,6 +189,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
         <div class="snav-item active" onclick="showSection('gorünüm')"><span class="snav-icon">🎨</span> Görünüm</div>
         <div class="snav-item" onclick="showSection('dil')"><span class="snav-icon">🌐</span> Dil</div>
         <div class="snav-item" onclick="showSection('profil')"><span class="snav-icon">👤</span> Profil</div>
+        <div class="snav-item" onclick="showSection('sifre')"><span class="snav-icon">🔑</span> Şifre</div>
         <div class="snav-item" onclick="showSection('bildirim')"><span class="snav-icon">🔔</span> Bildirimler</div>
         <div class="snav-item" onclick="showSection('gizlilik')"><span class="snav-icon">🔒</span> Gizlilik</div>
         <div class="snav-item" onclick="showSection('hesap')"><span class="snav-icon">⚠️</span> Hesap</div>
@@ -311,6 +316,27 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
           </div>
           <div class="save-bar">
             <button class="btn-save" onclick="saveProfile()">💾 Kaydet</button>
+          </div>
+        </div>
+
+        <div class="settings-section" id="sec-sifre">
+          <div class="sc-head"><h2>🔑 Şifre Değiştir</h2><p>Hesap güvenliğiniz için güçlü bir şifre kullanın</p></div>
+          <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:12px;">
+            <div class="m-field" style="margin:0">
+              <label>Mevcut Şifre</label>
+              <input type="password" class="s-input" id="curPass" placeholder="Mevcut şifreniz">
+            </div>
+            <div class="m-field" style="margin:0">
+              <label>Yeni Şifre</label>
+              <input type="password" class="s-input" id="newPass" placeholder="En az 8 karakter">
+            </div>
+            <div class="m-field" style="margin:0">
+              <label>Yeni Şifre (Tekrar)</label>
+              <input type="password" class="s-input" id="newPass2" placeholder="Yeni şifrenizi tekrar girin">
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-save" onclick="changePassword()">🔑 Şifreyi Güncelle</button>
           </div>
         </div>
 
@@ -487,10 +513,15 @@ function savePref(key, value){
 }
 
 /* Profil kaydet */
-function saveProfile(){
+async function saveProfile(){
   const email=document.getElementById('emailInput').value.trim();
-  localStorage.setItem('pm_email', email);
-  showToast('Profil güncellendi!','success');
+  try{
+    const r=await fetch('/api/user/profile',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(!r.ok){showToast(d.error||'Hata','error');return;}
+    localStorage.setItem('pm_email',email);
+    showToast('Profil güncellendi!','success');
+  }catch{showToast('Bağlantı hatası','error');}
 }
 
 /* Cache temizle */
@@ -525,8 +556,16 @@ function loadPrefs(){
   if(df)document.getElementById('dateFormat').value=df;
   const nd=localStorage.getItem('pm_pref_notifDays');
   if(nd)document.getElementById('notifDays').value=nd;
-  const email=localStorage.getItem('pm_email');
-  if(email)document.getElementById('emailInput').value=email;
+  const uname=getUser();
+  if(uname){
+    if(document.getElementById('usernameInput'))document.getElementById('usernameInput').value=uname;
+    if(document.getElementById('profileAv'))document.getElementById('profileAv').textContent=uname.charAt(0).toUpperCase();
+    if(document.getElementById('sbAv'))document.getElementById('sbAv').textContent=uname.charAt(0).toUpperCase();
+    if(document.getElementById('sbName'))document.getElementById('sbName').textContent=uname;
+  }
+  const cachedEmail=localStorage.getItem('pm_email');
+  if(cachedEmail&&document.getElementById('emailInput'))document.getElementById('emailInput').value=cachedEmail;
+  fetch('/api/user/me',{headers:{'Authorization':'Bearer '+getToken()}}).then(r=>r.ok?r.json():null).then(d=>{if(d&&d.Email&&document.getElementById('emailInput'))document.getElementById('emailInput').value=d.Email||'';}).catch(()=>{});
 }
 
 window.onload=()=>{
@@ -539,6 +578,30 @@ window.onload=()=>{
   document.getElementById('usernameInput').value=user;
   loadPrefs();
 };
+
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var bd=document.getElementById('sidebarBackdrop');
+  sb.classList.toggle('open');
+  if(bd){bd.classList.toggle('show');}
+  document.body.style.overflow=sb.classList.contains('open')?'hidden':'';
+}
+
+async function changePassword(){
+  var cur=document.getElementById('curPass');
+  var nw=document.getElementById('newPass');
+  var nw2=document.getElementById('newPass2');
+  if(!cur||!nw||!nw2)return;
+  if(nw.value!==nw2.value){showToast('Yeni şifreler eşleşmiyor.','error');return;}
+  if(nw.value.length<8){showToast('Şifre en az 8 karakter olmalı.','error');return;}
+  try{
+    const r=await fetch('/api/user/password',{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify({currentPassword:cur.value,newPassword:nw.value})});
+    const d=await r.json();
+    if(!r.ok){showToast(d.error||'Hata','error');return;}
+    showToast('Şifre güncellendi!','success');
+    cur.value='';nw.value='';nw2.value='';
+  }catch{showToast('Bağlantı hatası','error');}
+}
 </script>
 </body>
 </html>
