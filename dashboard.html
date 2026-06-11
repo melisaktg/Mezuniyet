@@ -220,7 +220,7 @@ body {
 .pet-tab:hover:not(.active) { border-color:var(--navy2); color:var(--navy); }
 .pet-tab-em { font-size:17px; }
 
-.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:26px; }
+.stat-row { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:26px; }
 
 .stat-card {
   background:var(--white); border:1px solid var(--border);
@@ -485,7 +485,10 @@ body {
 @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;} }
 @keyframes spin { to{transform:rotate(360deg);} }
 
-@media(max-width:1100px) {
+@media(max-width:1200px) {
+  .stat-row { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:900px) {
   .stat-row { grid-template-columns:repeat(2,1fr); }
   .dash-grid { grid-template-columns:1fr; }
 }
@@ -506,10 +509,39 @@ body {
   align-items:center; justify-content:center;
   cursor:pointer; font-size:18px;
 }
+body.dark-mode{--cream:#111827;--warm1:#1f2937;--warm2:#374151;--white:#1f2937;--border:#374151;--text:#f9fafb;--muted:#9ca3af;}
+body.dark-mode .sidebar{background:#0a1628;}
+body.dark-mode .topbar{background:#1f2937;border-color:#374151;}
+body.dark-mode .modal-box,.dark-mode .panel,.dark-mode .stat-card,.dark-mode .card,.dark-mode .rec-card,.dark-mode .apt-card,.dark-mode .rem-card,.dark-mode .vax-card{background:#1f2937;border-color:#374151;}
+body.dark-mode .pet-row,body.dark-mode .vax-row,body.dark-mode .apt-row,body.dark-mode .rem-row,body.dark-mode .rec-row,body.dark-mode .table-row,body.dark-mode .pet-card,body.dark-mode .ilan-card{background:#1f2937;border-color:#374151;}
+body.dark-mode table thead tr{background:#0a1628;}
+body.dark-mode .m-field input,body.dark-mode .m-field select,body.dark-mode .m-field textarea{background:#111827;border-color:#374151;color:#f9fafb;}
+body.dark-mode .settings-card,body.dark-mode .setting-row,body.dark-mode .s-input{background:#1f2937;border-color:#374151;color:#f9fafb;}
+body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-search{background:#1f2937;border-color:#374151;color:#f9fafb;}
+
+@media(max-width:640px){
+  .topbar{padding:0 12px;height:auto;min-height:56px;flex-wrap:wrap;gap:8px;padding-top:8px;padding-bottom:8px;}
+  .topbar-right{gap:6px;}
+  .tb-btn{padding:7px 10px;font-size:12px;}
+  .topbar-left h1{font-size:16px;}
+  .topbar-left p{display:none;}
+  .content{padding:14px 12px 40px;}
+  .stat-row{grid-template-columns:1fr 1fr;gap:10px;}
+  .dash-grid{grid-template-columns:1fr;}
+  .sc-num{font-size:28px;}
+}
+@media(max-width:420px){
+  .topbar-right .tb-btn-ghost{display:none;}
+  .topbar-right{gap:4px;}
+}
+
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.sidebar-backdrop.show{display:block;}
 </style>
 </head>
 <body>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <a class="sb-brand" href="index.html">
     <div class="sb-logo">🐾</div>
@@ -575,7 +607,7 @@ body {
 
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
-      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <div class="topbar-left">
         <h1 id="greetTitle">Dashboard</h1>
         <p id="greetSub">Bugün ne kontrol edelim?</p>
@@ -641,6 +673,14 @@ body {
           <span class="sc-num" id="statRem">—</span>
           <span class="sc-label">Aktif Hatırlatıcı</span>
         </div>
+        <div class="stat-card" style="animation-delay:0.25s">
+          <div class="sc-top">
+            <div class="sc-ico ic-blue">📋</div>
+            <span class="sc-trend info" id="ilanTrend">—</span>
+          </div>
+          <span class="sc-num" id="statIlan">—</span>
+          <span class="sc-label">Aktif İlan</span>
+        </div>
       </div>
 
       <div class="dash-grid">
@@ -687,7 +727,7 @@ body {
           <div class="panel" id="reminderPanel" style="animation-delay:0.25s">
             <div class="panel-head">
               <h3>🔔 Hatırlatıcılar</h3>
-              <a href="hatirlaticılar.html" class="panel-link">Tümünü gör →</a>
+              <a href="hatirlatici.html" class="panel-link">Tümünü gör →</a>
             </div>
             <div class="rem-list" id="remList">
               <div class="loading-row"><div class="spinner"></div> Yükleniyor...</div>
@@ -908,6 +948,7 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
+(function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
 function getToken() { return localStorage.getItem('pm_token'); }
 function getUser()  { return localStorage.getItem('pm_user'); }
 function getRole()  { return localStorage.getItem('pm_role'); }
@@ -1072,6 +1113,8 @@ async function loadDashboard() {
     document.getElementById('vaxTrend').textContent=(data.upcomingVax||[]).length?'⚠️ Dikkat':'✓ İyi';
     document.getElementById('aptTrend').textContent=(data.upcomingApt||[]).length?'Var':'Yok';
     document.getElementById('remTrend').textContent=(data.activeReminders||[]).length?'Bekliyor':'Temiz';
+    document.getElementById('statIlan').textContent=data.ilanCount||0;
+    document.getElementById('ilanTrend').textContent=(data.ilanCount||0)+' ilan';
 
     const vaxUrgent=(data.upcomingVax||[]).filter(v=>daysBetween(v.NextDate)<=7).length;
     const remLate  =(data.activeReminders||[]).filter(r=>daysBetween(r.DueDate)<=0).length;
@@ -1174,6 +1217,14 @@ window.onload = () => {
 
   loadDashboard();
 };
+
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var bd=document.getElementById('sidebarBackdrop');
+  sb.classList.toggle('open');
+  if(bd){bd.classList.toggle('show');}
+  document.body.style.overflow=sb.classList.contains('open')?'hidden':'';
+}
 </script>
 </body>
 </html>
