@@ -18,7 +18,6 @@
 html{scroll-behavior:smooth;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;}
 
-/* SIDEBAR */
 .sidebar{width:var(--sidebar);background:var(--navy3);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s;}
 .sb-brand{padding:26px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:13px;text-decoration:none;}
 .sb-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--orange),#f0a05a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(224,123,46,0.45);flex-shrink:0;}
@@ -40,7 +39,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .sb-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
 .sb-logout:hover{color:rgba(255,100,100,0.8);}
 
-/* MAIN */
 .main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
 .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;box-shadow:0 1px 8px rgba(15,34,64,0.06);}
 .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy3);line-height:1.1;}
@@ -54,7 +52,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .content{padding:28px 36px 52px;flex:1;}
 .hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
 
-/* PAGE CONTENT */
 .filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
 .filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;transition:all 0.18s;}
 .filter-sel:focus{border-color:var(--orange);}
@@ -85,7 +82,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
 .spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
 
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
 .modal-box{background:#fff;border-radius:20px;width:500px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
@@ -226,7 +222,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </div>
 
-<!-- Aşı Ekle Modal -->
 <div class="modal-overlay" id="vaxModal" onclick="if(event.target===this)closeModal('vaxModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -345,7 +340,6 @@ async function loadData(){
     const today=new Date().toISOString().split('T')[0];
     document.getElementById('v-date').value=today;
 
-    // Tüm hayvanların aşılarını topla
     const vaxPromises=pets.map(p=>fetch(`/api/pets/${p.Id}/vaccinations`,{headers:authHeaders()}).then(r=>r.json()).then(vs=>vs.map(v=>({...v,PetName:p.Name,PetSpecies:p.Species,PetId:p.Id}))));
     const vaxArrays=await Promise.all(vaxPromises);
     allVax=vaxArrays.flat().sort((a,b)=>new Date(a.NextDate||0)-new Date(b.NextDate||0));
