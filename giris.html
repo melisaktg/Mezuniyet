@@ -27,7 +27,6 @@ body {
   background:var(--cream);
 }
 
-/* Sol Panel */
 .left-panel {
   background:var(--navy3);
   display:flex; flex-direction:column;
@@ -85,7 +84,6 @@ body {
 .lf-text { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.5; }
 .lf-text strong { color:rgba(255,255,255,0.9); }
 
-/* Sağ Panel — Form */
 .right-panel {
   display:flex; flex-direction:column;
   justify-content:center; align-items:center;
@@ -209,7 +207,6 @@ body.dark-mode footer{background:#0a1628;}
 </head>
 <body>
 
-<!-- SOL PANEL -->
 <div class="left-panel">
   <a href="index.html" class="lp-logo">
     <div class="lp-mark">🐾</div>
@@ -249,22 +246,17 @@ body.dark-mode footer{background:#0a1628;}
   </div>
 </div>
 
-<!-- SAĞ PANEL — FORM -->
 <div class="right-panel">
   <div class="form-wrap">
     <h2>Hesabınıza Girin</h2>
     <p class="sub">Giriş yapın veya yeni hesap oluşturun.</p>
 
-    <!-- Tab -->
     <div class="tab-row">
       <button class="tab-btn active" id="tabGiris"   onclick="switchTab('giris')">Giriş Yap</button>
       <button class="tab-btn"         id="tabKayit"   onclick="switchTab('kayit')">Kayıt Ol</button>
     </div>
 
-    <!-- Hata kutusu -->
     <div class="err-box" id="errBox"></div>
-
-    <!-- GİRİŞ FORMU -->
     <div id="formGiris">
       <div class="field">
         <label>Kullanıcı Adı</label>
@@ -279,8 +271,6 @@ body.dark-mode footer{background:#0a1628;}
         <div class="spinner" id="girisSpin"></div>
       </button>
     </div>
-
-    <!-- KAYIT FORMU -->
     <div id="formKayit" style="display:none">
       <div class="field">
         <label>Kullanıcı Adı</label>
@@ -349,12 +339,10 @@ async function girisYap() {
     const data = await r.json();
     if(!r.ok) { showErr(data.error||'Giriş başarısız.'); return; }
 
-    // Token'ı sakla
     localStorage.setItem('pm_token', data.token);
     localStorage.setItem('pm_user',  data.kullanici);
     localStorage.setItem('pm_role',  data.rol||'user');
 
-    // Dashboard'a yönlendir
     window.location.href = 'dashboard.html';
   } catch {
     showErr('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
@@ -385,13 +373,11 @@ async function kayitOl() {
     const data = await r.json();
     if(!r.ok) { showErr(data.error||'Kayıt başarısız.'); return; }
 
-    // Kayıt sonrası otomatik giriş
     showErr('✅ Kayıt başarılı! Giriş yapılıyor...');
     document.getElementById('errBox').style.background='#f0fdf4';
     document.getElementById('errBox').style.borderColor='#bbf7d0';
     document.getElementById('errBox').style.color='#15803d';
 
-    // Giriş yap
     document.getElementById('g-kullanici').value = kullanici;
     document.getElementById('g-sifre').value = sifre;
     setTimeout(girisYap, 800);
@@ -402,7 +388,6 @@ async function kayitOl() {
   }
 }
 
-// Enter tuşu desteği
 document.addEventListener('keydown', e => {
   if(e.key==='Enter') {
     const isGiris = document.getElementById('formGiris').style.display!=='none';
@@ -410,7 +395,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Zaten giriş yapılmışsa yönlendir
 window.onload = () => {
   if(localStorage.getItem('pm_token')) {
     window.location.href = 'dashboard.html';
