@@ -27,7 +27,6 @@
 html { scroll-behavior:smooth; }
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--cream); color:var(--text); overflow-x:hidden; }
 
-/* ── HEADER ── */
 header {
   background:var(--navy3); height:70px;
   display:flex; align-items:center; justify-content:space-between;
@@ -55,8 +54,7 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .h-btn-logout { padding:8px 18px; border-radius:8px; border:1px solid rgba(192,57,43,0.4); color:rgba(255,140,120,0.9); background:rgba(192,57,43,0.12); font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; text-decoration:none; transition:all 0.18s; display:none; align-items:center; gap:7px; }
 .h-btn-logout:hover { background:rgba(192,57,43,0.25); color:#fff; border-color:rgba(192,57,43,0.7); }
 .h-user-name { font-size:13px; color:rgba(255,255,255,0.75); font-weight:600; display:none; align-items:center; gap:6px; }
-
-/* ── SAYFA BAŞLIĞI ── */
+  
 .page-hero {
   background:var(--navy3); padding:52px 52px 48px; position:relative; overflow:hidden;
 }
@@ -71,7 +69,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .page-hero h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,44px); font-weight:700; color:#fff; line-height:1.1; margin-bottom:10px; }
 .page-hero p { font-size:14px; color:rgba(255,255,255,0.5); max-width:420px; line-height:1.7; font-weight:300; }
 
-/* ── STATS BAR ── */
 .stats-strip {
   background:var(--white); border-bottom:3px solid var(--orange);
   display:none; justify-content:center; flex-wrap:wrap;
@@ -84,7 +81,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .sp-num { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--navy3); line-height:1; display:block; }
 .sp-lbl { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:3px; font-weight:600; }
 
-/* ── FİLTRE PANELİ ── */
 .filters-panel {
   background:var(--white); border-bottom:1px solid var(--border);
   padding:20px 52px; box-shadow:0 2px 8px rgba(0,0,0,0.04);
@@ -115,7 +111,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 }
 .btn-reset:hover { border-color:var(--orange); color:var(--orange); }
 
-/* ── RESULTS SECTION ── */
 .results-section { max-width:1240px; margin:0 auto; padding:36px 52px 64px; }
 .results-bar {
   display:none; justify-content:space-between; align-items:center;
@@ -129,7 +124,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
   background:var(--white); outline:none; cursor:pointer;
 }
 
-/* ── KARTLAR ── */
 .cards-grid {
   display:grid; grid-template-columns:repeat(3,1fr); gap:22px;
 }
@@ -166,7 +160,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .btn-see { background:var(--navy3); color:#fff; border:none; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
 .btn-see:hover { background:var(--navy2); }
 
-/* ── BOŞ / HATA / LOADER ── */
 .state-box { grid-column:1/-1; text-align:center; padding:70px 20px; color:var(--muted); }
 .state-box .e-ico { font-size:52px; display:block; margin-bottom:14px; }
 .state-box h3 { font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--navy3); margin-bottom:6px; }
@@ -175,7 +168,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .loader { width:40px; height:40px; border:4px solid var(--border); border-top-color:var(--orange); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── MODAL ── */
 .modal-overlay { position:fixed; inset:0; background:rgba(12,22,42,0.85); backdrop-filter:blur(8px); z-index:999; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity 0.25s; }
 .modal-overlay.open { opacity:1; pointer-events:all; }
 .pm-modal { background:#fff; border-radius:22px; width:560px; max-width:100%; overflow:hidden; box-shadow:0 40px 100px rgba(0,0,0,0.45); transform:scale(0.9) translateY(24px); transition:transform 0.38s cubic-bezier(.34,1.5,.64,1),opacity 0.25s; opacity:0; max-height:90vh; overflow-y:auto; }
@@ -211,7 +203,6 @@ nav a.active { color:#fff; background:rgba(224,123,46,0.2); }
 .pm-call { background:var(--orange); color:#fff; border:none; padding:10px 20px; border-radius:9px; font-size:13px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
 .pm-call:hover { background:var(--orange2); }
 
-/* ── FOOTER ── */
 footer { background:var(--navy3); padding:52px 52px 28px; }
 .footer-top { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:60px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:28px; }
 .f-brand-desc { font-size:13px; color:rgba(255,255,255,0.4); line-height:1.75; margin-top:16px; max-width:220px; }
@@ -224,7 +215,6 @@ footer { background:var(--navy3); padding:52px 52px 28px; }
 .f-social { width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:13px; cursor:pointer; transition:all 0.2s; border:1px solid rgba(255,255,255,0.08); }
 .f-social:hover { background:rgba(255,255,255,0.15); color:#fff; }
 
-/* ── RESPONSİF ── */
 @media(max-width:1100px){ .cards-grid{grid-template-columns:repeat(2,1fr);} }
 @media(max-width:900px){
   header{padding:0 24px;} nav{display:none;}
@@ -251,7 +241,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <a class="logo" href="index.html">
     <div class="logo-mark">🐾</div>
@@ -271,7 +260,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </header>
 
-<!-- SAYFA BAŞLIĞI -->
 <div class="page-hero">
   <div class="page-hero-inner">
     <div class="hero-eyebrow">
@@ -283,7 +271,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </div>
 
-<!-- STATS STRIP -->
 <div class="stats-strip" id="statsStrip">
   <div class="stat-pill"><span class="sp-num" id="statToplam">0</span><div class="sp-lbl">Toplam İlan</div></div>
   <div class="stat-pill"><span class="sp-num" id="statSahip">0</span><div class="sp-lbl">Sahiplendirme</div></div>
@@ -291,7 +278,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   <div class="stat-pill"><span class="sp-num" id="statBulundu">0</span><div class="sp-lbl">Bulundu</div></div>
 </div>
 
-<!-- FİLTRELER -->
 <div class="filters-panel">
   <div class="filters-panel-inner">
     <div class="filters-row">
@@ -337,7 +323,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </div>
 
-<!-- SONUÇLAR -->
 <div class="results-section">
   <div class="results-bar" id="resultsBar">
     <div class="results-count" id="resultsCount"></div>
@@ -347,7 +332,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-top">
     <div>
@@ -363,9 +347,9 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
     </div>
     <div class="f-col">
       <h4>Şirket</h4>
-      <a href="#">Hakkımızda</a>
-      <a href="#">Gizlilik Politikası</a>
-      <a href="#">İletişim</a>
+      <a href="hakkimizda.html">Hakkımızda</a>
+      <a href="gizlilik.html">Gizlilik Politikası</a>
+      <a href="iletizm.html">İletişim</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -374,7 +358,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </footer>
 
-<!-- MODAL (index.html ile birebir aynı) -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="pm-modal">
     <div class="pm-hero-m">
@@ -400,7 +383,7 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
 
 <script>
 (function(){var t=localStorage.getItem("pm_theme")||"light";var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(t==="dark"||(t==="system"&&d))document.body.classList.add("dark-mode");})();
-/* ── Yardımcılar ── */
+
 const emoji    = t => { t=(t||'').toLowerCase(); if(t.includes('kedi'))return'🐱'; if(t.includes('k\u00f6pek')||t.includes('kopek'))return'🐶'; if(t.includes('ku\u015f')||t.includes('kus'))return'🐦'; return'🐾'; };
 const badgeCls = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'cb-sahip'; if(t.includes('kay'))return'cb-kayip'; if(t.includes('bulun'))return'cb-bulundu'; return'cb-diger'; };
 const badgeLbl = t => { t=(t||'').toLowerCase(); if(t.includes('sahip'))return'Sahiplendir'; if(t.includes('kay'))return'Kayıp'; if(t.includes('bulun'))return'Bulundu'; return'Diğer'; };
@@ -408,7 +391,6 @@ const imgSrc   = (t, fotoUrl) => { if(fotoUrl) return fotoUrl; t=(t||'').toLower
 
 let tumIlanlar = [];
 
-/* ── Modal ── */
 function openModal(ilan) {
   const e  = emoji(ilan.HayvanTuru);
   const t  = (ilan.IlanTuru||'').toLowerCase();
@@ -444,7 +426,6 @@ function closeModal(e)  { if(e.target===document.getElementById('modalOverlay'))
 function closeModalBtn(){ document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModalBtn(); });
 
-/* ── Kart ── */
 function makeCard(ilan, idx) {
   const e=emoji(ilan.HayvanTuru), bc=badgeCls(ilan.IlanTuru), bl=badgeLbl(ilan.IlanTuru);
   const desc=(ilan.Aciklama||'').substring(0,90)+((ilan.Aciklama||'').length>90?'...':'');
@@ -474,8 +455,6 @@ function makeCard(ilan, idx) {
   d.onclick=()=>openModal(ilan);
   return d;
 }
-
-/* ── Filtreler ── */
 function applyFilters() {
   const ara   = document.getElementById('searchInput').value.toLowerCase().trim();
   const ilan  = document.getElementById('ilanFilter').value.toLowerCase();
@@ -506,7 +485,6 @@ function resetFilters() {
   renderIlanlar(tumIlanlar);
 }
 
-/* ── Render ── */
 function renderIlanlar(liste) {
   const grid = document.getElementById('ilanlarGrid');
   const bar  = document.getElementById('resultsBar');
@@ -523,19 +501,16 @@ function renderIlanlar(liste) {
   liste.forEach((ilan,i)=>grid.appendChild(makeCard(ilan,i)));
 }
 
-/* ── Şehir dropdown ── */
 function doldurSehirler(ilanlar) {
   const sehirler=[...new Set(ilanlar.map(i=>i.Sehir).filter(Boolean))].sort();
   const sel=document.getElementById('cityFilter');
   sehirler.forEach(s=>{ const o=document.createElement('option'); o.value=s.toLowerCase(); o.textContent=s; sel.appendChild(o); });
 }
 
-/* ── Canlı filtre ── */
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 ['ilanFilter','typeFilter','cityFilter','sortSelect'].forEach(id=>
   document.getElementById(id).addEventListener('change', applyFilters));
 
-/* ── Giriş / Çıkış ── */
 function girisDurumGuncelle() {
   const user = localStorage.getItem('pm_user');
   const btnGiris  = document.getElementById('btnGiris');
@@ -561,7 +536,6 @@ function cikisYap() {
 }
 girisDurumGuncelle();
 
-/* ── Veri yükle ── */
 window.onload = async () => {
   try {
     const r = await fetch('/ilanlari-getir');
@@ -574,7 +548,6 @@ window.onload = async () => {
       return;
     }
 
-    /* Stats */
     const strip=document.getElementById('statsStrip');
     strip.style.display='flex';
     document.getElementById('statToplam').textContent  = data.length;
