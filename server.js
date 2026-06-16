@@ -40,7 +40,7 @@ app.use('/kullanici-kayit', authLimiter);
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }  // Render için gerekli
+        ? { rejectUnauthorized: false } 
         : false,
 });
 
@@ -367,7 +367,6 @@ app.post('/kullanici-kayit', async (req, res) => {
     }
 });
 
-// Giriş
 app.post('/kullanici-giris', async (req, res) => {
     const { kullanici, sifre } = req.body;
     if (!kullanici || !sifre)
@@ -397,11 +396,6 @@ app.post('/kullanici-giris', async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═════  PET MANAGEMENT  ══════════════════
-══════════════════════════════════════════ */
-
-// Hayvanları getir
 app.get('/api/pets', authMiddleware, async (req, res) => {
     try {
         const result = await pool.query(
@@ -423,7 +417,6 @@ app.get('/api/pets', authMiddleware, async (req, res) => {
     }
 });
 
-// Hayvan ekle
 app.post('/api/pets', authMiddleware, async (req, res) => {
     const { name, species, breed, birthDate, weight, gender, color, photoUrl, notes } = req.body;
     if (!name || !species)
@@ -454,7 +447,6 @@ app.post('/api/pets', authMiddleware, async (req, res) => {
     }
 });
 
-// Hayvan güncelle
 app.put('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -479,7 +471,6 @@ app.put('/api/pets/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Hayvan sil (soft delete)
 app.delete('/api/pets/:id', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     if (!id) return res.status(400).json({ error: 'Geçersiz ID.' });
@@ -494,9 +485,6 @@ app.delete('/api/pets/:id', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  AŞI TAKİBİ  ════════════════════
-══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
@@ -542,9 +530,6 @@ app.post('/api/pets/:petId/vaccinations', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  SAĞLIK KAYITLARI  ══════════════
-══════════════════════════════════════════ */
 
 app.get('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
     const petId = sanitizeInt(req.params.petId);
@@ -591,9 +576,6 @@ app.post('/api/pets/:petId/medical', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  RANDEVULAR  ════════════════════
-══════════════════════════════════════════ */
 
 app.get('/api/appointments', authMiddleware, async (req, res) => {
     try {
@@ -642,9 +624,6 @@ app.post('/api/appointments', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  HATIRLATICILАР  ════════════════
-══════════════════════════════════════════ */
 
 app.get('/api/reminders', authMiddleware, async (req, res) => {
     try {
@@ -694,7 +673,6 @@ app.post('/api/reminders', authMiddleware, async (req, res) => {
     }
 });
 
-// Hatırlatıcı tamamlandı
 app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
     const id = sanitizeInt(req.params.id);
     try {
@@ -710,9 +688,6 @@ app.patch('/api/reminders/:id/complete', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   ═══════  DASHBOARD ÖZET  ════════════════
-══════════════════════════════════════════ */
 
 app.get('/api/dashboard', authMiddleware, async (req, res) => {
     const uid = req.user.id;
@@ -847,9 +822,6 @@ app.get('/api/user/ilanlar', authMiddleware, async (req, res) => {
     }
 });
 
-/* ══════════════════════════════════════════
-   SUNUCU BAŞLAT
-══════════════════════════════════════════ */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`✅ PetMate sunucu çalışıyor: http://localhost:${PORT}`);
