@@ -49,8 +49,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .tb-btn-ghost:hover{border-color:var(--navy2);}
 .content{padding:28px 36px 52px;flex:1;}
 .hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
-
-/* Stats */
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
 .stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;}
 .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
@@ -62,7 +60,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .sc-num{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--navy3);line-height:1;display:block;margin-bottom:3px;}
 .sc-label{font-size:11px;color:var(--muted);font-weight:500;}
 
-/* Filters */
 .filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
 .filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;}
 .filter-sel:focus{border-color:var(--orange);}
@@ -71,7 +68,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .search-inp{width:100%;padding:8px 13px 8px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;}
 .search-inp:focus{border-color:var(--orange);}
 
-/* Reminder cards */
 .rem-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .rem-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all 0.2s;position:relative;}
 .rem-card:hover{box-shadow:0 4px 16px rgba(15,34,64,0.08);transform:translateY(-2px);}
@@ -105,7 +101,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
 .spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
 
-/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
 .modal-box{background:#fff;border-radius:20px;width:500px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
@@ -204,7 +199,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 
   <div class="content">
-    <!-- Stats -->
     <div class="stat-row">
       <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-red">🚨</div></div><span class="sc-num" id="statOverdue">—</span><span class="sc-label">Gecikmiş</span></div>
       <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-orange">⏰</div></div><span class="sc-num" id="statToday">—</span><span class="sc-label">Bugün</span></div>
@@ -212,7 +206,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
       <div class="stat-card"><div class="sc-top"><div class="sc-ico ic-green">✅</div></div><span class="sc-num" id="statTotal">—</span><span class="sc-label">Toplam Aktif</span></div>
     </div>
 
-    <!-- Filters -->
     <div class="filters-bar">
       <div class="search-wrap">
         <input type="text" class="search-inp" id="searchInp" placeholder="Başlık veya hayvan ara..." oninput="filterList()">
@@ -236,14 +229,12 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
       </select>
     </div>
 
-    <!-- List -->
     <div id="remContainer">
       <div class="loading-row"><div class="spinner"></div> Yükleniyor...</div>
     </div>
   </div>
 </div>
 
-<!-- Hatırlatıcı Modal -->
 <div class="modal-overlay" id="remModal" onclick="if(event.target===this)closeModal('remModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -328,7 +319,6 @@ function filterList(){
 function renderList(list){
   const container=document.getElementById('remContainer');
 
-  // Stats
   const active=allRems.filter(r=>!r.IsCompleted);
   document.getElementById('statTotal').textContent=active.length;
   document.getElementById('statOverdue').textContent=active.filter(r=>daysBetween(r.DueDate)<0).length;
@@ -340,13 +330,9 @@ function renderList(list){
     return;
   }
 
-  // Gecikmiş + bugün
   const urgent=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)<=0);
-  // Bu hafta
   const thisWeek=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)>0&&daysBetween(r.DueDate)<=7);
-  // Gelecek
   const future=list.filter(r=>!r.IsCompleted&&daysBetween(r.DueDate)>7);
-  // Tamamlananlar
   const done=list.filter(r=>r.IsCompleted);
 
   const makeCard=r=>{
