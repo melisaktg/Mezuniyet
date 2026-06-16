@@ -50,7 +50,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .content{padding:28px 36px 52px;flex:1;}
 .hamburger{display:none;width:38px;height:38px;border-radius:9px;background:var(--warm1);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
 
-/* Filters */
 .filters-bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
 .filter-sel{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;cursor:pointer;}
 .filter-sel:focus{border-color:var(--orange);}
@@ -59,7 +58,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .search-inp{width:100%;padding:8px 13px 8px 36px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--white);outline:none;}
 .search-inp:focus{border-color:var(--orange);}
 
-/* Appointment cards */
 .apt-grid{display:flex;flex-direction:column;gap:12px;}
 .apt-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;transition:all 0.2s;}
 .apt-card:hover{box-shadow:0 4px 16px rgba(15,34,64,0.08);transform:translateY(-2px);}
@@ -92,7 +90,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .loading-row{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;font-size:13px;}
 .spinner{width:20px;height:20px;border-radius:50%;border:2px solid var(--warm2);border-top-color:var(--orange);animation:spin 0.7s linear infinite;}
 
-/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,0.75);backdrop-filter:blur(7px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
 .modal-box{background:#fff;border-radius:20px;width:500px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.3);transform:scale(0.92) translateY(16px);transition:transform 0.35s cubic-bezier(.34,1.5,.64,1),opacity 0.25s;opacity:0;max-height:90vh;overflow-y:auto;}
@@ -208,7 +205,6 @@ body.dark-mode .filter-bar,body.dark-mode .filter-input,body.dark-mode .topbar-s
   </div>
 </div>
 
-<!-- Randevu Modal -->
 <div class="modal-overlay" id="aptModal" onclick="if(event.target===this)closeModal('aptModal')">
   <div class="modal-box">
     <div class="modal-head">
